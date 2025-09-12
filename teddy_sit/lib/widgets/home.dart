@@ -1,0 +1,589 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+// Logo
+class Teddysit extends StatelessWidget {
+  const Teddysit({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          width: 275,
+          height: 87,
+          child: Stack(
+            children: [
+              Positioned(
+                left: 0,
+                top: 0,
+                child: SizedBox(
+                  width: 275,
+                  height: 87,
+                  child: Text(
+                    'Teddy\nSit',
+                    style: GoogleFonts.kirangHaerang(
+                      color: const Color(0xFFE8E5ED),
+                      fontSize: 38,
+                      height: 40/38,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 47,
+                top: 45,
+                child: Container(
+                  width: 27,
+                  height: 27,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/bear.png"),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Stretch Recommendations
+class StretchCard extends StatelessWidget {
+  final VoidCallback? onTap;
+
+  const StretchCard({super.key, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: SizedBox(
+        width: 179,
+        height: 241,
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              top: 0,
+              child: Container(
+                width: 179,
+                height: 241,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFF7780BA),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x2D000000),
+                      blurRadius: 11.10,
+                      offset: Offset(0, 11),
+                      spreadRadius: 11,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 18,
+              top: 23,
+              child: Opacity(
+                opacity: 0.8,
+                child: Container(
+                  width: 153,
+                  height: 199,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/stretch.png"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 6,
+              top: 135,
+              child: SizedBox(
+                width: 173,
+                height: 75,
+                child: Text(
+                  'Stretch Recommendations',
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.inknutAntiqua(
+                    color: Colors.white,
+                    fontSize: 16,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 6,
+              top: 180,
+              child: SizedBox(
+                width: 165,
+                height: 75,
+                child: Text(
+                  'Your personalized recommendations sports',
+                  textAlign: TextAlign.left,
+                  style: GoogleFonts.inknutAntiqua(
+                    color: Color(0xFFE8E5ED),
+                    fontSize: 11,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Correct Sitting Poses
+class CorrectSittingCard extends StatelessWidget {
+  final VoidCallback? onTap;
+
+  const CorrectSittingCard({super.key, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: SizedBox(
+        width: 179,
+        height: 241,
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              top: 0,
+              child: Container(
+                width: 179,
+                height: 241,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFF7780BA),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x2D000000),
+                      blurRadius: 11.10,
+                      offset: Offset(0, 11),
+                      spreadRadius: 11,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 13,
+              top: 21,
+              child: Opacity(
+                opacity: 0.8,
+                child: Container(
+                  width: 153,
+                  height: 199,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/sitting.png"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 135,
+              child: SizedBox(
+                width: 169,
+                height: 75,
+                child: Text(
+                  'Correct\nSitting Poses',
+                  textAlign: TextAlign.right,
+                  style: GoogleFonts.inknutAntiqua(
+                    color: Colors.white,
+                    fontSize: 16,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 6,
+              top: 180,
+              child: SizedBox(
+                width: 165,
+                height: 75,
+                child: Text(
+                  'Learn the correct sitting poses by videos',
+                  textAlign: TextAlign.right,
+                  style: GoogleFonts.inknutAntiqua(
+                    color: Color(0xFFE8E5ED),
+                    fontSize: 11,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Analytics
+class AnalyticsCard extends StatelessWidget {
+  final VoidCallback? onTap;
+
+  const AnalyticsCard({super.key, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: SizedBox(
+        width: 381,
+        height: 133,
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              top: 0,
+              child: Container(
+                width: 381,
+                height: 133,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFF7780BA),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  shadows: const [
+                    BoxShadow(
+                      color: Color(0x2B000000),
+                      blurRadius: 7.8,
+                      offset: Offset(0, 3),
+                      spreadRadius: 6,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 18,
+              top: 20,
+              child: Opacity(
+                opacity: 0.8,
+                child: Container(
+                  width: 123,
+                  height: 91,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/barchart.png"), 
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 109,
+              top: 24,
+              child: SizedBox(
+                width: 272,
+                height: 75,
+                child: Text(
+                  'Analytics',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inknutAntiqua(
+                    color: Colors.white,
+                    fontSize: 24,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 128,
+              top: 59,
+              child: SizedBox(
+                width: 240,
+                height: 75,
+                child: Text(
+                  'Analyze your sitting posture to detect imbalances, slouching, \nor other issues',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inknutAntiqua(
+                    color: const Color(0xFFD9D8DD),
+                    fontSize: 12,
+                    height: 1.3,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Leaderboard
+class LeaderboardCard extends StatelessWidget {
+  final VoidCallback? onTap;
+
+  const LeaderboardCard({super.key, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: SizedBox(
+        width: 165,
+        height: 129,
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              top: 0,
+              child: Container(
+                width: 165,
+                height: 129,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFF7780BA),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 7,
+              top: 81,
+              child: SizedBox(
+                width: 151,
+                height: 45,
+                child: Text(
+                  'Leaderboard',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inknutAntiqua(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 18,
+              top: 9,
+              child: Text(
+                'Pr',
+                style: GoogleFonts.inknutAntiqua(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            Positioned(
+              left: 13,
+              top: 9,
+              child: Text(
+                '99',
+                style: GoogleFonts.inknutAntiqua(
+                  color: Colors.white,
+                  fontSize: 48,
+                ),
+              ),
+            ),
+            Positioned(
+              left: 95,
+              top: 28,
+              child: Container(
+                width: 53,
+                height: 53,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/ranking.png"),
+                    fit: BoxFit.fill,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Do Not Disturb
+class Donotdisturb extends StatelessWidget {
+  final VoidCallback? onTap;
+
+  const Donotdisturb({super.key, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: SizedBox(
+        width: 188,
+        height: 129,
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              top: 0,
+              child: Container(
+                width: 188,
+                height: 129,
+                decoration: ShapeDecoration(
+                  color: Color(0xFF7780BA),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 12,
+              top: 13,
+              child: Opacity(
+                opacity: 0.72,
+                child: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/moon.png"),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 0,
+              top: 70,
+              child: SizedBox(
+                width: 188,
+                height: 75,
+                child: Text(
+                  'Only records sitting posture, without reminders',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inknutAntiqua(
+                    color: Color(0xFFCCCBD2),
+                    fontSize: 11,
+                    height: 20/11,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 6,
+              top: 48,
+              child: SizedBox(
+                width: 176,
+                height: 77,
+                child: Text(
+                  'Do Not Disturb',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inknutAntiqua(
+                    color: Colors.white,
+                    fontSize: 16,
+                    height: 1.0,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Elapsed Time
+class ElapsedTime extends StatelessWidget {
+  const ElapsedTime({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          width: 260,
+          height: 133,
+          child: Stack(
+            children: [
+              Positioned(
+                left: 0,
+                top: 48,
+                child: SizedBox(
+                  width: 260,
+                  height: 68,
+                  child: Text(
+                    '00:00',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inknutAntiqua(
+                      textStyle: const TextStyle(
+                        color: Color(0xFFE8E5ED),
+                        fontSize: 64,
+                      ),
+                      height: 1.0,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 59,
+                top: 27,
+                child: Opacity(
+                  opacity: 0.46,
+                  child: Container(
+                    width: 138,
+                    height: 21,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFF7780BA),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(115),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 26,
+                top: 31,
+                child: SizedBox(
+                  width: 212,
+                  height: 21,
+                  child: Text(
+                    'Elapsed Time',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inknutAntiqua(
+                      textStyle: const TextStyle(
+                        color: Color(0xFFCCCBD2),
+                        fontSize: 11,
+                      ),
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
