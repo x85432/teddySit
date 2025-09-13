@@ -2,7 +2,38 @@ import 'package:flutter/material.dart';
 import 'widgets/home.dart';
 import 'pages/leaderboard.dart';
 
-void main() {
+// for cloud functions and firestore for Firebases
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'firebase_options.dart';
+
+// Firebase App check
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter/foundation.dart'; // for kDebug
+
+// main function must be an async function
+void main() async {
+  // cloud functions and database necessary
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // // 根據 kDebugMode 判斷是否為開發模式
+  // if (kDebugMode) {
+  //   // 在 Debug 模式下使用 Debug Provider
+  //   await FirebaseAppCheck.instance.activate(
+  //     androidProvider: AndroidProvider.debug,
+  //     appleProvider: AppleProvider.debug,
+  //   );
+  // } else {
+  //   // 在 Release 模式下使用正式的提供程式
+  //   await FirebaseAppCheck.instance.activate(
+  //     androidProvider: AndroidProvider.playIntegrity, // 或其他正式提供程式
+  //     appleProvider: AppleProvider.deviceCheck,       // 或其他正式提供程式
+  //   );
+  // }
+
   runApp(const MyApp());
 }
 
@@ -35,6 +66,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // A variable to store the message from the cloud function
+  String _cloudFunctionMessage = '';
+
+  // Asynchronous function to call the Cloud Function
+  Future<void> _callDoNotDisturbFunction() async {
+    try {
+      // Get an instance of the Firebase Functions
+      final functions = FirebaseFunctions.instance;
+      // Get the callable function by its name
+      final HttpsCallable callable = functions.httpsCallable('do_not_disturb');
+      // Call the function
+      final HttpsCallableResult result = await callable.call();
+
+      // Check if the result has data
+      if (result.data != null && result.data is Map && result.data['message'] != null) {
+        // Update the state with the message from the function
+        setState(() {
+          _cloudFunctionMessage = result.data['message'] as String;
+        });
+        // Log the message for debugging
+        debugPrint('Cloud Function Response: $_cloudFunctionMessage');
+      }
+    } catch (e) {
+      // Handle any errors that occur during the function call
+      debugPrint('Error calling Cloud Function: $e');
+      setState(() {
+        _cloudFunctionMessage = 'Error: $e';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   child: Donotdisturb(
                     onTap: () {
-                      debugPrint("Do Not Disturb card clicked!");
+                      _callDoNotDisturbFunction();
                     },
                   ),
                 ),
