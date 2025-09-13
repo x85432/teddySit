@@ -31,4 +31,4 @@ def do_not_disturb(req: https_fn.CallableRequest):
 
     # 回傳一個包含 'message' 鍵的字典 (dictionary)，
     # 這個字典將會自動轉換成 JSON 格式並回傳給 Flutter。
-    return {"message": "Clound function 成功被呼叫。"}
+    return {"message": "Cloud function 成功被呼叫。"}
