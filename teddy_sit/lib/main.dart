@@ -11,28 +11,33 @@ import 'firebase_options.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart'; // for kDebug
 
+
 // main function must be an async function
 void main() async {
   // cloud functions and database necessary
   WidgetsFlutterBinding.ensureInitialized();
+
+  
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // // 根據 kDebugMode 判斷是否為開發模式
-  // if (kDebugMode) {
-  //   // 在 Debug 模式下使用 Debug Provider
-  //   await FirebaseAppCheck.instance.activate(
-  //     androidProvider: AndroidProvider.debug,
-  //     appleProvider: AppleProvider.debug,
-  //   );
-  // } else {
-  //   // 在 Release 模式下使用正式的提供程式
-  //   await FirebaseAppCheck.instance.activate(
-  //     androidProvider: AndroidProvider.playIntegrity, // 或其他正式提供程式
-  //     appleProvider: AppleProvider.deviceCheck,       // 或其他正式提供程式
-  //   );
-  // }
+  // 根據 kDebugMode 判斷是否為開發模式
+  if (kDebugMode) {
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.debug,
+      appleProvider: AppleProvider.debug,
+    );
+
+    print('App Check initialized in Debug mode. Please check device logs (Logcat/Xcode Console) to confirm which Debug Token is being used.');
+
+  } else {
+    // 在 Release 模式下使用正式的提供程式
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.playIntegrity,
+      appleProvider: AppleProvider.deviceCheck,
+    );
+  }
 
   runApp(const MyApp());
 }
