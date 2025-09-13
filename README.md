@@ -42,6 +42,12 @@
    <details><img width="475" height="902" alt="image" src="https://github.com/user-attachments/assets/0fe67301-7097-4e41-855a-95a396f50c21" /> </details>
 
 
+# Common issues
+1. Fail to connect the device
+> Go to Android Studio
+> Virtual Device Manager
+> Delete your original device
+> Create another device and connet it again in VScode
 
 
 
