@@ -24,6 +24,7 @@
 4. Open `/teddySit/teddy_sit` as VS code
     > Ensure you have downloaded Flutter SDK and upgraded to the latest version <br>
     ```powershell
+    cd teddy_sit
     flutter clean
     flutter pub get
     ```
@@ -36,6 +37,10 @@
 
     Be patient! It will take a long time in the first time.
    <details> <img width="303" height="32" alt="image" src="https://github.com/user-attachments/assets/1c7e30fa-4a2f-41f5-a1fd-a04ccc43ece2" /> </details>
+
+   Finally, you will have our UI showing in you phone emulator
+   <details><img width="475" height="902" alt="image" src="https://github.com/user-attachments/assets/0fe67301-7097-4e41-855a-95a396f50c21" /> </details>
+
 
 
 
