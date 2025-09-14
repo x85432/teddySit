@@ -6,11 +6,34 @@ import 'package:firebase_core/firebase_core.dart'; // 導入 Firebase 核心套�
 import 'firebase_options.dart';
 import 'services/cloud_function_service.dart';
 
+// Firebase App check
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter/foundation.dart'; // for kDebug
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp( // 初始化 Firebase
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // 根據 kDebugMode 判斷是否為開發模式
+  if (kDebugMode) {
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.debug,
+      appleProvider: AppleProvider.debug,
+    );
+
+    print('App Check initialized in Debug mode. Please check device logs (Logcat/Xcode Console) to confirm which Debug Token is being used.');
+
+  } else {
+    // 在 Release 模式下使用正式的提供程式
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.playIntegrity,
+      appleProvider: AppleProvider.deviceCheck,
+    );
+  }
+  
   runApp(const MyApp());
 }
 
