@@ -18,7 +18,7 @@
       - 選擇我們的DB
       - <details><img width="519" height="59" alt="image" src="https://github.com/user-attachments/assets/83920fc2-cf9b-4940-b0f9-27142d2e048c" /></details>
   14. 在專案中開啟你的 emulator (手機模擬器)
-  15. run debug mode <img width="25" height="18" alt="image" src="https://github.com/user-attachments/assets/6c4618a5-adab-4d69-8231-79e2cab1ed7c" />
+  15. 回到 `main.dart` ， run debug mode <img width="25" height="18" alt="image" src="https://github.com/user-attachments/assets/6c4618a5-adab-4d69-8231-79e2cab1ed7c" />
 
   16. 測試 Do Not Disturb (點擊 UI 上的按鈕)
   17. 你會看到 Unauthenticated 的相關訊息
