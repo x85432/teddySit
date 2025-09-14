@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+android/app/google-services.json
+
+# contain api key
+# Please team member `firebase login && flutterfire configure`
+lib/firebase_options.dart
