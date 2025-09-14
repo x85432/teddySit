@@ -3,8 +3,8 @@ import 'widgets/home.dart';
 import 'pages/leaderboard.dart';
 
 import 'package:firebase_core/firebase_core.dart'; // 導入 Firebase 核心套件
-import 'package:cloud_functions/cloud_functions.dart'; // 導入 Cloud Functions 套件
 import 'firebase_options.dart';
+import 'services/cloud_function_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,8 +43,60 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Cloud functions instance
-  final FirebaseFunctions functions = FirebaseFunctions.instance;
+
+  // 創建 CloudFunctionService 的實例
+  final CloudFunctionService _cloudFunctionService = CloudFunctionService();
+
+  /// 通用方法：調用指定的 Cloud Function 並顯示結果 SnackBar
+  ///
+  /// [functionName]: 要調用的 Cloud Function 的名稱。
+  /// [params]: 傳遞給 Cloud Function 的參數。
+  /// [requireLimitedUseAppCheckTokens]: 是否需要有限用途 App Check 權杖。
+  Future<void> _callCloudFunctionAndShowResult({
+    required String functionName,
+    Map<String, dynamic>? params,
+    bool requireLimitedUseAppCheckTokens = false,
+  }) async {
+    debugPrint("MyHomePage: Calling Cloud Function '$functionName' from UI event.");
+
+    final CloudFunctionCallResult callResult =
+        await _cloudFunctionService.callCallableFunction(
+      functionName: functionName,
+      params: params,
+      requireLimitedUseAppCheckTokens: requireLimitedUseAppCheckTokens,
+    );
+
+    if (!mounted) {
+      debugPrint("MyHomePage: Widget not mounted, cannot show SnackBar.");
+      return;
+    }
+
+    String snackBarMessage;
+    Color snackBarColor;
+
+    switch (callResult.type) {
+      case CloudFunctionResultType.success:
+        snackBarMessage = '${callResult.message} 返回數據: ${callResult.data}';
+        snackBarColor = Colors.green;
+        break;
+      case CloudFunctionResultType.firebaseError:
+        snackBarMessage = '${callResult.message}';
+        snackBarColor = Colors.orange;
+        break;
+      case CloudFunctionResultType.unexpectedError:
+        snackBarMessage = '${callResult.message}';
+        snackBarColor = Colors.red;
+        break;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackBarMessage),
+        backgroundColor: snackBarColor,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +188,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Donotdisturb(
                     onTap: () {
                       debugPrint("Do Not Disturb card clicked!");
+                      _callCloudFunctionAndShowResult(
+                        functionName: 'do_not_disturb', // 假設有個函式叫 updateDoNotDisturbStatus
+                        // params: {'status': true, 'duration': '30min'},
+                      );
                     },
                   ),
                 ),
