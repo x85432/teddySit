@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'widgets/home.dart';
 import 'pages/leaderboard.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart'; // 導入 Firebase 核心套件
+import 'package:cloud_functions/cloud_functions.dart'; // 導入 Cloud Functions 套件
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp( // 初始化 Firebase
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -35,6 +43,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // Cloud functions instance
+  final FirebaseFunctions functions = FirebaseFunctions.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
