@@ -19,14 +19,15 @@
       - <details><img width="519" height="59" alt="image" src="https://github.com/user-attachments/assets/83920fc2-cf9b-4940-b0f9-27142d2e048c" /></details>
   14. 在專案中開啟你的 emulator (手機模擬器)
   15. 回到 `main.dart` ， run debug mode <img width="25" height="18" alt="image" src="https://github.com/user-attachments/assets/6c4618a5-adab-4d69-8231-79e2cab1ed7c" />
-
+      - 一定要等 Gradle 建置完成
+      - <details><img width="308" height="38" alt="image" src="https://github.com/user-attachments/assets/7479fb23-e7d4-4ca8-b011-e490c4dba8ed" /></details>
   16. 測試 Do Not Disturb (點擊 UI 上的按鈕)
   17. 你會看到 Unauthenticated 的相關訊息
 ----
 ## 讓 APP 獲得 Cloud function 觸發的權限
-  14. 在Vscode 的 DEBUG CONSOLE 搜尋，`Firebase Console for your project`
+  18. 在Vscode 的 DEBUG CONSOLE 搜尋，`Firebase Console for your project`
       - DEBUG CONSOLE 在 Terminal 那邊的視窗
-  16. 找到 e 開頭的 token
+  19. 找到 e 開頭的 token
       - 可能長得像這樣 `exxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
-  17. 進入 [Firebase 網站](https://console.firebase.google.com/u/0/project/teddysitdb/appcheck/products)，到我們的專案
-  18. 找到 Build > App check > [Apps](https://console.firebase.google.com/u/0/project/teddysitdb/appcheck/apps) > android 三個點點 > Manage (管理偵錯...) > 命名你的 APP ，並且把你的 Token 丟進去
+  20. 進入 [Firebase 網站](https://console.firebase.google.com/u/0/project/teddysitdb/appcheck/products)，到我們的專案
+  21. 找到 Build > App check > [Apps](https://console.firebase.google.com/u/0/project/teddysitdb/appcheck/apps) > android 三個點點 > Manage (管理偵錯...) > 命名你的 APP ，並且把你的 Token 丟進去
