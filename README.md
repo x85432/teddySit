@@ -15,11 +15,13 @@
   10. 執行 `npm install -g firebase-tools`
   11. 執行 `firebase login`
   12. 執行 `flutterfire configure` (如果遇到403，要被我加進去 Firebase 專案，然後再執行一次)
-  13. 在專案中開啟你的 emulator (手機模擬器)
-  14. run debug mode <img width="25" height="18" alt="image" src="https://github.com/user-attachments/assets/6c4618a5-adab-4d69-8231-79e2cab1ed7c" />
+      - 選擇我們的DB
+      - <details><img width="519" height="59" alt="image" src="https://github.com/user-attachments/assets/83920fc2-cf9b-4940-b0f9-27142d2e048c" /></details>
+  14. 在專案中開啟你的 emulator (手機模擬器)
+  15. run debug mode <img width="25" height="18" alt="image" src="https://github.com/user-attachments/assets/6c4618a5-adab-4d69-8231-79e2cab1ed7c" />
 
-  15. 測試 Do Not Disturb (點擊 UI 上的按鈕)
-  16. 你會看到 Unauthenticated 的相關訊息
+  16. 測試 Do Not Disturb (點擊 UI 上的按鈕)
+  17. 你會看到 Unauthenticated 的相關訊息
 ----
 ## 讓 APP 獲得 Cloud function 觸發的權限
   14. 在Vscode 的 DEBUG CONSOLE 搜尋，`Firebase Console for your project`
