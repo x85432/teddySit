@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'widgets/home.dart';
 import 'pages/leaderboard.dart';
+import 'pages/stretch.dart';
+import 'pages/analytic.dart';
 
 void main() {
   runApp(const MyApp());
@@ -78,6 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   child: StretchCard(
                     onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const StretchPage()),
+                      );
                       debugPrint("Stretch Recommendations card clicked!");
                     },
                   ),
@@ -99,6 +105,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   child: AnalyticsCard(
                     onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AnalyticPage()),
+                        );
                       debugPrint("Analytics card clicked!");
                     },
                   ),
