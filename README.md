@@ -13,8 +13,9 @@
   8. 執行 `flutter pub get`
   9. 執行 `start ms-settings:developers`， 開發人員模式開啟 (如果你還沒開的話)
   10. 執行 `npm install -g firebase-tools`
-  11. 執行 `firebase login`
-  12. 執行 `flutterfire configure` (如果遇到403，要被我加進去 Firebase 專案，然後再執行一次)
+  11. 執行 `dart pub global activate flutterfire_cli`
+  12. 執行 `firebase login`
+  13. 執行 `flutterfire configure` (如果遇到403，要被我加進去 Firebase 專案，然後再執行一次)
       - 選擇我們的DB
       - <details><img width="519" height="59" alt="image" src="https://github.com/user-attachments/assets/83920fc2-cf9b-4940-b0f9-27142d2e048c" /></details>
   14. 在專案中開啟你的 emulator (手機模擬器)
