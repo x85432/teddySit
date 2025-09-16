@@ -34,6 +34,9 @@ dependencies:
   video_player: ^2.6.1
   fl_chart: ^0.69.0   
 
+  # firebase
+  firebase_core: ^4.1.0
+  firebase_app_check: ^0.4.0+1
   # cloud functions
   cloud_firestore: ^6.0.1
   cloud_functions: ^6.0.1
