@@ -187,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 InkWell(
                   onTap: ()
                   {
-                    debugPrint('Pause!');
+                    debugPrint('Pause!22');
                   },
                   child: Image(image: AssetImage('assets/Pause.png'), width: 52, height: 52),
                 ),
