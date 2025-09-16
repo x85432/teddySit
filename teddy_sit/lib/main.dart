@@ -154,7 +154,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 SizedBox(width: 39),
                 InkWell(
-                  onTap: null,
+                  onTap: ()
+                  {
+                    debugPrint('Pause!');
+                  },
                   child: Image(image: AssetImage('assets/Pause.png'), width: 52, height: 52),
                 ),
                 SizedBox(width: 39),
