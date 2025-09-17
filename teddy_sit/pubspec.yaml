@@ -32,7 +32,8 @@ dependencies:
     sdk: flutter
   google_fonts: ^6.3.1
   video_player: ^2.6.1
-  fl_chart: ^0.69.0   
+  fl_chart: ^0.69.0
+  smooth_page_indicator: ^1.2.0   
 
   # firebase
   firebase_core: ^4.1.0
@@ -81,6 +82,9 @@ flutter:
     - assets/Stop.png
     - assets/Pause.png
     - assets/conversation.png
+    - assets/1.png
+    - assets/2.png
+    - assets/3.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -167,6 +167,89 @@ class LongestTimeWid extends StatelessWidget {
   }
 }
 
+// 折線圖
+class LineChartPage extends StatelessWidget {
+  final String label;
+  final List<FlSpot> spots;
+
+  const LineChartPage({super.key, required this.label, required this.spots});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("折線圖: $label"),
+        backgroundColor: Colors.deepPurple,
+      ),
+      body: Center(
+        child: SizedBox(
+          height: 300,
+          width: 350,
+          child: LineChart(
+            LineChartData(
+              lineBarsData: [
+                LineChartBarData(
+                  spots: spots,
+                  isCurved: true,
+                  color: const Color(0xFF7780BA),
+                  barWidth: 3,
+                  dotData: FlDotData(show: true),
+                ),
+              ],
+              titlesData: FlTitlesData(
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false), // 左邊不顯示
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: 2, // 你可以改成 20 / 10 等等
+                    reservedSize: 40,
+                    getTitlesWidget: (value, meta) {
+                      return Text(
+                        value.toInt().toString(),
+                        style: GoogleFonts.inknutAntiqua(
+                          color: const Color(0xFFCDCCD3),
+                          fontSize: 14,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      return Text(
+                        value.toInt().toString(), // X 軸數字
+                        style: GoogleFonts.inknutAntiqua(
+                          color: const Color(0xFFCDCCD3),
+                          fontSize: 14,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+              ),
+              borderData: FlBorderData(
+                show: true,
+                border: Border.all(
+                  color: const Color.fromARGB(40, 255, 255, 255),
+                  width: 2,
+                ),
+              ),
+              gridData: FlGridData(show: false),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // Report
 class Report extends StatelessWidget {
   const Report({super.key});
@@ -271,3 +354,183 @@ class Report extends StatelessWidget {
   }
 }
 
+class BarToLineChartExample extends StatefulWidget {
+  final List<List<FlSpot>> lineDataPerBar;
+
+  const BarToLineChartExample({super.key, required this.lineDataPerBar});
+
+  @override
+  BarToLineChartExampleState createState() => BarToLineChartExampleState();
+}
+
+class BarToLineChartExampleState extends State<BarToLineChartExample> {
+  bool showLineChart = false;
+  int selectedBarIndex = -1;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 300,
+      width: 350,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        child: showLineChart ? buildAnimatedLineChart() : buildBarChart(),
+      ),
+    );
+  }
+
+  Widget buildBarChart() {
+    return BarChart(
+      key: const ValueKey('barChart'),
+      BarChartData(
+        backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+        alignment: BarChartAlignment.start,
+        groupsSpace: 15,
+        maxY: 100,
+        barTouchData: BarTouchData(
+          enabled: true,
+          touchCallback: (event, response) {
+            if (response != null &&
+                response.spot != null &&
+                event.isInterestedForInteractions) {
+              setState(() {
+                selectedBarIndex = response.spot!.touchedBarGroupIndex;
+                showLineChart = true;
+              });
+            }
+          },
+        ),
+        titlesData: FlTitlesData(
+          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 20,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toInt().toString(),
+                  style: GoogleFonts.inknutAntiqua(
+                    color: Color(0xFFCDCCD3),
+                    fontSize: 14,
+                  ),
+                );
+              },
+            ),
+          ),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                const labels = ['A', 'B', 'C', 'D', 'E'];
+                if (value.toInt() < labels.length) {
+                  return Text(
+                    labels[value.toInt()],
+                    style: GoogleFonts.inknutAntiqua(
+                      color: Color(0xFFCDCCD3),
+                      fontSize: 14,
+                    ),
+                  );
+                }
+                return const Text('');
+              },
+            ),
+          ),
+        ),
+        gridData: FlGridData(show: false),
+        borderData: FlBorderData(
+          show: true,
+          border: Border.all(color: Color.fromARGB(40, 255, 255, 255), width: 2),
+        ),
+        barGroups: List.generate(widget.lineDataPerBar.length, (index) {
+          final yValues = widget.lineDataPerBar[index];
+          double maxY = yValues.isNotEmpty
+              ? yValues.map((e) => e.y).reduce((a, b) => a > b ? a : b)
+              : 0;
+
+          return BarChartGroupData(
+            x: index,
+            barRods: [
+              BarChartRodData(
+                toY: maxY,
+                color: Color(0xFF7780BA),
+                width: 20,
+                borderRadius: BorderRadius.circular(5),
+                backDrawRodData: BackgroundBarChartRodData(
+                  show: true,
+                  color: Colors.grey,
+                ),
+              )
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget buildAnimatedLineChart() {
+    final targetSpots = (selectedBarIndex >= 0 &&
+            selectedBarIndex < widget.lineDataPerBar.length)
+        ? widget.lineDataPerBar[selectedBarIndex].cast<FlSpot>()
+        : <FlSpot>[];
+
+    return Stack(
+      key: const ValueKey('lineChart'),
+      children: [
+        TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 700),
+          builder: (context, value, child) {
+            final animatedSpots = targetSpots
+                .map((e) => FlSpot(e.x, e.y * value))
+                .toList();
+            return LineChart(
+              LineChartData(
+                minY: 0,
+                maxY: 100,
+                gridData: FlGridData(show: false),
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border.all(
+                      color: Color.fromARGB(40, 255, 255, 255), width: 2),
+                ),
+                titlesData: FlTitlesData(
+                  leftTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: AxisTitles(
+                      sideTitles:
+                          SideTitles(showTitles: true, reservedSize: 40)),
+                  bottomTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: true)),
+                ),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: animatedSpots,
+                    isCurved: true,
+                    color: Color(0xFF7780BA),
+                    barWidth: 3,
+                    dotData: FlDotData(show: true),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        Positioned(
+          top: 0,
+          right: 10,
+          child: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              setState(() {
+                showLineChart = false;
+                selectedBarIndex = -1; // 重置高亮
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
