@@ -424,35 +424,38 @@ class LeaderboardCard extends StatelessWidget {
   }
 }
 
-// Do Not Disturb
-class Donotdisturb extends StatelessWidget {
-  final VoidCallback? onTap;
+class Donotdisturb extends StatefulWidget {
+  const Donotdisturb({super.key});
 
-  const Donotdisturb({super.key, this.onTap});
+  @override
+  State<Donotdisturb> createState() => _DonotdisturbState();
+}
+
+class _DonotdisturbState extends State<Donotdisturb> {
+  bool _isPressed = false;
+
+  void _toggle() {
+    setState(() {
+      _isPressed = !_isPressed;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
-      child: SizedBox(
+      onTap: _toggle,
+      borderRadius: BorderRadius.circular(25),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
         width: 188,
         height: 129,
+        decoration: BoxDecoration(
+          color: _isPressed ? const Color(0xFFE7EAFF) : const Color(0xFF7780BA),
+          borderRadius: BorderRadius.circular(25),
+        ),
         child: Stack(
           children: [
-            Positioned(
-              left: 0,
-              top: 0,
-              child: Container(
-                width: 188,
-                height: 129,
-                decoration: ShapeDecoration(
-                  color: Color(0xFF7780BA),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                ),
-              ),
-            ),
             Positioned(
               left: 12,
               top: 13,
@@ -472,34 +475,42 @@ class Donotdisturb extends StatelessWidget {
             ),
             Positioned(
               left: 0,
-              top: 70,
+              top: 48,
               child: SizedBox(
                 width: 188,
-                height: 75,
-                child: Text(
-                  'Only records sitting posture, without reminders',
-                  textAlign: TextAlign.center,
+                height: 77,
+                child: AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 300),
                   style: GoogleFonts.inknutAntiqua(
-                    color: Color(0xFFCCCBD2),
-                    fontSize: 11,
-                    height: 20/11,
+                    color: _isPressed ? Colors.black : Colors.white,
+                    fontSize: 16,
+                    height: 1.0,
+                  ),
+                  child: Text(
+                    _isPressed ? 'Do Not Disturb ON' : 'Do Not Disturb OFF',
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
             ),
             Positioned(
-              left: 6,
-              top: 48,
+              left: 0,
+              top: 70,
               child: SizedBox(
-                width: 176,
-                height: 77,
-                child: Text(
-                  'Do Not Disturb',
-                  textAlign: TextAlign.center,
+                width: 188,
+                height: 75,
+                child: AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 300),
                   style: GoogleFonts.inknutAntiqua(
-                    color: Colors.white,
-                    fontSize: 16,
-                    height: 1.0,
+                    color: _isPressed ? Colors.black54 : const Color(0xFFCCCBD2),
+                    fontSize: 11,
+                    height: 20/11,
+                  ),
+                  child: Text(
+                    _isPressed
+                        ? 'Only records sitting posture, without reminders'
+                        : 'Now it records and reminds your posture',
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -510,6 +521,7 @@ class Donotdisturb extends StatelessWidget {
     );
   }
 }
+
 
 // Elapsed Time
 class ElapsedTime extends StatelessWidget {

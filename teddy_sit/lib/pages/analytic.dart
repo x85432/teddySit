@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../widgets/home.dart';
 import '../widgets/analytic_wid.dart';
 import '../widgets/stretch_wid.dart';
@@ -66,7 +67,16 @@ class AnalyticPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 40, left: 35),
             child:
-            BarChartExample()
+            //BarChartExample()
+            BarToLineChartExample(
+              lineDataPerBar: [
+                [FlSpot(0, 10), FlSpot(1, 20), FlSpot(2, 30)], // A
+                [FlSpot(0, 50), FlSpot(1, 60), FlSpot(2, 70)], // B
+                [FlSpot(0, 30), FlSpot(1, 40), FlSpot(2, 50)], // C
+                [FlSpot(0, 20), FlSpot(1, 30), FlSpot(2, 40)], // D
+                [FlSpot(0, 0), FlSpot(1, 10), FlSpot(2, 20)],  // E
+              ],
+            ),
           ),
           const SizedBox(height: 27),
           Row(

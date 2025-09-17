@@ -3,6 +3,7 @@ import 'widgets/home.dart';
 import 'pages/leaderboard.dart';
 import 'pages/stretch.dart';
 import 'pages/analytic.dart';
+import 'pages/sittingpose.dart';
 
 import 'package:firebase_core/firebase_core.dart'; // 導入 Firebase 核心套件
 import 'firebase_options.dart';
@@ -123,6 +124,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   child: CorrectSittingCard(
                     onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SittingPosePage()),
+                      );
                       debugPrint("Correct Sitting Poses card clicked!");
                     },
                   ),
@@ -163,11 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(width: 10),
                 SizedBox(
-                  child: Donotdisturb(
-                    onTap: () {
-                      debugPrint("Do Not Disturb card clicked!");
-                    },
-                  ),
+                  child: Donotdisturb(),
                 ),
               ],
             ),
