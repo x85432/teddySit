@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:teddy_sit/pages/Userprofile.dart';
 import 'widgets/home.dart';
 import 'pages/profile.dart';
-import 'pages/signup.dart';
+import 'pages/Userprofile.dart';
 import 'pages/leaderboard.dart';
 import 'pages/stretch.dart';
 import 'pages/analytic.dart';
@@ -11,6 +12,8 @@ import 'pages/sittingpose.dart';
 import 'package:firebase_core/firebase_core.dart'; // 導入 Firebase 核心套件
 import 'firebase_options.dart';
 // import 'services/cloud_function_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 // Firebase App check
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -39,7 +42,9 @@ void main() async {
       appleProvider: AppleProvider.deviceCheck,
     );
   }
-  
+
+  FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   runApp(const MyApp());
 }
 
@@ -72,6 +77,34 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+    Future<void> callDoNotDisturb() async {
+    try {
+      // 獲取 Firebase Functions 實例
+      FirebaseFunctions functions = FirebaseFunctions.instance;
+      
+      // 調用 'do_not_disturb' 函數
+      HttpsCallable callable = functions.httpsCallable('do_not_disturb');
+      debugPrint('🚀 正在調用 do_not_disturb 函數...');
+      // 執行調用（可以傳入資料，這裡傳空的 Map）
+      final result = await callable.call({});
+      
+      // 獲取回傳的資料
+      final data = result.data;
+      
+      debugPrint('✅ 成功調用 Callable Function！');
+      debugPrint('回應訊息: ${data['message']}');
+
+      return data;
+      
+    } on FirebaseFunctionsException catch (error) {
+      debugPrint('❌ Firebase Functions 錯誤:');
+      debugPrint('Code: ${error.code}');
+      debugPrint('Message: ${error.message}');
+      debugPrint('Details: ${error.details}');
+    } catch (error) {
+      debugPrint('❌ 一般錯誤: $error');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,8 +131,9 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SignUpPage()),
+                  MaterialPageRoute(builder: (context) => const UserProfilePage()),
                 );
+                debugPrint("Account button clicked!");
               },
               child: Image(image: AssetImage('assets/Account.png'), width: 45, height: 45),
             )
@@ -150,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const AnalyticPage()),
-                        );
+                      );
                       debugPrint("Analytics card clicked!");
                     },
                   ),
@@ -195,6 +229,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   onTap: ()
                   {
                     debugPrint('Pause!33');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ProfilePage()),
+                    );
+                    callDoNotDisturb();
                   },
                   child: Image(image: AssetImage('assets/Pause.png'), width: 52, height: 52),
                 ),

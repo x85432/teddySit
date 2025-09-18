@@ -31,4 +31,17 @@ def do_not_disturb(req: https_fn.CallableRequest):
 
     # 回傳一個包含 'message' 鍵的字典 (dictionary)，
     # 這個字典將會自動轉換成 JSON 格式並回傳給 Flutter。
-    return {"message": "Cloud function 成功被呼叫。"}
+    return {"message": "Cloud function 成功被呼叫叫叫。"}
+
+@https_fn.on_call(enforce_app_check=True)
+def getAverage(req: https_fn.CallableRequest):
+    """
+    此函數接收一個請求，並回傳一個簡單的 JSON 訊息。
+    """
+    # req.data 包含了從 Flutter 傳過來的任何資料，
+    # 在此範例中我們沒有傳入資料，但您可以在此處存取。
+    print("Python Cloud Function 'do_not_disturb' was called.")
+
+    # 回傳一個包含 'message' 鍵的字典 (dictionary)，
+    # 這個字典將會自動轉換成 JSON 格式並回傳給 Flutter。
+    return {"message": "Cloud function 成功被呼叫叫叫。"}

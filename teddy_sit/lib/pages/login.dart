@@ -4,13 +4,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../widgets/home.dart';
 import '../services/auth_service.dart';
 
-class SignUpPage extends StatelessWidget{
-  SignUpPage({super.key});
+class LogInPage extends StatelessWidget{
+  LogInPage({super.key});
 
-  final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordConfirmationController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +84,7 @@ class SignUpPage extends StatelessWidget{
                       height: 75,
                       width: 323,
                       child: Text(
-                        'Get Started',
+                        'Welcome Back!',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.inknutAntiqua(
                           fontSize: 32,
@@ -102,44 +100,6 @@ class SignUpPage extends StatelessWidget{
                     left: 30,
                     child: Column(
                       children: [
-                        SizedBox(height: 35),
-                        SizedBox(
-                          width: 320,   
-                          height: 53,  
-                          child: TextField(
-                            controller: _fullNameController,
-                            style: GoogleFonts.inknutAntiqua(
-                              fontSize: 14,        
-                              color: Color(0xFF070C24), 
-                            ),
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
-                              hintText: 'Enter Full Name',
-                              hintStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
-                                color: Color.fromARGB(125, 245, 245, 245),   
-                              ),
-                              labelText: 'Full Name',
-                              labelStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
-                                color: Color.fromARGB(124, 0, 0, 0), 
-                              ),
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(18),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3),
-                              ),
-                            ),
-                          ),
-                        ),
                         SizedBox(height: 35),
                         SizedBox(
                           width: 320,   
@@ -217,65 +177,10 @@ class SignUpPage extends StatelessWidget{
                             ),
                           ),
                         ),
-                        SizedBox(height: 35),
-                        SizedBox(
-                          width: 320,   
-                          height: 53,  
-                          child: TextField(
-                            controller: _passwordConfirmationController,
-                            obscureText: true,
-                            style: GoogleFonts.inknutAntiqua(
-                              fontSize: 14,        
-                              color: Color(0xFF070C24), 
-                            ),
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
-                              hintText: 'Enter Password Again',
-                              hintStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
-                                color: Color.fromARGB(125, 245, 245, 245),   
-                              ),
-                              labelText: 'Confirm Password',
-                              labelStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
-                                color: Color.fromARGB(124, 0, 0, 0), 
-                              ),
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(18),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3),
-                              ),
-                            ),
-                          ),
-                        ),
                         SizedBox(height: 30),
                         InkWell(
                           onTap: () async {
-                            // 檢查密碼是否匹配
-                            if (_passwordController.text != _passwordConfirmationController.text) {
-                              Fluttertoast.showToast(
-                                msg: "密碼不一致",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                fontSize: 16.0
-                              );
-                              return;
-                            }
-
-                            // 檢查欄位是否都有填寫
-                            if (_fullNameController.text.isEmpty ||
-                                _emailController.text.isEmpty ||
-                                _passwordController.text.isEmpty) {
+                            if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
                               Fluttertoast.showToast(
                                 msg: "請填寫所有欄位",
                                 toastLength: Toast.LENGTH_SHORT,
@@ -286,13 +191,12 @@ class SignUpPage extends StatelessWidget{
                               );
                               return;
                             }
-                            debugPrint("Full Name: ${_fullNameController.text}");
+
                             debugPrint("Email: ${_emailController.text}");
                             debugPrint("Password: ${_passwordController.text}");
                             
-                            // 呼叫 AuthService 進行註冊
-                            await AuthService().signup(
-                              name: _fullNameController.text,
+                            // 呼叫 AuthService 進行登入
+                            await AuthService().signin(
                               email: _emailController.text,
                               password: _passwordController.text,
                               context: context
@@ -328,7 +232,7 @@ class SignUpPage extends StatelessWidget{
                                           width: 174,
                                           height: 41,
                                           child: Text(
-                                            'Sign Up',
+                                            'Log In',
                                             textAlign: TextAlign.center,
                                             style: GoogleFonts.inknutAntiqua(
                                               color: Colors.white,

@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../pages/signuppage.dart';
-import '../pages/loginpage.dart';
+import '../pages/signup.dart';
+import '../pages/login.dart';
 
 class AuthService {
 
   // 創建用戶 Firestore document
-  Future<void> _createUserDocument(User user) async {
+  Future<void> _createUserDocument(User user, {String? name}) async {
     try {
       final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
 
@@ -21,6 +21,7 @@ class AuthService {
         // 創建新的用戶 document
         await userDoc.set({
           'uid': user.uid,
+          'name': name ?? '',
           'email': user.email,
           'createdAt': FieldValue.serverTimestamp(),
           'lastLoginAt': FieldValue.serverTimestamp(),
@@ -41,6 +42,7 @@ class AuthService {
   }
 
   Future<void> signup({
+    required String name,
     required String email,
     required String password,
     required BuildContext context
@@ -55,7 +57,7 @@ class AuthService {
 
       // 創建用戶的 Firestore document
       if (userCredential.user != null) {
-        await _createUserDocument(userCredential.user!);
+        await _createUserDocument(userCredential.user!, name: name);
       }
 
       Fluttertoast.showToast(

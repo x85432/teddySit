@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:teddy_sit/pages/signup.dart';
 import '../widgets/home.dart';
 import '../widgets/profile_wid.dart';
-import 'loginpage.dart';
-import 'signuppage.dart';
+import 'login.dart';
+import 'signup.dart';
 
 class UserProfilePage extends StatelessWidget {
   const UserProfilePage({super.key});
@@ -53,7 +54,7 @@ class UserProfilePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Signup()),
+                  MaterialPageRoute(builder: (context) => SignUpPage()),
                 );
                 debugPrint('Signup button tapped');
               },
@@ -64,7 +65,7 @@ class UserProfilePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Login()),
+                  MaterialPageRoute(builder: (context) => LogInPage()),
                 );
                 debugPrint('Login button tapped');
               },
