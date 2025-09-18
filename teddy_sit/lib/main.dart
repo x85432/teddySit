@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'widgets/home.dart';
+import 'pages/profile.dart';
+import 'pages/signup.dart';
 import 'pages/leaderboard.dart';
 import 'pages/stretch.dart';
 import 'pages/analytic.dart';
 import 'pages/sittingpose.dart';
+
 
 import 'package:firebase_core/firebase_core.dart'; // 導入 Firebase 核心套件
 import 'firebase_options.dart';
@@ -49,7 +52,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'TeddySit',
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 30, 55, 179),
+        scaffoldBackgroundColor: Color(0xFF070C24),
         appBarTheme: AppBarTheme(
           backgroundColor:  Color(0xFF070C24),
           foregroundColor: Color(0xFFE8DEF8),   
@@ -93,7 +96,10 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.only(top: 28),
             child: InkWell(
               onTap: () {
-                // Navigate to profile page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignUpPage()),
+                );
               },
               child: Image(image: AssetImage('assets/Account.png'), width: 45, height: 45),
             )
@@ -194,7 +200,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 SizedBox(width: 39),
                 InkWell(
-                  onTap: null,
+                  onTap: ()
+                  {
+                    debugPrint('Stop!33');
+                  },
                   child: Image(image: AssetImage('assets/Stop.png'), width: 52, height: 52),
                 ),
               ],

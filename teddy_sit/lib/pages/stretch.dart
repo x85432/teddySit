@@ -48,7 +48,7 @@ class StretchPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
                 SizedBox(width: 248),
-                DropdownButtonExample()
+                //DropdownButtonExample()
               ],
             ),
             const SizedBox(height: 28),

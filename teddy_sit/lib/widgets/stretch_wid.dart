@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 
-const List<String> list = <String>['Easy', 'Medium', 'Hard'];
+// 下拉選單的項目
+const List<String> dropdownOptions = ['Set 1', 'Set 2', 'Set 3'];
 
-// DropdownButton
 class DropdownButtonExample extends StatefulWidget {
   final double width; 
   final double height; 
-  
+  final ValueChanged<String> onChanged; // ✅ 回傳選中的值
+
   const DropdownButtonExample({
     super.key,
     this.width = 130,
     this.height = 41,
+    required this.onChanged,
   });
 
   @override
@@ -20,7 +22,7 @@ class DropdownButtonExample extends StatefulWidget {
 }
 
 class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  String dropdownValue = list.first;
+  String dropdownValue = dropdownOptions.first;
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +47,13 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
             fontSize: 14,
           ),
           onChanged: (String? value) {
+            if (value == null) return;
             setState(() {
-              dropdownValue = value!;
+              dropdownValue = value;
             });
+            widget.onChanged(value); // ✅ 通知父層
           },
-          items: list.map<DropdownMenuItem<String>>((String value) {
+          items: dropdownOptions.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Center(child: Text(value)),
@@ -60,6 +64,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
     );
   }
 }
+
 
 // Video
 class VideoCard extends StatefulWidget {

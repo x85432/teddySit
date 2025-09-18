@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 //import 'package:google_fonts/google_fonts.dart';
 import '../widgets/home.dart';
 import '../widgets/sittingpose_wid.dart';
+import 'pose.dart';
 
 class SittingPosePage extends StatelessWidget{
   const SittingPosePage({super.key});
@@ -44,9 +45,10 @@ class SittingPosePage extends StatelessWidget{
         children: [
           //使用目的
           Padding(
-            padding: const EdgeInsets.only(top: 42, left: 30),
+            padding: const EdgeInsets.only(top: 42, left: 6),
             child: SizedBox(
               height: 210,
+              width: 350,
               child: PageViewExample(
                 width: 350,
                 height: 210,
@@ -58,12 +60,56 @@ class SittingPosePage extends StatelessWidget{
               )
             ),
           ),
-
+          Padding(
+            padding: const EdgeInsets.only(top: 29, left: 30),
+            child: Row(
+              children: [
+                InkWell(
+                  child: Correctsittingposture(),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PosePage(
+                          images: const [
+                            AssetImage('assets/1.png'),
+                            AssetImage('assets/2.png'),
+                            AssetImage('assets/3.png'),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(width: 16),
+                InkWell(
+                  child: Wrongsittingposture(),
+                 onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PosePage(
+                          images: const [
+                            AssetImage('assets/1.png'),
+                            AssetImage('assets/2.png'),
+                            AssetImage('assets/3.png'),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                )
+                
+              ],
+            )
+          ),
+          
           //分數計算
           Padding(
-            padding: const EdgeInsets.only(top: 261, left: 30),
+            padding: const EdgeInsets.only(top: 20, left: 6),
             child: SizedBox(
               height: 240,
+              width: 350,
               child: PageViewExample(
                 width: 350,
                 height: 240,
