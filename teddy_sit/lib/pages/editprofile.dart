@@ -88,25 +88,33 @@ class EditProfilePage extends StatelessWidget{
                     ),
                   ),
                   Positioned(
+                    left: 45,
                     child: Column(
+                      
                       children: [
-                        SizedBox(height: 35),
+                        SizedBox(height: 50),
                         SizedBox(
-                          width: 320,   // 設定寬度
-                          height: 53,   // 設定高度
+                          width: 320,   
+                          height: 53,  
                           child: TextField(
+                            //controller: _fullNameController,
                             style: GoogleFonts.inknutAntiqua(
-                              fontSize: 18,          // 文字大小
-                              color: Color(0xFF070C24),   // 文字顏色
+                              fontSize: 14,        
+                              color: Color(0xFF070C24), 
                             ),
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+                              hintText: 'Bibo',
+                              hintStyle: GoogleFonts.inknutAntiqua(
+                                fontSize: 14,          
+                                color: Color.fromARGB(125, 245, 245, 245),   
+                              ),
                               labelText: 'Your Name',
                               labelStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 16,          // Label 大小
-                                color: Color.fromARGB(124, 0, 0, 0),    // Label 顏色
+                                fontSize: 14,          
+                                color: Color.fromARGB(124, 0, 0, 0), 
                               ),
-                              prefixIcon: Icon(Icons.person, color: Colors.blue), // icon 顏色
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(18),
                                 borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
@@ -122,153 +130,131 @@ class EditProfilePage extends StatelessWidget{
                             ),
                           ),
                         ),
-                        SizedBox(height: 7),
+                        
+                        SizedBox(height: 40),
                         SizedBox(
-                          height: 82,
-                          width: 228,
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 41,
-                                width: 228,
-                                child: Text(
-                                  textAlign:TextAlign.left, 
-                                  'Email',
-                                  style: GoogleFonts.inknutAntiqua(
-                                    fontSize: 14,
-                                    color: Color.fromARGB(123, 0, 0, 0),
-                                    height: 20/14
-                                  ),
-                                ),
+                          width: 320,   
+                          height: 53,  
+                          child: TextField(
+                            //controller: _passwordController,
+                            //obscureText: true,
+                            style: GoogleFonts.inknutAntiqua(
+                              fontSize: 14,
+                              color: Color(0xFF070C24),
+                            ),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+                              hintText: '2005/02/12',
+                              hintStyle: GoogleFonts.inknutAntiqua(
+                                fontSize: 14,          
+                                color: Color.fromARGB(125, 245, 245, 245),   
                               ),
-                              SizedBox(
-                                height: 41,
-                                width: 228,
-                                child: Text(
-                                  textAlign:TextAlign.left, 
-                                  'xxxx@gmail.com',
-                                  style: GoogleFonts.inknutAntiqua(
-                                    fontSize: 20,
-                                    color: Color(0xFF070C24),
-                                    height: 1
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 7),
-                        SizedBox(
-                          height: 82,
-                          width: 228,
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 41,
-                                width: 228,
-                                child: Text(
-                                  textAlign:TextAlign.left, 
-                                  'Date of Birth',
-                                  style: GoogleFonts.inknutAntiqua(
-                                    fontSize: 14,
-                                    color: Color.fromARGB(123, 0, 0, 0),
-                                    height: 20/14
-                                  ),
-                                ),
+                              labelText: 'Date of Birth',
+                              labelStyle: GoogleFonts.inknutAntiqua(
+                                fontSize: 14,          
+                                color: Color.fromARGB(124, 0, 0, 0), 
                               ),
-                              SizedBox(
-                                height: 41,
-                                width: 228,
-                                child: Text(
-                                  textAlign:TextAlign.left, 
-                                  '2004/08/15',
-                                  style: GoogleFonts.inknutAntiqua(
-                                    fontSize: 20,
-                                    color: Color(0xFF070C24),
-                                    height: 1
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 7),
-                        SizedBox(
-                          height: 82,
-                          width: 228,
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 41,
-                                width: 228,
-                                child: Text(
-                                  textAlign:TextAlign.left, 
-                                  'Height',
-                                  style: GoogleFonts.inknutAntiqua(
-                                    fontSize: 14,
-                                    color: Color.fromARGB(123, 0, 0, 0),
-                                    height: 20/14
-                                  ),
-                                ),
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
                               ),
-                              SizedBox(
-                                height: 41,
-                                width: 228,
-                                child: Text(
-                                  textAlign:TextAlign.left, 
-                                  '150cm',
-                                  style: GoogleFonts.inknutAntiqua(
-                                    fontSize: 20,
-                                    color: Color(0xFF070C24),
-                                    height: 1
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 7),
-                        SizedBox(
-                            height: 82,
-                            width: 228,
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: 41,
-                                  width: 228,
-                                  child: Text(
-                                    textAlign:TextAlign.left, 
-                                    'Weight',
-                                    style: GoogleFonts.inknutAntiqua(
-                                      fontSize: 14,
-                                      color: Color.fromARGB(123, 0, 0, 0),
-                                      height: 20/14
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 41,
-                                  width: 228,
-                                  child: Text(
-                                    textAlign:TextAlign.left, 
-                                    '64kg',
-                                    style: GoogleFonts.inknutAntiqua(
-                                      fontSize: 20,
-                                      color: Color(0xFF070C24),
-                                      height: 1
-                                    ),
-                                  ),
-                                )
-                              ],
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3),
+                              ),
                             ),
                           ),
-                        SizedBox(height: 5),
+                        ),
+                        SizedBox(height: 40),
+                        SizedBox(
+                          width: 320,   
+                          height: 53,  
+                          child: TextField(
+                            //controller: _passwordConfirmationController,
+                            //obscureText: true,
+                            style: GoogleFonts.inknutAntiqua(
+                              fontSize: 14,        
+                              color: Color(0xFF070C24), 
+                            ),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+                              hintText: '150',
+                              hintStyle: GoogleFonts.inknutAntiqua(
+                                fontSize: 14,          
+                                color: Color.fromARGB(125, 245, 245, 245),   
+                              ),
+                              labelText: 'Height',
+                              labelStyle: GoogleFonts.inknutAntiqua(
+                                fontSize: 14,          
+                                color: Color.fromARGB(124, 0, 0, 0), 
+                              ),
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 40),
+                        SizedBox(
+                          width: 320,   
+                          height: 53,  
+                          child: TextField(
+                            //controller: _passwordConfirmationController,
+                            //obscureText: true,
+                            style: GoogleFonts.inknutAntiqua(
+                              fontSize: 14,        
+                              color: Color(0xFF070C24), 
+                            ),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+                              hintText: '60',
+                              hintStyle: GoogleFonts.inknutAntiqua(
+                                fontSize: 14,          
+                                color: Color.fromARGB(125, 245, 245, 245),   
+                              ),
+                              labelText: 'Weight',
+                              labelStyle: GoogleFonts.inknutAntiqua(
+                                fontSize: 14,          
+                                color: Color.fromARGB(124, 0, 0, 0), 
+                              ),
+                              floatingLabelBehavior: FloatingLabelBehavior.always,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(18),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 60),
                         InkWell(
                           onTap: () {
                             debugPrint('Save Profile!');
                           },
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 64),
+                            padding: const EdgeInsets.only(left: 0),
                             child: Column(
                               children: [
                                 SizedBox(

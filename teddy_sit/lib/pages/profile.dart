@@ -63,7 +63,7 @@ class ProfilePage extends StatelessWidget{
                 image: AssetImage('assets/Account.png'),
                 width: 100,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Stack(
                 children: [
                   Opacity(
@@ -91,14 +91,14 @@ class ProfilePage extends StatelessWidget{
                   Positioned(
                     child: Column(
                       children: [
-                        SizedBox(height: 35),
+                        SizedBox(height: 30),
                         SizedBox(
-                          height: 82,
+                          height: 76,
                           width: 228,
                           child: Column(
                             children: [
                               SizedBox(
-                                height: 41,
+                                height: 38,
                                 width: 228,
                                 child: Text(
                                   textAlign:TextAlign.left, 
@@ -111,7 +111,7 @@ class ProfilePage extends StatelessWidget{
                                 ),
                               ),
                               SizedBox(
-                                height: 41,
+                                height: 38,
                                 width: 228,
                                 child: Text(
                                   textAlign:TextAlign.left, 
@@ -126,14 +126,14 @@ class ProfilePage extends StatelessWidget{
                             ],
                           ),
                         ),
-                        SizedBox(height: 7),
+                        SizedBox(height: 4),
                         SizedBox(
-                          height: 82,
+                          height: 76,
                           width: 228,
                           child: Column(
                             children: [
                               SizedBox(
-                                height: 41,
+                                height: 38,
                                 width: 228,
                                 child: Text(
                                   textAlign:TextAlign.left, 
@@ -146,7 +146,7 @@ class ProfilePage extends StatelessWidget{
                                 ),
                               ),
                               SizedBox(
-                                height: 41,
+                                height: 38,
                                 width: 228,
                                 child: Text(
                                   textAlign:TextAlign.left, 
@@ -161,14 +161,14 @@ class ProfilePage extends StatelessWidget{
                             ],
                           ),
                         ),
-                        SizedBox(height: 7),
+                        SizedBox(height: 4),
                         SizedBox(
-                          height: 82,
+                          height: 76,
                           width: 228,
                           child: Column(
                             children: [
                               SizedBox(
-                                height: 41,
+                                height: 38,
                                 width: 228,
                                 child: Text(
                                   textAlign:TextAlign.left, 
@@ -181,7 +181,7 @@ class ProfilePage extends StatelessWidget{
                                 ),
                               ),
                               SizedBox(
-                                height: 41,
+                                height: 38,
                                 width: 228,
                                 child: Text(
                                   textAlign:TextAlign.left, 
@@ -196,14 +196,14 @@ class ProfilePage extends StatelessWidget{
                             ],
                           ),
                         ),
-                        SizedBox(height: 7),
+                        SizedBox(height: 4),
                         SizedBox(
-                          height: 82,
+                          height: 76,
                           width: 228,
                           child: Column(
                             children: [
                               SizedBox(
-                                height: 41,
+                                height: 38,
                                 width: 228,
                                 child: Text(
                                   textAlign:TextAlign.left, 
@@ -216,7 +216,7 @@ class ProfilePage extends StatelessWidget{
                                 ),
                               ),
                               SizedBox(
-                                height: 41,
+                                height: 38,
                                 width: 228,
                                 child: Text(
                                   textAlign:TextAlign.left, 
@@ -231,14 +231,14 @@ class ProfilePage extends StatelessWidget{
                             ],
                           ),
                         ),
-                        SizedBox(height: 7),
+                        SizedBox(height: 4),
                         SizedBox(
-                            height: 82,
+                            height: 76,
                             width: 228,
                             child: Column(
                               children: [
                                 SizedBox(
-                                  height: 41,
+                                  height: 38,
                                   width: 228,
                                   child: Text(
                                     textAlign:TextAlign.left, 
@@ -251,7 +251,7 @@ class ProfilePage extends StatelessWidget{
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 41,
+                                  height: 38,
                                   width: 228,
                                   child: Text(
                                     textAlign:TextAlign.left, 
@@ -266,7 +266,7 @@ class ProfilePage extends StatelessWidget{
                               ],
                             ),
                           ),
-                        SizedBox(height: 5),
+                        SizedBox(height: 8),
                         InkWell(
                           onTap: () {
                             debugPrint('Edit Profile!');
@@ -276,7 +276,7 @@ class ProfilePage extends StatelessWidget{
                             );
                           },
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 64),
+                            padding: const EdgeInsets.only(left: 48),
                             child: Column(
                               children: [
                                 SizedBox(
@@ -318,6 +318,64 @@ class ProfilePage extends StatelessWidget{
                                     ],
                                   ),
                                 ),
+                                
+                              ],
+                            )
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        InkWell(
+                          onTap: () {
+                            debugPrint('Edit Profile!');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 48),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  width: 319,
+                                  height: 53,
+                                  child: Stack(
+                                    children: [
+                                      Positioned(
+                                        left: 0,
+                                        top: 0,
+                                        child: Container(
+                                          width: 319,
+                                          height: 53,
+                                          decoration: ShapeDecoration(
+                                            color: const Color.fromARGB(138, 255, 255, 255),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(18),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        left: 73,
+                                        top: 17,
+                                        child: SizedBox(
+                                          width: 174,
+                                          height: 41,
+                                          child: Text(
+                                            'Log Out',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.inknutAntiqua(
+                                              color: Color(0xFF070C24),
+                                              fontSize: 20,
+                                              height: 1,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                
                               ],
                             )
                           ),
