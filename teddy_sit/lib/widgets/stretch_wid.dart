@@ -3,18 +3,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 
 
-// 下拉選單的項目
-const List<String> dropdownOptions = ['Set 1', 'Set 2', 'Set 3'];
-
 class DropdownButtonExample extends StatefulWidget {
-  final double width; 
-  final double height; 
-  final ValueChanged<String> onChanged; // ✅ 回傳選中的值
+  final double width;
+  final double height;
+  final List<String> options; // ✅ 從外部傳入選單
+  final ValueChanged<String> onChanged;
 
   const DropdownButtonExample({
     super.key,
-    this.width = 130,
+    this.width = 150,
     this.height = 41,
+    required this.options,
     required this.onChanged,
   });
 
@@ -23,7 +22,24 @@ class DropdownButtonExample extends StatefulWidget {
 }
 
 class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  String dropdownValue = dropdownOptions.first;
+  String? dropdownValue;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.options.isNotEmpty) {
+      dropdownValue = widget.options.first;
+    }
+  }
+
+  @override
+  void didUpdateWidget(DropdownButtonExample oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 如果舊的選項不存在於新選項中，重置選中值
+    if (dropdownValue == null || !widget.options.contains(dropdownValue)) {
+      dropdownValue = widget.options.isNotEmpty ? widget.options.first : null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +48,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
       height: widget.height,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Color(0x48D9D9D9),
+        color: const Color(0x48D9D9D9),
         borderRadius: BorderRadius.circular(18),
       ),
       child: DropdownButtonHideUnderline(
@@ -52,9 +68,9 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
             setState(() {
               dropdownValue = value;
             });
-            widget.onChanged(value); // ✅ 通知父層
+            widget.onChanged(value); // 通知父層
           },
-          items: dropdownOptions.map<DropdownMenuItem<String>>((String value) {
+          items: widget.options.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Center(child: Text(value)),
@@ -65,6 +81,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
     );
   }
 }
+
 
 
 // Video

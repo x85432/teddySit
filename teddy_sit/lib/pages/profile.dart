@@ -21,8 +21,7 @@ class ProfilePage extends StatelessWidget{
             padding: const EdgeInsets.only(top: 28), 
             child: InkWell(
               onTap: () {
-                Navigator.pop(context);
-                // Navigate to settings page
+                Navigator.popUntil(context, ModalRoute.withName('/home'));
               },
               child: Image(image: AssetImage('assets/Home.png'), width: 35, height: 35),
             ),

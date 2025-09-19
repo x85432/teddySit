@@ -63,7 +63,16 @@ class MyApp extends StatelessWidget {
           foregroundColor: Color(0xFFE8DEF8),   
         ),
       ),
-      home: const MyHomePage(title: 'Teddy\nSit'),
+      initialRoute: '/home',
+      routes: {
+        '/home': (context) => const MyHomePage(title: 'Teddy\nSit'),
+        '/profile': (context) => const ProfilePage(),
+        '/userProfile': (context) => const UserProfilePage(),
+        '/leaderboard': (context) => const LeaderboardPage(),
+        '/stretch': (context) => const StretchPage(),
+        '/analytic': (context) => const AnalyticPage(),
+        '/sittingPose': (context) => const SittingPosePage(),
+      },
     );
   }
 }
@@ -119,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.only(top: 28), 
             child: InkWell(
               onTap: () {
-                // Navigate to settings page
+                Navigator.popUntil(context, ModalRoute.withName('/home'));
               },
               child: Image(image: AssetImage('assets/Home.png'), width: 35, height: 35),
             ),

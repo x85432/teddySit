@@ -3,14 +3,14 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // Longest Time
-class LongestTimeWid extends StatelessWidget {
-  final String text;   // 顯示的文字，例如 "20 min"
-  final int type;      // 0 = ✅ 圈圈, 1 = ❌ 叉叉
+class LongestTimeWid extends StatelessWidget {   
+  final int type;  
+  final int minutes;
 
   const LongestTimeWid({
     super.key,
-    required this.text,
     required this.type,
+    required this.minutes
   });
 
   @override
@@ -50,7 +50,7 @@ class LongestTimeWid extends StatelessWidget {
           left: 57,
           top: 8,
           child: Text(
-            text,
+            '$minutes min',
             style: GoogleFonts.inknutAntiqua(
               fontSize: 14,
               color: const Color(0xFFCDCCD3),

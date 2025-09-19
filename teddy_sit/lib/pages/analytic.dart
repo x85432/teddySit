@@ -6,10 +6,11 @@ import '../widgets/analytic_wid.dart';
 //import '../widgets/stretch_wid.dart';
 
 // 下拉選單項目
-const List<String> dropdownOptions = ['Set 1', 'Set 2', 'Set 3'];
+const List<String> dropdownOptions = ['Today', 'Past 7 Days', 'Past Months'];
 
 class AnalyticPage extends StatefulWidget {
   const AnalyticPage({super.key});
+  
 
   @override
   State<AnalyticPage> createState() => _AnalyticPageState();
@@ -18,19 +19,18 @@ class AnalyticPage extends StatefulWidget {
 class _AnalyticPageState extends State<AnalyticPage> {
   String selectedOption = dropdownOptions.first;
 
-  // 不同數據對應
   final Map<String, List<List<FlSpot>>> lineDataSets = {
-    'Set 1': [
+    'Today': [
       [FlSpot(0, 10), FlSpot(1, 20)],
       [FlSpot(0, 30), FlSpot(1, 40)],
       [FlSpot(0, 50), FlSpot(1, 60)],
     ],
-    'Set 2': [
+    'Past 7 Days': [
       [FlSpot(0, 15), FlSpot(1, 25)],
       [FlSpot(0, 35), FlSpot(1, 45)],
       [FlSpot(0, 55), FlSpot(1, 65)],
     ],
-    'Set 3': [
+    'Past Months': [
       [FlSpot(0, 20), FlSpot(1, 30)],
       [FlSpot(0, 40), FlSpot(1, 50)],
       [FlSpot(0, 60), FlSpot(1, 70)],
@@ -38,16 +38,28 @@ class _AnalyticPageState extends State<AnalyticPage> {
   };
 
   final Map<String, List<String>> labelsSets = {
-    'Set 1': ['A', 'B', 'C'],
-    'Set 2': ['X', 'Y', 'Z'],
-    'Set 3': ['L', 'M', 'N'],
+    'Today': ['A', 'B', 'C'],
+    'Past 7 Days': ['X', 'Y', 'Z'],
+    'Past Months': ['L', 'M', 'N'],
   };
 
   final Map<String, List<double>> barValuesSets = {
-    'Set 1': [20, 50, 80],
-    'Set 2': [30, 40, 70],
-    'Set 3': [10, 60, 90],
+    'Today': [20, 50, 80],
+    'Past 7 Days': [30, 40, 70],
+    'Past Months': [10, 60, 90],
   };
+
+  final Map<String, double> averageScores = 
+  {
+    'Today': 85.0,
+    'Past 7 Days': 78.5,
+    'Past Months': 82.3,
+  };
+
+  int correct = 40;
+  int incorrect = 50;
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +76,7 @@ class _AnalyticPageState extends State<AnalyticPage> {
             padding: const EdgeInsets.only(top: 28), 
             child: InkWell(
               onTap: () {
-                Navigator.pop(context);
+                Navigator.popUntil(context, ModalRoute.withName('/home'));
               },
               child: const Image(
                 image: AssetImage('assets/Home.png'),
@@ -98,16 +110,16 @@ class _AnalyticPageState extends State<AnalyticPage> {
               children: [
                 const SizedBox(width: 30),
                 Text(
-                  'Average Score',
+                  'Average Score: ${averageScores[selectedOption] ?? 0}',
                   style: GoogleFonts.inknutAntiqua(
                     fontSize: 14,
                     color: const Color(0xFFCDCCD3),
                   ),
                 ),
-                const SizedBox(width: 100),
-                // ✅ 下拉選單
+                const SizedBox(width: 20),
+                
                 Container(
-                  width: 130,
+                  width: 150,
                   height: 41,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
@@ -144,7 +156,7 @@ class _AnalyticPageState extends State<AnalyticPage> {
               ],
             ),
           ),
-          // ✅ 圖表
+          
           Padding(
             padding: const EdgeInsets.only(top: 10, left: 35),
             child: BarToLineChartExample(
@@ -193,10 +205,10 @@ class _AnalyticPageState extends State<AnalyticPage> {
               ),
               const SizedBox(width: 19),
               Column(
-                children: const [
-                  LongestTimeWid(text: '20 min', type: 0), 
+                children:  [
+                  LongestTimeWid(minutes: correct, type: 0), 
                   SizedBox(height: 19),
-                  LongestTimeWid(text: '15 min', type: 1),
+                  LongestTimeWid(minutes: incorrect, type: 1),
                 ],
               ),
             ],

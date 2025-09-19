@@ -26,7 +26,7 @@ class PosePage extends StatelessWidget {
             padding: const EdgeInsets.only(top: 28),
             child: InkWell(
               onTap: () {
-                Navigator.pop(context);
+                Navigator.popUntil(context, (route) => route.isFirst);
               },
               child: const Image(
                 image: AssetImage('assets/Home.png'),

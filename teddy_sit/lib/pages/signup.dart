@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../widgets/home.dart';
+import 'Userprofile.dart';
 import '../services/auth_service.dart';
 
 class SignUpPage extends StatelessWidget{
@@ -27,8 +28,7 @@ class SignUpPage extends StatelessWidget{
             padding: const EdgeInsets.only(top: 28), 
             child: InkWell(
               onTap: () {
-                Navigator.pop(context);
-                // Navigate to settings page
+                Navigator.popUntil(context, (route) => route.isFirst);
               },
               child: Image(image: AssetImage('assets/Home.png'), width: 35, height: 35),
             ),
@@ -54,14 +54,39 @@ class SignUpPage extends StatelessWidget{
             children: [
               
 
-              SizedBox(height: 41),
+              SizedBox(height: 20),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const UserProfilePage()),
+                );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Row(
+                    children: [
+                      const Image(image: AssetImage('assets/Arrow.png')),
+                      Text(
+                        'Back',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inknutAntiqua(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 5),
               Stack(
                 children: [
                   Opacity(
                     opacity: 0.65,
                     child: Container(
                       width: 412,
-                      height: 749,
+                      height: MediaQuery.of(context).size.height - 180, 
                       decoration: ShapeDecoration(
                         gradient: LinearGradient(
                           begin: Alignment(0.00, -1.00),
@@ -80,7 +105,7 @@ class SignUpPage extends StatelessWidget{
                     ),
                   ),
                   Positioned(
-                    top: 45,
+                    top: 60,
                     left: 47,
                     child: SizedBox(
                       height: 75,
@@ -98,8 +123,8 @@ class SignUpPage extends StatelessWidget{
                   ),
                   
                   Positioned(
-                    top: 80,
-                    left: 30,
+                    top: 110,
+                    left: 47,
                     child: Column(
                       children: [
                         SizedBox(height: 35),
@@ -256,7 +281,7 @@ class SignUpPage extends StatelessWidget{
                             ),
                           ),
                         ),
-                        SizedBox(height: 30),
+                        SizedBox(height: 50),
                         InkWell(
                           onTap: () async {
                             // 檢查密碼是否匹配
@@ -299,7 +324,7 @@ class SignUpPage extends StatelessWidget{
                             );
                           },
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 35),
+                            padding: const EdgeInsets.only(left: 0),
                             child: Column(
                               children: [
                                 SizedBox(
