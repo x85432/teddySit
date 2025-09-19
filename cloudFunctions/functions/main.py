@@ -188,7 +188,7 @@ def do_not_disturb(req: https_fn.CallableRequest):
         print(f"寫入 Firestore 時發生錯誤: {e}")
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.INTERNAL,
-            message=f"無法儲存 DND 設定: {e}"
+            message=f"無法儲存 DND  定: {e}"
         )
 
 # @https_fn.on_call(enforce_app_check=True) # getUserSettings 也應遵循相同的邏輯
