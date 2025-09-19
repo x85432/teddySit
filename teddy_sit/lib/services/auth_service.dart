@@ -23,6 +23,9 @@ class AuthService {
           'uid': user.uid,
           'name': name ?? '',
           'email': user.email,
+          'dateOfBirth': null,
+          'height': null,
+          'weight': null,
           'createdAt': FieldValue.serverTimestamp(),
           'lastLoginAt': FieldValue.serverTimestamp(),
         });
@@ -149,7 +152,7 @@ class AuthService {
   Future<void> signout({
     required BuildContext context
   }) async {
-    
+
     await FirebaseAuth.instance.signOut();
 
     Fluttertoast.showToast(
@@ -161,7 +164,6 @@ class AuthService {
       fontSize: 14.0,
     );
 
-    await Future.delayed(const Duration(seconds: 1));
-    Navigator.pop(context);
+    // AuthWrapper 會自動處理頁面切換，所以不需要手動導航
   }
 }

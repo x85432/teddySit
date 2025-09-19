@@ -1,13 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/home.dart';
+import '../services/auth_service.dart';
+import '../services/profile_service.dart';
 import 'editprofile.dart';
 
-class ProfilePage extends StatelessWidget{
+class ProfilePage extends StatefulWidget{
   const ProfilePage({super.key});
 
   @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final ProfileService _profileService = ProfileService();
+  Map<String, dynamic>? _userData;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 每次進入頁面時重新載入資料
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final userData = await _profileService.getUserProfile();
+    setState(() {
+      _userData = userData;
+      _isLoading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -94,12 +131,12 @@ class ProfilePage extends StatelessWidget{
                         SizedBox(height: 30),
                         SizedBox(
                           height: 76,
-                          width: 228,
+                          width: 260,
                           child: Column(
                             children: [
                               SizedBox(
                                 height: 38,
-                                width: 228,
+                                width: 260,
                                 child: Text(
                                   textAlign:TextAlign.left, 
                                   'Your Name',
@@ -112,10 +149,10 @@ class ProfilePage extends StatelessWidget{
                               ),
                               SizedBox(
                                 height: 38,
-                                width: 228,
+                                width: 260,
                                 child: Text(
-                                  textAlign:TextAlign.left, 
-                                  'Bibo',
+                                  textAlign:TextAlign.left,
+                                  _userData?['name'] ?? '未設定',
                                   style: GoogleFonts.inknutAntiqua(
                                     fontSize: 20,
                                     color: Color(0xFF070C24),
@@ -129,12 +166,12 @@ class ProfilePage extends StatelessWidget{
                         SizedBox(height: 4),
                         SizedBox(
                           height: 76,
-                          width: 228,
+                          width: 260,
                           child: Column(
                             children: [
                               SizedBox(
                                 height: 38,
-                                width: 228,
+                                width: 260,
                                 child: Text(
                                   textAlign:TextAlign.left, 
                                   'Email',
@@ -147,12 +184,12 @@ class ProfilePage extends StatelessWidget{
                               ),
                               SizedBox(
                                 height: 38,
-                                width: 228,
+                                width: 260,
                                 child: Text(
-                                  textAlign:TextAlign.left, 
-                                  'xxxx@gmail.com',
+                                  textAlign:TextAlign.left,
+                                  _userData?['email'] ?? '',
                                   style: GoogleFonts.inknutAntiqua(
-                                    fontSize: 20,
+                                    fontSize: 15,
                                     color: Color(0xFF070C24),
                                     height: 1
                                   ),
@@ -164,12 +201,12 @@ class ProfilePage extends StatelessWidget{
                         SizedBox(height: 4),
                         SizedBox(
                           height: 76,
-                          width: 228,
+                          width: 260,
                           child: Column(
                             children: [
                               SizedBox(
                                 height: 38,
-                                width: 228,
+                                width: 260,
                                 child: Text(
                                   textAlign:TextAlign.left, 
                                   'Date of Birth',
@@ -182,10 +219,10 @@ class ProfilePage extends StatelessWidget{
                               ),
                               SizedBox(
                                 height: 38,
-                                width: 228,
+                                width: 260,
                                 child: Text(
-                                  textAlign:TextAlign.left, 
-                                  '2004/08/15',
+                                  textAlign:TextAlign.left,
+                                  _profileService.formatDateForDisplay(_userData?['dateOfBirth']),
                                   style: GoogleFonts.inknutAntiqua(
                                     fontSize: 20,
                                     color: Color(0xFF070C24),
@@ -199,12 +236,12 @@ class ProfilePage extends StatelessWidget{
                         SizedBox(height: 4),
                         SizedBox(
                           height: 76,
-                          width: 228,
+                          width: 260,
                           child: Column(
                             children: [
                               SizedBox(
                                 height: 38,
-                                width: 228,
+                                width: 260,
                                 child: Text(
                                   textAlign:TextAlign.left, 
                                   'Height',
@@ -217,10 +254,10 @@ class ProfilePage extends StatelessWidget{
                               ),
                               SizedBox(
                                 height: 38,
-                                width: 228,
+                                width: 260,
                                 child: Text(
-                                  textAlign:TextAlign.left, 
-                                  '150cm',
+                                  textAlign:TextAlign.left,
+                                  _profileService.formatHeightForDisplay(_userData?['height']),
                                   style: GoogleFonts.inknutAntiqua(
                                     fontSize: 20,
                                     color: Color(0xFF070C24),
@@ -234,12 +271,12 @@ class ProfilePage extends StatelessWidget{
                         SizedBox(height: 4),
                         SizedBox(
                             height: 76,
-                            width: 228,
+                            width: 260,
                             child: Column(
                               children: [
                                 SizedBox(
                                   height: 38,
-                                  width: 228,
+                                  width: 260,
                                   child: Text(
                                     textAlign:TextAlign.left, 
                                     'Weight',
@@ -252,10 +289,10 @@ class ProfilePage extends StatelessWidget{
                                 ),
                                 SizedBox(
                                   height: 38,
-                                  width: 228,
+                                  width: 260,
                                   child: Text(
-                                    textAlign:TextAlign.left, 
-                                    '64kg',
+                                    textAlign:TextAlign.left,
+                                    _profileService.formatWeightForDisplay(_userData?['weight']),
                                     style: GoogleFonts.inknutAntiqua(
                                       fontSize: 20,
                                       color: Color(0xFF070C24),
@@ -268,12 +305,14 @@ class ProfilePage extends StatelessWidget{
                           ),
                         SizedBox(height: 8),
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             debugPrint('Edit Profile!');
-                            Navigator.push(
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => const EditProfilePage()),
                             );
+                            // 從編輯頁面回來後重新載入資料
+                            _loadUserData();
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 48),
@@ -325,12 +364,10 @@ class ProfilePage extends StatelessWidget{
                         ),
                         SizedBox(height: 15),
                         InkWell(
-                          onTap: () {
-                            debugPrint('Edit Profile!');
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const EditProfilePage()),
-                            );
+                          onTap: () async {
+                            final authService = AuthService();
+                            await authService.signout(context: context);
+                            debugPrint('Log Out!');
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 48),
@@ -380,6 +417,7 @@ class ProfilePage extends StatelessWidget{
                             )
                           ),
                         )
+                      
                         
                         
 

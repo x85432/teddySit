@@ -1,12 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/home.dart';
+import '../services/profile_service.dart';
 
-class EditProfilePage extends StatelessWidget{
+class EditProfilePage extends StatefulWidget{
   const EditProfilePage({super.key});
 
   @override
+  _EditProfilePageState createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
+  final ProfileService _profileService = ProfileService();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _dateOfBirthController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+
+  String? _email;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _dateOfBirthController.dispose();
+    _heightController.dispose();
+    _weightController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadUserData() async {
+    final userData = await _profileService.getUserProfile();
+    if (userData != null) {
+      setState(() {
+        _nameController.text = userData['name'] ?? '';
+        _email = userData['email'] ?? '';
+        _dateOfBirthController.text = userData['dateOfBirth'] ?? '';
+        _heightController.text = userData['height'] ?? '';
+        _weightController.text = userData['weight'] ?? '';
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    final success = await _profileService.updateUserProfile(
+      name: _nameController.text.trim(),
+      dateOfBirth: _dateOfBirthController.text.trim(),
+      height: _heightController.text.trim(),
+      weight: _weightController.text.trim(),
+    );
+
+    if (success) {
+      Navigator.pop(context);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -97,7 +165,7 @@ class EditProfilePage extends StatelessWidget{
                           width: 320,   
                           height: 53,  
                           child: TextField(
-                            //controller: _fullNameController,
+                            controller: _nameController,
                             style: GoogleFonts.inknutAntiqua(
                               fontSize: 14,        
                               color: Color(0xFF070C24), 
@@ -136,8 +204,7 @@ class EditProfilePage extends StatelessWidget{
                           width: 320,   
                           height: 53,  
                           child: TextField(
-                            //controller: _passwordController,
-                            //obscureText: true,
+                            controller: _dateOfBirthController,
                             style: GoogleFonts.inknutAntiqua(
                               fontSize: 14,
                               color: Color(0xFF070C24),
@@ -172,14 +239,13 @@ class EditProfilePage extends StatelessWidget{
                         ),
                         SizedBox(height: 40),
                         SizedBox(
-                          width: 320,   
-                          height: 53,  
+                          width: 320,
+                          height: 53,
                           child: TextField(
-                            //controller: _passwordConfirmationController,
-                            //obscureText: true,
+                            controller: _heightController,
                             style: GoogleFonts.inknutAntiqua(
-                              fontSize: 14,        
-                              color: Color(0xFF070C24), 
+                              fontSize: 14,
+                              color: Color(0xFF070C24),
                             ),
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
@@ -190,8 +256,8 @@ class EditProfilePage extends StatelessWidget{
                               ),
                               labelText: 'Height',
                               labelStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
-                                color: Color.fromARGB(124, 0, 0, 0), 
+                                fontSize: 14,
+                                color: Color.fromARGB(124, 0, 0, 0),
                               ),
                               floatingLabelBehavior: FloatingLabelBehavior.always,
                               border: OutlineInputBorder(
@@ -211,14 +277,13 @@ class EditProfilePage extends StatelessWidget{
                         ),
                         SizedBox(height: 40),
                         SizedBox(
-                          width: 320,   
-                          height: 53,  
+                          width: 320,
+                          height: 53,
                           child: TextField(
-                            //controller: _passwordConfirmationController,
-                            //obscureText: true,
+                            controller: _weightController,
                             style: GoogleFonts.inknutAntiqua(
-                              fontSize: 14,        
-                              color: Color(0xFF070C24), 
+                              fontSize: 14,
+                              color: Color(0xFF070C24),
                             ),
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
@@ -250,9 +315,7 @@ class EditProfilePage extends StatelessWidget{
                         ),
                         SizedBox(height: 60),
                         InkWell(
-                          onTap: () {
-                            debugPrint('Save Profile!');
-                          },
+                          onTap: _saveProfile,
                           child: Padding(
                             padding: const EdgeInsets.only(left: 0),
                             child: Column(

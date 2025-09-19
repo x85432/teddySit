@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:teddy_sit/pages/Userprofile.dart';
 import 'widgets/home.dart';
+import 'widgets/auth_wrapper.dart';
 import 'pages/profile.dart';
 import 'pages/Userprofile.dart';
 import 'pages/leaderboard.dart';
@@ -86,6 +87,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _isTimerRunning = false;
+  bool _shouldReset = false;
+
     Future<void> callDoNotDisturb() async {
     try {
       // 獲取 Firebase Functions 實例
@@ -140,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const UserProfilePage()),
+                  MaterialPageRoute(builder: (context) => const AuthWrapper()),
                 );
                 debugPrint("Account button clicked!");
               },
@@ -222,13 +226,17 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             const SizedBox(height: 10),
-            const ElapsedTime(),
+            ElapsedTime(isRunning: _isTimerRunning, shouldReset: _shouldReset),
             const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children:[
                 InkWell(
                   onTap: () {
+                    setState(() {
+                      _isTimerRunning = true;
+                      _shouldReset = false;
+                    });
                     debugPrint("Start button clicked!");
                   },
                   child: Image(image: AssetImage('assets/Start.png'), width: 52, height: 52),
@@ -237,11 +245,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 InkWell(
                   onTap: ()
                   {
-                    debugPrint('Pause!33');
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ProfilePage()),
-                    );
+                    setState(() {
+                      _isTimerRunning = false;
+                      _shouldReset = false;
+                    });
+                    debugPrint('Pause button clicked!');
                     callDoNotDisturb();
                   },
                   child: Image(image: AssetImage('assets/Pause.png'), width: 52, height: 52),
@@ -250,7 +258,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 InkWell(
                   onTap: ()
                   {
-                    debugPrint('Stop!33');
+                    setState(() {
+                      _isTimerRunning = false;
+                      _shouldReset = true;
+                    });
+                    debugPrint('Stop button clicked!');
+
+                    // Reset the flag after a brief delay
+                    Future.delayed(Duration(milliseconds: 100), () {
+                      if (mounted) {
+                        setState(() {
+                          _shouldReset = false;
+                        });
+                      }
+                    });
                   },
                   child: Image(image: AssetImage('assets/Stop.png'), width: 52, height: 52),
                 ),

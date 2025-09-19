@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:async';
 
 // Logo
 class Teddysit extends StatelessWidget {
@@ -524,8 +525,86 @@ class _DonotdisturbState extends State<Donotdisturb> {
 
 
 // Elapsed Time
-class ElapsedTime extends StatelessWidget {
-  const ElapsedTime({super.key});
+class ElapsedTime extends StatefulWidget {
+  final bool isRunning;
+  final bool shouldReset;
+  final VoidCallback? onStart;
+  final VoidCallback? onPause;
+  final VoidCallback? onStop;
+
+  const ElapsedTime({
+    super.key,
+    this.isRunning = false,
+    this.shouldReset = false,
+    this.onStart,
+    this.onPause,
+    this.onStop,
+  });
+
+  @override
+  State<ElapsedTime> createState() => _ElapsedTimeState();
+}
+
+class _ElapsedTimeState extends State<ElapsedTime> {
+  Timer? _timer;
+  int _seconds = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isRunning) {
+      _startTimer();
+    }
+  }
+
+  @override
+  void didUpdateWidget(ElapsedTime oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.shouldReset && !oldWidget.shouldReset) {
+      _stopTimer();
+    } else if (widget.isRunning && !oldWidget.isRunning) {
+      _startTimer();
+    } else if (!widget.isRunning && oldWidget.isRunning) {
+      _pauseTimer();
+    }
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _seconds++;
+      });
+    });
+  }
+
+  void _pauseTimer() {
+    _timer?.cancel();
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    setState(() {
+      _seconds = 0;
+    });
+  }
+
+  String _formatTime(int seconds) {
+    int hours = seconds ~/ 3600;
+    int minutes = (seconds % 3600) ~/ 60;
+    int remainingSeconds = seconds % 60;
+
+    if (hours > 0) {
+      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+    } else {
+      return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -543,7 +622,7 @@ class ElapsedTime extends StatelessWidget {
                   width: 260,
                   height: 68,
                   child: Text(
-                    '00:00',
+                    _formatTime(_seconds),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inknutAntiqua(
                       textStyle: const TextStyle(
