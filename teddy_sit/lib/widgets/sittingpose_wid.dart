@@ -144,7 +144,7 @@ class Correctsittingposture extends StatelessWidget {
                   width: 155,
                   height: 75,
                   child: Text(
-                    'Correct Sitting Posture to Follow',
+                    'Correct Sitting Posture Tips',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inknutAntiqua(
                       color: Colors.white,
@@ -236,7 +236,7 @@ class Wrongsittingposture extends StatelessWidget {
                   width: 140,
                   height: 75,
                   child: Text(
-                    'Wrong Sitting Patterns You Should Avoid',
+                    'Common Mistakes to Avoid',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inknutAntiqua(
                       color: Colors.white,

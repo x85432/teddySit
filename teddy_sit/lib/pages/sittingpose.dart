@@ -53,9 +53,11 @@ class SittingPosePage extends StatelessWidget{
                 width: 350,
                 height: 210,
                 images: [
-                  AssetImage('assets/1.png'),
-                  AssetImage('assets/2.png'),
-                  AssetImage('assets/3.png'),
+                  AssetImage('assets/A1.png'),
+                  AssetImage('assets/A2.png'),
+                  AssetImage('assets/A3.png'),
+                  AssetImage('assets/A4.png'),
+                  AssetImage('assets/A5.png'),
                 ],
               )
             ),
@@ -72,9 +74,11 @@ class SittingPosePage extends StatelessWidget{
                       MaterialPageRoute(
                         builder: (context) => PosePage(
                           images: const [
-                            AssetImage('assets/1.png'),
-                            AssetImage('assets/2.png'),
-                            AssetImage('assets/3.png'),
+                            AssetImage('assets/B1_1.png'),
+                            AssetImage('assets/B1_2.png'),
+                            AssetImage('assets/B1_3.png'),
+                            AssetImage('assets/B1_4.png'),
+                            AssetImage('assets/B1_5.png'),
                           ],
                         ),
                       ),
@@ -90,9 +94,8 @@ class SittingPosePage extends StatelessWidget{
                       MaterialPageRoute(
                         builder: (context) => PosePage(
                           images: const [
-                            AssetImage('assets/1.png'),
-                            AssetImage('assets/2.png'),
-                            AssetImage('assets/3.png'),
+                            AssetImage('assets/B2_1.png'),
+                            AssetImage('assets/B2_2.png'),
                           ],
                         ),
                       ),
@@ -114,9 +117,12 @@ class SittingPosePage extends StatelessWidget{
                 width: 350,
                 height: 240,
                 images: [
-                  AssetImage('assets/1.png'),
-                  AssetImage('assets/2.png'),
-                  AssetImage('assets/3.png'),
+                  AssetImage('assets/B3_1.png'),
+                  AssetImage('assets/B3_2.png'),
+                  AssetImage('assets/B3_3.png'),
+                  AssetImage('assets/B3_4.png'),
+                  AssetImage('assets/B3_5.png'),
+                  AssetImage('assets/B3_6.png'),
                 ],
               )
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 
+
 // 下拉選單的項目
 const List<String> dropdownOptions = ['Set 1', 'Set 2', 'Set 3'];
 
@@ -130,5 +131,4 @@ class _VideoCardState extends State<VideoCard> {
     );
   }
 }
-
 

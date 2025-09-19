@@ -67,9 +67,7 @@ class StretchPage extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 69, left: 19),
-                child: VideoCard(
-                  videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-                ),
+                child: VideoCard(videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4')
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16, left: 16),
