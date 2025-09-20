@@ -9,6 +9,7 @@ import json
 import logging
 import os
 from uuid import uuid4
+from datetime import datetime, timezone
 
 # backend funcitons
 from scoreFunctions import calculate_cva
@@ -151,53 +152,49 @@ def process_sensor_data(request: https_fn.Request):
             mimetype='application/json'
         )
 
-@https_fn.on_call(enforce_app_check=True) # 保持 App Check 啟用，用於 Flutter 客戶端
-def do_not_disturb(req: https_fn.CallableRequest):
-    print("Python Cloud Function 'do_not_disturb' was called (App Check enabled, Auth disabled, simulating userId).")
-    
-    # 由於你不需要 Firebase Authentication，我們移除 req.auth 的檢查。
-    # App Check 會確保只有合法的應用程式可以呼叫這個函數。
-
-    # **新的修改：如果沒有提供 userId，則生成一個模擬的 userId**
-    user_id = req.data.get("userID") 
-    if not user_id:
-        # 如果客戶端沒有提供 userId，我們就生成一個隨機的 UUID 作為模擬的 userId
-        user_id = f"simulated_user_{uuid4().hex}" 
-        print(f"警告：客戶端未提供 userID。使用模擬 userID: {user_id}")
-    else:
-        print(f"客戶端提供的 userID: {user_id}")
-
-
-    dnd_status = req.data.get("dnd_enabled", False)
-    dnd_duration_hours = req.data.get("duration", 0)
-
-    data = {
-        "userID": user_id, # 使用從請求資料中獲取或生成的 user_id
-        "doNotDisturbEnabled": dnd_status,
-        "durationHours": dnd_duration_hours,
-        "lastUpdated": datetime.datetime.now(),
-    }
-
+@https_fn.on_call()
+def get_sensor_data_by_time_range(req: https_fn.CallableRequest) -> dict:
     try:
-        db = get_db()
-        # 使用從請求資料中獲取或生成的 user_id 作為文件 ID
-        db.collection("userSettings").document(user_id).set(data)
-        print(f"成功為使用者 {user_id} 更新 DND 設定。")
-        return {"message": "DND 設定已成功儲存到 Firestore！", "status": "success"}
-    except Exception as e:
-        print(f"寫入 Firestore 時發生錯誤: {e}")
-        raise https_fn.HttpsError(
-            code=https_fn.FunctionsErrorCode.INTERNAL,
-            message=f"無法儲存 DND 設定: {e}"
+        data = req.data
+        device_id = data.get('device_id')
+        collection_name = data.get('collection_name', 'raw_data')
+        start_time_str = data.get('start_time')
+        end_time_str = data.get('end_time')
+
+        if not device_id or not start_time_str or not end_time_str:
+            raise ValueError("缺少必要參數")
+
+        start_time_dt = datetime.fromisoformat(start_time_str.replace('Z', '+00:00'))
+        end_time_dt = datetime.fromisoformat(end_time_str.replace('Z', '+00:00'))
+
+        start_timestamp = firestore.Timestamp.from_datetime(start_time_dt)
+        end_timestamp = firestore.Timestamp.from_datetime(end_time_dt)
+
+        db = firestore.client()
+        query = (
+            db.collection('devices')
+              .document(device_id)
+              .collection(collection_name)
+              .where('timestamp', '>=', start_timestamp)
+              .where('timestamp', '<=', end_timestamp)
+              .order_by('timestamp', direction=firestore.Query.ASCENDING)
         )
 
-# @https_fn.on_call(enforce_app_check=True) # getUserSettings 也應遵循相同的邏輯
-# def getUserSettings(req: https_fn.CallableRequest):
-#     print("Python Cloud Function 'getUserSettings' was called.")
-#     user_id = req.data.get("userId") 
-#     if not user_id:
-#         raise https_fn.HttpsError(
-#             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
-#             message="未提供使用者ID，無法讀取設定。客戶端必須在請求資料中提供 'userId'。"
-#         )
-#     # ... (其餘讀取邏輯) ...
+        results = []
+        for doc in query.stream():
+            doc_data = doc.to_dict()
+
+            # ✅ 處理 timestamp 兩種情況
+            ts = doc_data.get("timestamp")
+            if isinstance(ts, firestore.Timestamp):
+                doc_data["timestamp"] = ts.isoformat()
+            elif isinstance(ts, (int, float)):  # 板子傳上來的 UNIX epoch
+                dt = datetime.fromtimestamp(ts, tz=timezone.utc)
+                doc_data["timestamp"] = dt.isoformat()
+
+            results.append(doc_data)
+
+        return {"status": "success", "data": results}
+
+    except Exception as e:
+        return {"status": "error", "message": str(e)}

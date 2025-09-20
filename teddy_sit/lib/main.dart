@@ -26,6 +26,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'notifications/permission_handler.dart';
 import 'notifications/service.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -52,6 +55,9 @@ void main() async {
 
   // 每次啟動都自動登出
   await FirebaseAuth.instance.signOut();
+
+  FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   runApp(const MyApp());
 }
 
@@ -145,6 +151,34 @@ class _MyHomePageState extends State<MyHomePage> {
     _requestPermissionsOnStartup(); // add this
   }
 
+  Future<void> getSensorDataByTimeRange({
+    required String deviceId,
+    required String startTime,
+    required String endTime,
+    String collectionName = "score",
+  }) async {
+    try {
+      final functions = FirebaseFunctions.instance;
+      final callable = functions.httpsCallable('get_sensor_data_by_time_range');
+
+      final result = await callable.call({
+        "device_id": deviceId,
+        "collection_name": collectionName,
+        "start_time": startTime,
+        "end_time": endTime,
+      });
+
+      final data = result.data;
+      if (data["status"] == "success") {
+        debugPrint("拿到 ${data['data'].length} 筆資料");
+        debugPrint(data['data']);
+      } else {
+        debugPrint("錯誤: ${data['message']}");
+      }
+    } catch (e) {
+      debugPrint("呼叫失敗: $e");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,6 +194,8 @@ class _MyHomePageState extends State<MyHomePage> {
             child: InkWell(
               onTap: () {
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
+                // Navigate to settings page
+                getSensorDataByTimeRange(deviceId: "redTest", startTime: "2025-9-20", endTime: "", collectionName: "score");
               },
               child: Image(image: AssetImage('assets/Home.png'), width: 35 * scale, height: 35 * scale),
             ),
