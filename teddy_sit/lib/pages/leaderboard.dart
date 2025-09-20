@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/home.dart';
 import '../widgets/leaderboard_wid.dart';
 
+double scale = 2340/2400;
+
 class LeaderboardPage extends StatelessWidget {
   const LeaderboardPage({super.key});
 
@@ -27,49 +29,49 @@ class LeaderboardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: 100,
+        toolbarHeight: 100*scale,
         title: Padding(
-          padding: const EdgeInsets.only(top: 11, left: 12),
+          padding: EdgeInsets.only(top: 11*scale, left: 12*scale),
           child: const Teddysit(),
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(top: 28), 
+            padding: EdgeInsets.only(top: 28*scale), 
             child: InkWell(
               onTap: () {
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
               },
-              child: Image(image: AssetImage('assets/Home.png'), width: 35, height: 35),
+              child: Image(image: AssetImage('assets/Home.png'), width: 35*scale, height: 35*scale),
             ),
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
           Padding(
-            padding: const EdgeInsets.only(top: 28),
+            padding: EdgeInsets.only(top: 28*scale),
             child: InkWell(
               onTap: () {
                 
               },
-              child: Image(image: AssetImage('assets/Account.png'), width: 45, height: 45),
+              child: Image(image: AssetImage('assets/Account.png'), width: 45*scale, height: 45*scale),
             )
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
         ],
       ),
       body: 
         Column(
           children: [
-            const SizedBox(height: 30),
-            Padding(padding: const EdgeInsets.only(left: 14),
+            SizedBox(height: 30*scale),
+            Padding(padding: EdgeInsets.only(left: 14*scale),
               child:
                 Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 59),
+                      padding: EdgeInsets.only(top: 59*scale),
                       child: Rank3(rank: topThree[1]['rank'], playerName: topThree[1]['name'], score: topThree[1]['score'], type: topThree[1]['type']),
                     ),
                     Rank3(rank: topThree[0]['rank'], playerName: topThree[0]['name'], score: topThree[0]['score'], type: topThree[0]['type']),
                     Padding(
-                      padding:const EdgeInsets.only(top: 59),
+                      padding: EdgeInsets.only(top: 59*scale),
                       child: Rank3(rank: topThree[2]['rank'], playerName: topThree[2]['name'], score: topThree[2]['score'], type: topThree[2]['type']),
                     )
                     
@@ -77,18 +79,18 @@ class LeaderboardPage extends StatelessWidget {
                 ),
                 
             ),
-            const SizedBox(height: 15),
+            SizedBox(height: 15*scale),
             Expanded(
               child: Stack(
                 children: [
                   Positioned(
-                    left: 20,
+                    left: 20*scale,
                     child: 
                       Opacity(
                         opacity: 0.24,
                         child: Container(
-                          width: 370,
-                          height: 445,
+                          width: 370*scale,
+                          height: 445*scale,
                           decoration: ShapeDecoration(
                             gradient: LinearGradient(
                               begin: Alignment(0.0, -1.0),
@@ -104,7 +106,7 @@ class LeaderboardPage extends StatelessWidget {
                   ),
                   
                   SizedBox(
-                    height: 445, 
+                    height: 445*scale, 
                     child: SingleChildScrollView(
                       child: Column(
                         children: others.map((data) => Column(
@@ -116,11 +118,11 @@ class LeaderboardPage extends StatelessWidget {
                               imagePath: data['imagePath'],
                             ),
                              if (data['rank'] % 8 != 0) 
-                              const Divider(
+                               Divider(
                                 color: Color.fromARGB(123, 255, 255, 255),
-                                thickness: 2,
-                                height: 1,
-                                indent: 35,
+                                thickness: 2*scale,
+                                height: 1*scale,
+                                indent: 35*scale,
                                 endIndent: 40,
                               ),
                           ],

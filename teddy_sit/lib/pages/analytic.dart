@@ -5,6 +5,8 @@ import '../widgets/home.dart';
 import '../widgets/analytic_wid.dart';
 //import '../widgets/stretch_wid.dart';
 
+double scale = 2340/2400;
+
 // 下拉選單項目
 const List<String> dropdownOptions = ['Today', 'Past 7 Days', 'Past Months'];
 
@@ -66,62 +68,62 @@ class _AnalyticPageState extends State<AnalyticPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: 100,
+        toolbarHeight: 100*scale,
         title: Padding(
-          padding: const EdgeInsets.only(top: 11, left: 12),
+          padding: EdgeInsets.only(top: 11*scale, left: 12*scale),
           child: const Teddysit(),
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(top: 28), 
+            padding: EdgeInsets.only(top: 28*scale), 
             child: InkWell(
               onTap: () {
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
               },
-              child: const Image(
+              child: Image(
                 image: AssetImage('assets/Home.png'),
-                width: 35,
-                height: 35,
+                width: 35*scale,
+                height: 35*scale,
               ),
             ),
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
           Padding(
-            padding: const EdgeInsets.only(top: 28),
+            padding: EdgeInsets.only(top: 28*scale),
             child: InkWell(
               onTap: () {},
-              child: const Image(
+              child: Image(
                 image: AssetImage('assets/Account.png'),
-                width: 45,
-                height: 45,
+                width: 45*scale,
+                height: 45*scale,
               ),
             ),
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
         ],
       ),
       body: Column(
         children: [
-          const SizedBox(height: 30),
+          SizedBox(height: 20*scale),
           SizedBox(
-            height: 41,
-            width: 374,
+            height: 41*scale,
+            width: 374*scale,
             child: Row(
               children: [
-                const SizedBox(width: 30),
+                SizedBox(width: 15*scale),
                 Text(
                   'Average Score: ${averageScores[selectedOption] ?? 0}',
                   style: GoogleFonts.inknutAntiqua(
-                    fontSize: 14,
+                    fontSize: 14*scale,
                     color: const Color(0xFFCDCCD3),
                   ),
                 ),
-                const SizedBox(width: 20),
+                SizedBox(width: 20*scale),
                 
                 Container(
-                  width: 150,
-                  height: 41,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  width: 150*scale,
+                  height: 41*scale,
+                  padding: EdgeInsets.symmetric(horizontal: 12*scale),
                   decoration: BoxDecoration(
                     color: const Color(0x48D9D9D9),
                     borderRadius: BorderRadius.circular(18),
@@ -136,7 +138,7 @@ class _AnalyticPageState extends State<AnalyticPage> {
                       elevation: 8,
                       style: GoogleFonts.inknutAntiqua(
                         color: const Color(0xFFCDCCD3),
-                        fontSize: 14,
+                        fontSize: 14*scale,
                       ),
                       onChanged: (String? newValue) {
                         if (newValue == null) return;
@@ -158,37 +160,37 @@ class _AnalyticPageState extends State<AnalyticPage> {
           ),
           
           Padding(
-            padding: const EdgeInsets.only(top: 10, left: 35),
+            padding: EdgeInsets.only(top: 0*scale, left: 35*scale),
             child: BarToLineChartExample(
               lineDataPerBar: lineDataSets[selectedOption]!,
               labels: labelsSets[selectedOption]!,
               barValues: barValuesSets[selectedOption]!,
             ),
           ),
-          const SizedBox(height: 27),
+          SizedBox(height: 10*scale),
           Row(
             children: [
-              const SizedBox(width: 20),
+              SizedBox(width: 20*scale),
               Stack(
                 children: [
                   Positioned(
-                    left: 14,
-                    top: 23,
+                    left: 14*scale,
+                    top: 23*scale,
                     child: Text(
                       'Longest Duration\nof Correct and\nIncorrect Posture',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inknutAntiqua(
-                        fontSize: 16,
+                        fontSize: 16*scale,
                         color: const Color(0xFFCDCCD3),
-                        height: 20/16
+                        height: 20/16*scale
                       ),
                     ),
                   ),
                   Opacity(
                     opacity: 0.24,
                     child: Container(
-                      width: 187,
-                      height: 111,
+                      width: 187*scale,
+                      height: 111*scale,
                       decoration: ShapeDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
@@ -203,11 +205,11 @@ class _AnalyticPageState extends State<AnalyticPage> {
                   ),
                 ],
               ),
-              const SizedBox(width: 19),
+              SizedBox(width: 19*scale),
               Column(
                 children:  [
                   LongestTimeWid(minutes: correct, type: 0), 
-                  SizedBox(height: 19),
+                  SizedBox(height: 19*scale),
                   LongestTimeWid(minutes: incorrect, type: 1),
                 ],
               ),
@@ -216,20 +218,20 @@ class _AnalyticPageState extends State<AnalyticPage> {
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.only(left: 26, top: 18),
+              padding: EdgeInsets.only(left: 26*scale, top: 18*scale),
               child: Text(
                 'Statistic',
                 style: GoogleFonts.inknutAntiqua(
-                  fontSize: 14,
+                  fontSize: 14*scale,
                   color: const Color(0xFFCDCCD3),
                 ),
               ),
             ),
           ),
-          const Align(
+          Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: EdgeInsets.only(left: 21, top: 8),
+              padding: EdgeInsets.only(left: 21*scale, top: 8*scale),
               child: Report(),
             ),
           ),

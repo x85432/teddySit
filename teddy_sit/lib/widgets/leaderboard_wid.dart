@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+double scale = 2340/2400;
 
 class Rank3 extends StatelessWidget {
   final int rank;
@@ -26,8 +27,8 @@ class Rank3 extends StatelessWidget {
         Opacity(
           opacity: 0.24,
           child: Container(
-            width: type == 1 ? 124 : 123,
-            height: type == 1 ? 272 : 213,
+            width: type == 1 ? 124*scale : 123*scale,
+            height: type == 1 ? 272*scale : 213*scale,
             decoration: ShapeDecoration(
               gradient: LinearGradient(
                 begin: Alignment(0.00, -1.00),
@@ -47,7 +48,7 @@ class Rank3 extends StatelessWidget {
           mainAxisSize: MainAxisSize.min, 
           crossAxisAlignment: CrossAxisAlignment.center, 
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 20*scale),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -55,9 +56,9 @@ class Rank3 extends StatelessWidget {
                   rank.toString(),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inika(
-                    fontSize: 64,
+                    fontSize: 64*scale,
                     color: Colors.white,
-                    height: 0.8,
+                    height: 0.8*scale,
                   ),
                 ),
                 Text(
@@ -69,38 +70,38 @@ class Rank3 extends StatelessWidget {
                               ? 'rd'
                               : 'th',
                   style: GoogleFonts.inika(
-                    fontSize: 24,
+                    fontSize: 24*scale,
                     color: Colors.white,
                   ),
                 )
               ],
             ),
             
-            SizedBox(height: rank == 3 ? 20 : 10),
-            SizedBox(height: type == 1 ? 15 : 0),
+            SizedBox(height: rank == 3 ? 20*scale : 10*scale),
+            SizedBox(height: type == 1 ? 15*scale : 0),
             Text(
               score.toString(),
               textAlign: TextAlign.center,
               style: GoogleFonts.inknutAntiqua(
-                fontSize: 14,
+                fontSize: 14*scale,
                 color: Color(0xFFCDCCD3),
               ),
             ),
-            SizedBox(height: type == 1 ? 25 : 8),
-            SizedBox(height: rank == 3 ? 0 : 7),
+            SizedBox(height: type == 1 ? 25*scale : 8*scale),
+            SizedBox(height: rank == 3 ? 0 : 7*scale),
             Image(
               image: imagePath != null
                   ? AssetImage(imagePath!)
                   : const AssetImage('assets/Account.png'),
-              width: 57,
-              height: 57,
+              width: 57*scale,
+              height: 57*scale,
             ),
-            SizedBox(height: type == 1 ? 30 : 2),
+            SizedBox(height: type == 1 ? 30*scale : 2*scale),
             Text(
               playerName,
               textAlign: TextAlign.center,
               style: GoogleFonts.inknutAntiqua(
-                fontSize: 14,
+                fontSize: 14*scale,
                 color: Color(0xFFCDCCD3),
               ),
             ),
@@ -131,10 +132,10 @@ class Rank extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 75.2, 
-      width: 370,
-      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-      padding: const EdgeInsets.fromLTRB(12, 0, 25, 0),  
+      height: 75.2*scale, 
+      width: 370*scale,
+      margin: EdgeInsets.symmetric(vertical: 6*scale, horizontal: 12*scale),
+      padding: EdgeInsets.fromLTRB(12*scale, 0, 25*scale, 0),  
       
 
       decoration: BoxDecoration(
@@ -146,34 +147,34 @@ class Rank extends StatelessWidget {
         children: [
           Column(
             children:[
-              const SizedBox(height: 11),
+              SizedBox(height: 11*scale),
               Text(
                 '$rank',
                 style: GoogleFonts.inika(
                   color: Colors.white,
-                  fontSize: 36,
+                  fontSize: 36*scale,
                 ),
               ),
             ] 
           ),
-          const SizedBox(width: 15),
+          SizedBox(width: 15*scale),
 
           CircleAvatar(
-            radius: 24,
+            radius: 24*scale,
             backgroundColor: const Color.fromARGB(0, 59, 74, 102),
             backgroundImage:
                 imagePath != null ? AssetImage(imagePath!) : AssetImage('assets/Account.png'),
             
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12*scale),
           Expanded(
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 playerName,
                 style: GoogleFonts.inika(
-                  textStyle: const TextStyle(
-                    fontSize: 18,
+                  textStyle: TextStyle(
+                    fontSize: 18*scale,
                     color: Color(0xFFE9E6EE),
                   ),
                 ),
@@ -187,8 +188,8 @@ class Rank extends StatelessWidget {
             child: Text(
               '$score pts',
               style: GoogleFonts.inika(
-                textStyle: const TextStyle(
-                  fontSize: 16,
+                textStyle: TextStyle(
+                  fontSize: 16*scale,
                   color: Color(0xFFE9E6EE),
                 ),
               ),

@@ -4,6 +4,8 @@ import '../widgets/home.dart';
 import '../widgets/sittingpose_wid.dart';
 import 'pose.dart';
 
+double scale = 2340/2400;
+
 class SittingPosePage extends StatelessWidget{
   const SittingPosePage({super.key});
 
@@ -12,45 +14,45 @@ class SittingPosePage extends StatelessWidget{
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: 100,
+        toolbarHeight: 100*scale,
         title: Padding(
-          padding: const EdgeInsets.only(top: 11, left: 12),
+          padding: EdgeInsets.only(top: 11*scale, left: 12*scale),
           child: const Teddysit(),
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(top: 28), 
+            padding: EdgeInsets.only(top: 28*scale), 
             child: InkWell(
               onTap: () {
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
               },
-              child: Image(image: AssetImage('assets/Home.png'), width: 35, height: 35),
+              child: Image(image: AssetImage('assets/Home.png'), width: 35*scale, height: 35*scale),
             ),
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
           Padding(
-            padding: const EdgeInsets.only(top: 28),
+            padding: EdgeInsets.only(top: 28*scale),
             child: InkWell(
               onTap: () {
                 
               },
-              child: Image(image: AssetImage('assets/Account.png'), width: 45, height: 45),
+              child: Image(image: AssetImage('assets/Account.png'), width: 45*scale, height: 45*scale),
             )
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
         ],
       ),
       body: Column(
         children: [
           //使用目的
           Padding(
-            padding: const EdgeInsets.only(top: 42, left: 6),
+            padding: EdgeInsets.only(top: 20*scale, left: 6*scale),
             child: SizedBox(
-              height: 210,
-              width: 350,
+              height: 210*scale,
+              width: 350*scale,
               child: PageViewExample(
-                width: 350,
-                height: 210,
+                width: 350*scale,
+                height: 210*scale,
                 images: [
                   AssetImage('assets/A1.png'),
                   AssetImage('assets/A2.png'),
@@ -62,7 +64,7 @@ class SittingPosePage extends StatelessWidget{
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 29, left: 30),
+            padding: EdgeInsets.only(top: 20*scale, left: 30*scale),
             child: Row(
               children: [
                 InkWell(
@@ -84,7 +86,7 @@ class SittingPosePage extends StatelessWidget{
                     );
                   },
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16*scale),
                 InkWell(
                   child: Wrongsittingposture(),
                  onTap: () {
@@ -108,13 +110,13 @@ class SittingPosePage extends StatelessWidget{
           
           //分數計算
           Padding(
-            padding: const EdgeInsets.only(top: 20, left: 6),
+            padding: EdgeInsets.only(top: 20*scale, left: 6*scale),
             child: SizedBox(
-              height: 240,
-              width: 350,
+              height: 220*scale,
+              width: 350*scale,
               child: PageViewExample(
-                width: 350,
-                height: 240,
+                width: 350*scale,
+                height: 220*scale,
                 images: [
                   AssetImage('assets/B3_1.png'),
                   AssetImage('assets/B3_2.png'),

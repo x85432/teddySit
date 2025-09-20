@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../widgets/home.dart';
 import '../widgets/sittingpose_wid.dart';
 
+double scale = 2340/2400;
+
 class PosePage extends StatelessWidget {
   final List<ImageProvider> images; // ← 從外面傳進來
 
@@ -16,38 +18,38 @@ class PosePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: 100,
+        toolbarHeight: 100*scale,
         title: Padding(
-          padding: const EdgeInsets.only(top: 11, left: 12),
+          padding: EdgeInsets.only(top: 11*scale, left: 12*scale),
           child: const Teddysit(),
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(top: 28),
+            padding: EdgeInsets.only(top: 28*scale),
             child: InkWell(
               onTap: () {
                 Navigator.popUntil(context, (route) => route.isFirst);
               },
-              child: const Image(
+              child: Image(
                 image: AssetImage('assets/Home.png'),
-                width: 35,
-                height: 35,
+                width: 35*scale,
+                height: 35*scale,
               ),
             ),
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
           Padding(
-            padding: const EdgeInsets.only(top: 28),
+            padding: EdgeInsets.only(top: 28*scale),
             child: InkWell(
               onTap: () {},
-              child: const Image(
+              child: Image(
                 image: AssetImage('assets/Account.png'),
-                width: 45,
-                height: 45,
+                width: 45*scale,
+                height: 45*scale,
               ),
             ),
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
         ],
       ),
       body: Column(
@@ -57,7 +59,7 @@ class PosePage extends StatelessWidget {
               Navigator.pop(context);
             },
             child: Padding(
-              padding: const EdgeInsets.only(top: 40, left: 30),
+              padding: EdgeInsets.only(top: 20*scale, left: 30*scale),
               child: Row(
                 children: [
                   const Image(image: AssetImage('assets/Arrow.png')),
@@ -65,7 +67,7 @@ class PosePage extends StatelessWidget {
                     'Back',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inknutAntiqua(
-                      fontSize: 16,
+                      fontSize: 16*scale,
                       color: Colors.white,
                     ),
                   )
@@ -74,13 +76,13 @@ class PosePage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 30, left: 5),
+            padding: EdgeInsets.only(top: 15*scale, left: 5*scale),
             child: SizedBox(
-              height: 640,
-              width: 350,
+              height: 640*scale,
+              width: 350*scale,
               child: PageViewExample(
-                width: 350,
-                height: 640,
+                width: 350*scale,
+                height: 640*scale,
                 images: images, // ← 直接用傳進來的
               ),
             ),

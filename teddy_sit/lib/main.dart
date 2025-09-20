@@ -19,7 +19,9 @@ import 'package:cloud_functions/cloud_functions.dart';
 // Firebase App check
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart'; // for kDebug
+import 'package:firebase_auth/firebase_auth.dart';
 
+// Notifications
 import 'notifications/permission_handler.dart';
 import 'notifications/service.dart';
 
@@ -47,8 +49,7 @@ void main() async {
     );
   }
 
-  FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-  FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  await FirebaseAuth.instance.signOut();
   runApp(const MyApp());
 }
 
@@ -84,6 +85,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
+  
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -104,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _isTimerRunning = false;
   bool _shouldReset = false;
+  final double scale = 2340/2400;
 
     Future<void> callDoNotDisturb() async {
     try {
@@ -144,24 +147,24 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 100,
+        toolbarHeight: 100 * scale,
         title: Padding(
-          padding: const EdgeInsets.only(top: 11, left: 12),
+          padding: EdgeInsets.only(top: 11 * scale, left: 12 * scale),
           child: const Teddysit(),
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(top: 28), 
+            padding: EdgeInsets.only(top: 28 * scale), 
             child: InkWell(
               onTap: () {
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
               },
-              child: Image(image: AssetImage('assets/Home.png'), width: 35, height: 35),
+              child: Image(image: AssetImage('assets/Home.png'), width: 35 * scale, height: 35 * scale),
             ),
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18 * scale),
           Padding(
-            padding: const EdgeInsets.only(top: 28),
+            padding: EdgeInsets.only(top: 28 * scale),
             child: InkWell(
               onTap: () {
                 Navigator.push(
@@ -170,17 +173,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
                 debugPrint("Account button clicked!");
               },
-              child: Image(image: AssetImage('assets/Account.png'), width: 45, height: 45),
+              child: Image(image: AssetImage('assets/Account.png'), width: 45 * scale, height: 45 * scale),
             )
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18 * scale),
         ],
       ),
       
       body: Center(
         child: Column(
           children: [
-            const SizedBox(height: 10),
+            SizedBox(height: 10 * scale),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -195,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10 * scale),
                 SizedBox(
                   child: CorrectSittingCard(
                     onTap: () {
@@ -209,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 15),
+            SizedBox(height: 15 * scale),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -226,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 15),
+            SizedBox(height: 15  * scale),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -241,15 +244,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10 * scale),
                 SizedBox(
                   child: Donotdisturb(),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            //SizedBox(height: 10 * scale),
             ElapsedTime(isRunning: _isTimerRunning, shouldReset: _shouldReset),
-            const SizedBox(height: 5),
+            //SizedBox(height: 5 * scale),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children:[
@@ -266,9 +269,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     debugPrint("Start button clicked!");
 
                   },
-                  child: Image(image: AssetImage('assets/Start.png'), width: 52, height: 52),
+                  child: Image(image: AssetImage('assets/Start.png'), width: 52 * scale, height: 52 * scale),
                 ),
-                SizedBox(width: 39),
+                SizedBox(width: 39 * scale),
                 InkWell(
                   onTap: ()
                   {
@@ -279,9 +282,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     debugPrint('Pause button clicked!');
                     callDoNotDisturb();
                   },
-                  child: Image(image: AssetImage('assets/Pause.png'), width: 52, height: 52),
+                  child: Image(image: AssetImage('assets/Pause.png'), width: 52 * scale, height: 52 * scale),
                 ),
-                SizedBox(width: 39),
+                SizedBox(width: 39 * scale),
                 InkWell(
                   onTap: ()
                   {
@@ -300,7 +303,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     });
                   },
-                  child: Image(image: AssetImage('assets/Stop.png'), width: 52, height: 52),
+                  child: Image(image: AssetImage('assets/Stop.png'), width: 52 * scale, height: 52 * scale),
                 ),
               ],
             ),

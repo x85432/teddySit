@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+double scale  = 2340/2400;
 // Longest Time
 class LongestTimeWid extends StatelessWidget {   
   final int type;  
@@ -21,8 +22,8 @@ class LongestTimeWid extends StatelessWidget {
         Opacity(
           opacity: 0.24,
           child: Container(
-            width: 152,
-            height: 40,
+            width: 152*scale,
+            height: 40*scale,
             decoration: ShapeDecoration(
               gradient: const LinearGradient(
                 begin: Alignment(0.00, -1.00),
@@ -37,22 +38,22 @@ class LongestTimeWid extends StatelessWidget {
         ),
         // Icon
         Positioned(
-          left: 16,
-          top: 8,
+          left: 16*scale,
+          top: 8*scale,
           child: Icon(
             type == 0 ? Icons.circle_outlined : Icons.close, // ✅ 或 ❌
             color: const Color(0xFFCDCCD3),
-            size: 23,
+            size: 23*scale,
           ),
         ),
         // Text
         Positioned(
-          left: 57,
-          top: 8,
+          left: 57*scale,
+          top: 8*scale,
           child: Text(
             '$minutes min',
             style: GoogleFonts.inknutAntiqua(
-              fontSize: 14,
+              fontSize: 14*scale,
               color: const Color(0xFFCDCCD3),
             ),
           ),
@@ -76,8 +77,8 @@ class Report extends StatelessWidget {
             Opacity(
               opacity: 0.24,
               child: Container(
-                width: 135,
-                height: 204*0.8,
+                width: 135*scale,
+                height: 204*0.8*scale,
                 decoration: ShapeDecoration(
                   gradient: const LinearGradient(
                     begin: Alignment(0.00, -1.00),
@@ -91,40 +92,40 @@ class Report extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: 40,
-              top: 7,
+              left: 40*scale,
+              top: 7*scale,
               child: Text(
                 'A',
                 style: GoogleFonts.inknutAntiqua(
-                  fontSize: 60,
+                  fontSize: 60*scale,
                   color: Color(0xFFFFFFFF)
                 ),
               )
             ),
             Positioned(              
-              top: 90,
-              left: 22,
+              top: 90*scale,
+              left: 22*scale,
               child: Text(
                 textAlign: TextAlign.right,
                 'Your\nPosture\nhealth Level',
                 style: GoogleFonts.inknutAntiqua(
-                  fontSize: 13,
+                  fontSize: 13*scale,
                   color: Color(0xFFCDCCD3),
-                  height: 20/16
+                  height: 20/16*scale
                 ),
               )
             )
             
           ],
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8*scale),
         Stack(
           children: [
             Opacity(
               opacity: 0.24,
               child: Container(
-                width: 227,
-                height: 204*0.8,
+                width: 227*scale,
+                height: 204*0.8*scale,
                 decoration: ShapeDecoration(
                   gradient: const LinearGradient(
                     begin: Alignment(0.00, -1.00),
@@ -138,25 +139,25 @@ class Report extends StatelessWidget {
               ),
             ),
             Positioned(              
-              top: 18,
-              left: 32,
+              top: 18*scale,
+              left: 32*scale,
               child: Text(
                 textAlign: TextAlign.center,
                 'Click here to get the\nanalytic report',
                 style: GoogleFonts.inknutAntiqua(
-                  fontSize: 13,
+                  fontSize: 13*scale,
                   color: Color(0xFFCDCCD3),
-                  height: 20/16
+                  height: 20/16*scale
                 ),
               )
             ),
             Positioned(
-              left: 75,
-              top: 65,
+              left: 75*scale,
+              top: 65*scale,
               child: Image(
                 image: AssetImage('assets/conversation.png'),
-                width: 102 * 0.8,
-                height: 102 * 0.8,)
+                width: 102 * 0.8*scale,
+                height: 102 * 0.8*scale,)
               
             )
           ],
@@ -191,8 +192,8 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 320, 
-      width: 350,
+      height: 320*scale, 
+      width: 350*scale,
       child: Column(
         children: [
           // 上方返回鍵
@@ -210,7 +211,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
               ),
             )
           else
-            const SizedBox(height: 40), 
+            SizedBox(height: 40*scale), 
 
           // 下方圖表
           Expanded(
@@ -228,8 +229,8 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
   Widget buildBarChart() {
     return SizedBox(
       key: const ValueKey('barChart'),
-      height: 280,
-      width: 350,
+      height: 280*scale,
+      width: 350*scale,
       child: BarChart(
         BarChartData(
           minY: 0,
@@ -240,7 +241,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
             show: true,
             border: Border.all(
               color: const Color.fromARGB(40, 255, 255, 255),
-              width: 2,
+              width: 2*scale,
             ),
           ),
           titlesData: FlTitlesData(
@@ -249,14 +250,14 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
             rightTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 40,
-                interval: 20,
+                reservedSize: 40*scale,
+                interval: 20*scale,
                 getTitlesWidget: (value, meta) {
                   return Text(
                     '${value.toInt()}',
                     style: GoogleFonts.inknutAntiqua(
                       color: Colors.white,
-                      fontSize: 12,
+                      fontSize: 12*scale,
                     ),
                   );
                 },
@@ -274,7 +275,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
                     widget.labels[index],
                     style: GoogleFonts.inknutAntiqua(
                       color: Colors.white,
-                      fontSize: 12,
+                      fontSize: 12*scale,
                     ),
                   );
                 },
@@ -288,7 +289,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
                 BarChartRodData(
                   toY: widget.barValues[i],
                   color: Colors.blueAccent,
-                  width: 20,
+                  width: 20*scale,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ],
@@ -320,8 +321,8 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
 
     return SizedBox(
       key: const ValueKey('lineChart'),
-      height: 280,
-      width: 350,
+      height: 280*scale,
+      width: 350*scale,
       child: TweenAnimationBuilder<double>(
         tween: Tween<double>(begin: 0, end: 1),
         duration: const Duration(milliseconds: 700),
@@ -340,7 +341,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
                 show: true,
                 border: Border.all(
                   color: const Color.fromARGB(40, 255, 255, 255),
-                  width: 2,
+                  width: 2*scale,
                 ),
               ),
               titlesData: FlTitlesData(
@@ -349,14 +350,14 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
                 rightTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 40,
+                    reservedSize: 40*scale,
                     interval: 20,
                     getTitlesWidget: (value, meta) {
                       return Text(
                         '${value.toInt()}pts',
                         style: GoogleFonts.inknutAntiqua(
                           color: Colors.white,
-                          fontSize: 9,
+                          fontSize: 9*scale,
                         ),
                       );
                     },
@@ -373,7 +374,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
                         '${value.toInt()}s',
                         style: GoogleFonts.inknutAntiqua(
                           color: Colors.white,
-                          fontSize: 12,
+                          fontSize: 12*scale,
                         ),
                       );
                     },
@@ -385,7 +386,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
                   spots: animatedSpots,
                   isCurved: true,
                   color: const Color(0xFF7780BA),
-                  barWidth: 3,
+                  barWidth: 3*scale,
                   dotData: FlDotData(show: true),
                 ),
               ],

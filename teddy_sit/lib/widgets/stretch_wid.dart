@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 
+double scale = 2340/2400;
 
 class DropdownButtonExample extends StatefulWidget {
   final double width;
@@ -11,8 +12,8 @@ class DropdownButtonExample extends StatefulWidget {
 
   const DropdownButtonExample({
     super.key,
-    this.width = 150,
-    this.height = 41,
+    this.width = 150*2340/2400,
+    this.height = 41*2340/2400,
     required this.options,
     required this.onChanged,
   });
@@ -46,7 +47,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
     return Container(
       width: widget.width,
       height: widget.height,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: EdgeInsets.symmetric(horizontal: 12*scale),
       decoration: BoxDecoration(
         color: const Color(0x48D9D9D9),
         borderRadius: BorderRadius.circular(18),
@@ -61,7 +62,7 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
           elevation: 8,
           style: GoogleFonts.inknutAntiqua(
             color: const Color(0xFFCDCCD3),
-            fontSize: 14,
+            fontSize: 14*scale,
           ),
           onChanged: (String? value) {
             if (value == null) return;
@@ -136,8 +137,8 @@ class _VideoCardState extends State<VideoCard> {
         ClipRRect(
           borderRadius: BorderRadius.circular(25),
           child: Container(
-            width: 316,
-            height: 510,
+            width: 316*scale*0.9,
+            height: 510*scale*0.9,
             color: Colors.black,
             child: _controller.value.isInitialized
                 ? VideoPlayer(_controller)

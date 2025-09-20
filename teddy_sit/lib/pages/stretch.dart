@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../widgets/home.dart';
 import '../widgets/stretch_wid.dart';
 
+double scale = 2340/2400;
+
 class StretchPage extends StatefulWidget {
   const StretchPage({super.key});
 
@@ -49,40 +51,40 @@ class _StretchPageState extends State<StretchPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: 100,
-        title: const Padding(
-          padding: EdgeInsets.only(top: 11, left: 12),
+        toolbarHeight: 100*scale,
+        title: Padding(
+          padding: EdgeInsets.only(top: 11*scale, left: 12*scale),
           child: Teddysit(),
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(top: 28), 
+            padding: EdgeInsets.only(top: 28*scale), 
             child: InkWell(
               onTap: () {
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
               },
-              child: const Image(image: AssetImage('assets/Home.png'), width: 35, height: 35),
+              child: Image(image: AssetImage('assets/Home.png'), width: 35*scale, height: 35*scale),
             ),
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
           Padding(
-            padding: const EdgeInsets.only(top: 28),
+            padding: EdgeInsets.only(top: 28*scale),
             child: InkWell(
               onTap: () {},
-              child: const Image(image: AssetImage('assets/Account.png'), width: 45, height: 45),
+              child: Image(image: AssetImage('assets/Account.png'), width: 45*scale, height: 45*scale),
             )
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
         ],
       ),
       body: Center(
         child: Column(
           children: [
-            const SizedBox(height: 30),
+            SizedBox(height: 30*scale),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(width: 248),
+                SizedBox(width: 248*scale),
                 DropdownButtonExample(
                   options: videoOptions,
                   onChanged: (value) {
@@ -94,13 +96,13 @@ class _StretchPageState extends State<StretchPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 28),
+            SizedBox(height: 28*scale),
             Stack(
               children: [
                 // 影片背景
                 SizedBox(
-                  width: 356,
-                  height: 639,
+                  width: 356*scale*0.9,
+                  height: 639*scale*0.9,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Container(color: const Color(0xFF3A3F55)),
@@ -108,7 +110,7 @@ class _StretchPageState extends State<StretchPage> {
                 ),
                 // 影片播放器
                 Padding(
-                  padding: const EdgeInsets.only(top: 69, left: 19),
+                  padding: EdgeInsets.only(top: 69*scale*0.9, left: 19*scale*0.9),
                   child: VideoCard(videoUrl: videoUrl),
                 ),
                 // 心形 icon
@@ -151,17 +153,17 @@ class _StretchPageState extends State<StretchPage> {
                     );
                   },
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 16, left: 16),
+                    padding: EdgeInsets.only(top: 16*scale*0.9, left: 16*scale*0.9),
                     child: Icon(icon),
                   ),
                 ),
                 
                 // 影片標題
                 Padding(
-                  padding: const EdgeInsets.only(top: 593, left: 16),
+                  padding: EdgeInsets.only(top: 593*scale*0.9, left: 16*scale*0.9),
                   child: Text(
                     videoTitles[selectedSet] ?? '',
-                    style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 20),
+                    style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 20*scale),
                   ),
                 ),
               ],

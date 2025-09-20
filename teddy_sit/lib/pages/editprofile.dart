@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../widgets/home.dart';
 import '../services/profile_service.dart';
 
+double scale = 2340/2400;
+
 class EditProfilePage extends StatefulWidget{
   const EditProfilePage({super.key});
 
@@ -78,66 +80,66 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: 100,
+        toolbarHeight: 100*scale,
         title: Padding(
-          padding: const EdgeInsets.only(top: 11, left: 12),
+          padding: EdgeInsets.only(top: 11*scale, left: 12*scale),
           child: const Teddysit(),
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(top: 28), 
+            padding: EdgeInsets.only(top: 28*scale), 
             child: InkWell(
               onTap: () {
                 Navigator.popUntil(context, (route) => route.isFirst);
               },
-              child: Image(image: AssetImage('assets/Home.png'), width: 35, height: 35),
+              child: Image(image: AssetImage('assets/Home.png'), width: 35*scale, height: 35*scale),
             ),
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
           Padding(
-            padding: const EdgeInsets.only(top: 28),
+            padding: EdgeInsets.only(top: 28*scale),
             child: InkWell(
               onTap: () {
                 
               },
-              child: Image(image: AssetImage('assets/Account.png'), width: 45, height: 45),
+              child: Image(image: AssetImage('assets/Account.png'), width: 45*scale, height: 45*scale),
             )
           ),
-          const SizedBox(width: 18),
+          SizedBox(width: 18*scale),
         ],
       ),
       body: Center(
         child: SizedBox(
-          height: 810,
-          width: 412,
+          height: 810*scale,
+          width: 412*scale,
           child: Column(
             children: [
-              SizedBox(height: 5),
+              SizedBox(height: 5*scale),
               SizedBox(
-                height: 75,
-                width: 323,
+                height: 75*scale,
+                width: 323*scale,
                 child: Text(
                   'Edit Profile',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inknutAntiqua(
-                    fontSize: 28,
-                    height: 50/28,
+                    fontSize: 28*scale,
+                    height: 50/28*scale,
                     color: Color(0xFFE9E6EE)
                   ),
                 ),
               ),
               Image(
                 image: AssetImage('assets/Account.png'),
-                width: 100,
+                width: 100*scale,
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 10*scale),
               Stack(
                 children: [
                   Opacity(
                     opacity: 0.65,
                     child: Container(
-                      width: 412,
-                      height: 600,
+                      width: 412*scale,
+                      height: 530*scale,
                       decoration: ShapeDecoration(
                         gradient: LinearGradient(
                           begin: Alignment(0.00, -1.00),
@@ -156,164 +158,164 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                   ),
                   Positioned(
-                    left: 45,
+                    left: 45*scale,
                     child: Column(
                       
                       children: [
-                        SizedBox(height: 50),
+                        SizedBox(height: 50*scale),
                         SizedBox(
-                          width: 320,   
-                          height: 53,  
+                          width: 320*scale,   
+                          height: 53*scale,  
                           child: TextField(
                             controller: _nameController,
                             style: GoogleFonts.inknutAntiqua(
-                              fontSize: 14,        
+                              fontSize: 14*scale,        
                               color: Color(0xFF070C24), 
                             ),
                             decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+                              contentPadding: EdgeInsets.symmetric(vertical: 15*scale, horizontal: 12*scale),
                               hintText: 'Bibo',
                               hintStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
+                                fontSize: 14*scale,          
                                 color: Color.fromARGB(125, 245, 245, 245),   
                               ),
                               labelText: 'Your Name',
                               labelStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
+                                fontSize: 14*scale,          
                                 color: Color.fromARGB(124, 0, 0, 0), 
                               ),
                               floatingLabelBehavior: FloatingLabelBehavior.always,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(18),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3*scale),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3*scale),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3),
+                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3*scale),
                               ),
                             ),
                           ),
                         ),
                         
-                        SizedBox(height: 40),
+                        SizedBox(height: 40*scale),
                         SizedBox(
-                          width: 320,   
-                          height: 53,  
+                          width: 320*scale,   
+                          height: 53*scale,  
                           child: TextField(
                             controller: _dateOfBirthController,
                             style: GoogleFonts.inknutAntiqua(
-                              fontSize: 14,
+                              fontSize: 14*scale,
                               color: Color(0xFF070C24),
                             ),
                             decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+                              contentPadding: EdgeInsets.symmetric(vertical: 15*scale, horizontal: 12*scale),
                               hintText: '2005/02/12',
                               hintStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
+                                fontSize: 14*scale,          
                                 color: Color.fromARGB(125, 245, 245, 245),   
                               ),
                               labelText: 'Date of Birth',
                               labelStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
+                                fontSize: 14*scale,          
                                 color: Color.fromARGB(124, 0, 0, 0), 
                               ),
                               floatingLabelBehavior: FloatingLabelBehavior.always,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(18),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3*scale),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3*scale),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3),
+                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3*scale),
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 40),
+                        SizedBox(height: 40*scale),
                         SizedBox(
-                          width: 320,
-                          height: 53,
+                          width: 320*scale,
+                          height: 53*scale,
                           child: TextField(
                             controller: _heightController,
                             style: GoogleFonts.inknutAntiqua(
-                              fontSize: 14,
+                              fontSize: 14*scale,
                               color: Color(0xFF070C24),
                             ),
                             decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+                              contentPadding: EdgeInsets.symmetric(vertical: 15*scale, horizontal: 12*scale),
                               hintText: '150',
                               hintStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
+                                fontSize: 14*scale,          
                                 color: Color.fromARGB(125, 245, 245, 245),   
                               ),
                               labelText: 'Height',
                               labelStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,
+                                fontSize: 14*scale,
                                 color: Color.fromARGB(124, 0, 0, 0),
                               ),
                               floatingLabelBehavior: FloatingLabelBehavior.always,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(18),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3*scale),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3*scale),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3),
+                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3*scale),
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 40),
+                        SizedBox(height: 40*scale),
                         SizedBox(
-                          width: 320,
-                          height: 53,
+                          width: 320*scale,
+                          height: 53*scale,
                           child: TextField(
                             controller: _weightController,
                             style: GoogleFonts.inknutAntiqua(
-                              fontSize: 14,
+                              fontSize: 14*scale,
                               color: Color(0xFF070C24),
                             ),
                             decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+                              contentPadding: EdgeInsets.symmetric(vertical: 15*scale, horizontal: 12*scale),
                               hintText: '60',
                               hintStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
+                                fontSize: 14*scale,          
                                 color: Color.fromARGB(125, 245, 245, 245),   
                               ),
                               labelText: 'Weight',
                               labelStyle: GoogleFonts.inknutAntiqua(
-                                fontSize: 14,          
+                                fontSize: 14*scale,          
                                 color: Color.fromARGB(124, 0, 0, 0), 
                               ),
                               floatingLabelBehavior: FloatingLabelBehavior.always,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(18),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3*scale),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3),
+                                borderSide: BorderSide(color: Color.fromARGB(126, 245, 245, 245), width: 3*scale),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3),
+                                borderSide: BorderSide(color: const Color.fromARGB(173, 79, 74, 119), width: 3*scale),
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 60),
+                        SizedBox(height: 40*scale),
                         InkWell(
                           onTap: _saveProfile,
                           child: Padding(
@@ -321,16 +323,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             child: Column(
                               children: [
                                 SizedBox(
-                                  width: 319,
-                                  height: 53,
+                                  width: 319*scale,
+                                  height: 53*scale,
                                   child: Stack(
                                     children: [
                                       Positioned(
                                         left: 0,
                                         top: 0,
                                         child: Container(
-                                          width: 319,
-                                          height: 53,
+                                          width: 319*scale,
+                                          height: 53*scale,
                                           decoration: ShapeDecoration(
                                             color: Color(0xFF070C24),
                                             shape: RoundedRectangleBorder(
@@ -340,18 +342,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                         ),
                                       ),
                                       Positioned(
-                                        left: 65,
-                                        top: 14,
+                                        left: 65*scale,
+                                        top: 14*scale,
                                         child: SizedBox(
-                                          width: 174,
-                                          height: 41,
+                                          width: 174*scale,
+                                          height: 41*scale,
                                           child: Text(
                                             'Save',
                                             textAlign: TextAlign.center,
                                             style: GoogleFonts.inknutAntiqua(
                                               color: Colors.white,
-                                              fontSize: 20,
-                                              height: 1,
+                                              fontSize: 20*scale,
+                                              height: 1*scale,
                                             ),
                                           ),
                                         ),
