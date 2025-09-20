@@ -433,7 +433,7 @@ class LeaderboardCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inknutAntiqua(
                     color: Colors.white,
-                    fontSize: 20*scale,
+                    fontSize: 18*scale,
                   ),
                 ),
               ),
@@ -456,7 +456,7 @@ class LeaderboardCard extends StatelessWidget {
                 '99',
                 style: GoogleFonts.inknutAntiqua(
                   color: const Color.fromRGBO(255, 255, 255, 1),
-                  fontSize: 48*scale,
+                  fontSize: 42*scale,
                 ),
               ),
             ),
@@ -540,7 +540,7 @@ class _DonotdisturbState extends State<Donotdisturb> {
                   duration: const Duration(milliseconds: 300),
                   style: GoogleFonts.inknutAntiqua(
                     color: _isPressed ? Colors.black : Colors.white,
-                    fontSize: 16*scale,
+                    fontSize: 13*scale,
                     height: 1.0*scale,
                   ),
                   child: Text(
@@ -716,7 +716,7 @@ class _ElapsedTimeState extends State<ElapsedTime> {
                     style: GoogleFonts.inknutAntiqua(
                       textStyle: const TextStyle(
                         color: Color(0xFFE8E5ED),
-                        fontSize: 64*2340/2400,
+                        fontSize: 54*2340/2400,
                       ),
                       height: 1.0*2340/2400,
                     ),

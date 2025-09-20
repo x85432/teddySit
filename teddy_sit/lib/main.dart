@@ -98,6 +98,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final NotificationPermissionHandler _permissionHandler =
       NotificationPermissionHandler(); // add this
+  final GlobalKey _elapsedTimeKey = GlobalKey();
 
   Future<void> _requestPermissionsOnStartup() async { // add this
     bool permissionsGranted =
@@ -110,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _isTimerRunning = false;
   bool _shouldReset = false;
-  final double scale = 2340/2400;
+  final double scale = 2220/2400;
 
     Future<void> callDoNotDisturb() async {
     try {
@@ -177,6 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
       debugPrint("呼叫失敗: $e");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
                 // Navigate to settings page
-                getSensorDataByTimeRange(deviceId: "redTest", startTime: "2025-09-20T00:00:00Z", endTime: "2025-09-21T00:00:00Z", collectionName: "scores");
+                getSensorDataByTimeRange(deviceId: "redTest", startTime: "2025-09-20T00:00:00+08:00", endTime: "2025-09-21T00:00:00+08:00", collectionName: "scores");
               },
               child: Image(image: AssetImage('assets/Home.png'), width: 35 * scale, height: 35 * scale),
             ),
@@ -287,7 +289,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             //SizedBox(height: 10 * scale),
-            ElapsedTime(isRunning: _isTimerRunning, shouldReset: _shouldReset),
+            ElapsedTime(key: _elapsedTimeKey, isRunning: _isTimerRunning, shouldReset: _shouldReset),
             //SizedBox(height: 5 * scale),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -321,13 +323,49 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 SizedBox(width: 39 * scale),
                 InkWell(
-                  onTap: ()
-                  {
+                  onTap: () async {
                     setState(() {
                       _isTimerRunning = false;
                       _shouldReset = true;
                     });
                     debugPrint('Stop button clicked!');
+
+                    // 取得時間段資料
+                    final elapsedTimeState = _elapsedTimeKey.currentState;
+
+                    if (elapsedTimeState != null) {
+                      final session = (elapsedTimeState as dynamic).getCurrentSession();
+                      final segments = session?.segments ?? [];
+
+                      if (segments.isNotEmpty) {
+                        // 取得開始時間並格式化為台灣時區
+                        final startDateTime = segments.first.startTime;
+                        final startTime = '${startDateTime.year.toString().padLeft(4, '0')}-${startDateTime.month.toString().padLeft(2, '0')}-${startDateTime.day.toString().padLeft(2, '0')}T${startDateTime.hour.toString().padLeft(2, '0')}:${startDateTime.minute.toString().padLeft(2, '0')}:${startDateTime.second.toString().padLeft(2, '0')}+08:00';
+
+                        // 取得結束時間，設為該天的最後一秒作為 upper bound
+                        final lastSegmentEnd = segments.last.endTime ?? DateTime.now().add(Duration(hours: 8));
+                        final endDate = DateTime(lastSegmentEnd.year, lastSegmentEnd.month, lastSegmentEnd.day, 23, 59, 59);
+                        final endTime = '${endDate.year.toString().padLeft(4, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}T${endDate.hour.toString().padLeft(2, '0')}:${endDate.minute.toString().padLeft(2, '0')}:${endDate.second.toString().padLeft(2, '0')}+08:00';
+
+                        debugPrint('  startTime: $startTime');
+                        debugPrint('  endTime: $endTime');
+                        debugPrint('  deviceId: redTest');
+                        debugPrint('  collectionName: scores');
+
+
+                        // 呼叫 getSensorDataByTimeRange
+                        await getSensorDataByTimeRange(
+                          deviceId: "redTest",
+                          startTime: startTime,
+                          endTime: endTime,
+                          collectionName: "scores",
+                        );
+                      } else {
+                        debugPrint('沒有時間段資料');
+                      }
+                    } else {
+                      debugPrint('無法取得 ElapsedTime 狀態');
+                    }
 
                     // Reset the flag after a brief delay
                     Future.delayed(Duration(milliseconds: 100), () {
