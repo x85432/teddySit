@@ -1,5 +1,9 @@
 # 頂部引入和初始化部分
+# 頂部引入和初始化部分
 
+import firebase_admin # 引入 firebase_admin
+from firebase_admin import credentials, firestore, auth
+from firebase_functions import https_fn, params
 import firebase_admin # 引入 firebase_admin
 from firebase_admin import credentials, firestore, auth
 from firebase_functions import https_fn, params
@@ -29,6 +33,32 @@ else:
 # 每個 Cloud Function 最大同時實例數
 set_global_options(max_instances=10)
 
+# 全域變數
+_db = None
+
+# Secrets
+API_KEY_SECRET = params.SecretParam('API_KEY')
+
+# Firestore client 的懶惰初始化函數
+def get_db():
+    global _db
+    if _db is None:
+        try:
+            _db = firestore.client() # 使用初始化後的 app 獲取 firestore client
+            logging.info("Firestore client ready.")
+        except Exception as e:
+            logging.exception("Firestore client initialization failed: %s", e)
+            raise RuntimeError("Firestore client initialization failed.") from e
+    return _db
+
+def serialize_datetime(doc: dict):
+    """
+    將 datetime 物件轉成 ISO 8601 字串，方便 JSON 序列化
+    """
+    for k, v in doc.items():
+        if isinstance(v, datetime.datetime):
+            doc[k] = v.isoformat()
+    return doc
 # 全域變數
 _db = None
 
