@@ -49,6 +49,9 @@ dependencies:
   # toast messages
   fluttertoast: ^8.2.8
 
+  # BLE
+  flutter_blue_plus: ^1.36.8
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
