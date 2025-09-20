@@ -29,6 +29,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 // bluetooth
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'services/ble_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -216,17 +217,23 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           SizedBox(width: 18 * scale),
           Padding(
-            padding: EdgeInsets.only(top: 28 * scale), 
+            padding: EdgeInsets.only(top: 28 * scale),
             child: InkWell(
               onTap: () {
-                Navigator.popUntil(context, ModalRoute.withName('/home'));
-                // Navigate to settings page
-                getSensorDataByTimeRange(deviceId: "redTest", startTime: "2025-09-20T00:00:00+08:00", endTime: "2025-09-21T00:00:00+08:00", collectionName: "scores");
+                // 跳轉到 BleController 頁面
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const BleController()),
+                );
               },
-              child: Image(image: AssetImage('assets/Home.png'), width: 35 * scale, height: 35 * scale),
+              child: Image(
+                image: AssetImage('assets/Home.png'),
+                width: 35 * scale,
+                height: 35 * scale,
+              ),
             ),
           ),
-          SizedBox(width: 18 * scale),
+                    SizedBox(width: 18 * scale),
           Padding(
             padding: EdgeInsets.only(top: 28 * scale),
             child: InkWell(
