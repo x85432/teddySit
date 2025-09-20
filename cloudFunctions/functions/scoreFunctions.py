@@ -126,9 +126,9 @@ def calculate_tia(landmarks):
         angle_deg = math.degrees(angle_rad)
         
         # 根據圖片標準給出等級
-        if angle_deg <= 5:
+        if angle_deg <= 7:
             level = 3
-        elif 5 < angle_deg <= 10:
+        elif 7 < angle_deg <= 10:
             level = 2
         elif 10 <= angle_deg <= 15:
             level = 1
