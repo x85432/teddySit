@@ -1,7 +1,6 @@
 {
   "functions": [
     {
-      "source": "functions",
       "codebase": "default",
       "ignore": [
         "venv",
@@ -10,7 +9,14 @@
         "firebase-debug.*.log",
         "*.local"
       ],
+      "source": "functions",
       "runtime": "python313"
     }
-  ]
+  ],
+  "firestore": {
+    "database": "(default)",
+    "location": "asia-east1",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
 }

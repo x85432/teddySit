@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 
-const List<String> list = <String>['Easy', 'Medium', 'Hard'];
+double scale = 2340/2400;
 
-// DropdownButton
 class DropdownButtonExample extends StatefulWidget {
-  final double width; 
-  final double height; 
-  
+  final double width;
+  final double height;
+  final List<String> options; // ✅ 從外部傳入選單
+  final ValueChanged<String> onChanged;
+
   const DropdownButtonExample({
     super.key,
-    this.width = 130,
-    this.height = 41,
+    this.width = 150*2340/2400,
+    this.height = 41*2340/2400,
+    required this.options,
+    required this.onChanged,
   });
 
   @override
@@ -20,16 +23,33 @@ class DropdownButtonExample extends StatefulWidget {
 }
 
 class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  String dropdownValue = list.first;
+  String? dropdownValue;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.options.isNotEmpty) {
+      dropdownValue = widget.options.first;
+    }
+  }
+
+  @override
+  void didUpdateWidget(DropdownButtonExample oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 如果舊的選項不存在於新選項中，重置選中值
+    if (dropdownValue == null || !widget.options.contains(dropdownValue)) {
+      dropdownValue = widget.options.isNotEmpty ? widget.options.first : null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: widget.width,
       height: widget.height,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: EdgeInsets.symmetric(horizontal: 12*scale),
       decoration: BoxDecoration(
-        color: Color(0x48D9D9D9),
+        color: const Color(0x48D9D9D9),
         borderRadius: BorderRadius.circular(18),
       ),
       child: DropdownButtonHideUnderline(
@@ -42,14 +62,16 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
           elevation: 8,
           style: GoogleFonts.inknutAntiqua(
             color: const Color(0xFFCDCCD3),
-            fontSize: 14,
+            fontSize: 14*scale,
           ),
           onChanged: (String? value) {
+            if (value == null) return;
             setState(() {
-              dropdownValue = value!;
+              dropdownValue = value;
             });
+            widget.onChanged(value); // 通知父層
           },
-          items: list.map<DropdownMenuItem<String>>((String value) {
+          items: widget.options.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Center(child: Text(value)),
@@ -60,6 +82,8 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
     );
   }
 }
+
+
 
 // Video
 class VideoCard extends StatefulWidget {
@@ -113,8 +137,8 @@ class _VideoCardState extends State<VideoCard> {
         ClipRRect(
           borderRadius: BorderRadius.circular(25),
           child: Container(
-            width: 316,
-            height: 510,
+            width: 316*scale*0.9,
+            height: 510*scale*0.9,
             color: Colors.black,
             child: _controller.value.isInitialized
                 ? VideoPlayer(_controller)
@@ -125,5 +149,4 @@ class _VideoCardState extends State<VideoCard> {
     );
   }
 }
-
 
