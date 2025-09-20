@@ -20,6 +20,9 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart'; // for kDebug
 
+import 'notifications/permission_handler.dart';
+import 'notifications/service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -87,6 +90,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final NotificationPermissionHandler _permissionHandler =
+      NotificationPermissionHandler(); // add this
+
+  Future<void> _requestPermissionsOnStartup() async { // add this
+    bool permissionsGranted =
+        await _permissionHandler.checkNotificationPermissions();
+
+    if (!permissionsGranted) {
+      await _permissionHandler.requestNotificationPermissions();
+    }
+  }
+
   bool _isTimerRunning = false;
   bool _shouldReset = false;
 
@@ -118,6 +133,13 @@ class _MyHomePageState extends State<MyHomePage> {
       debugPrint('❌ 一般錯誤: $error');
     }
   }
+
+   @override
+  initState() { // add this
+    super.initState();
+    _requestPermissionsOnStartup(); // add this
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -236,8 +258,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     setState(() {
                       _isTimerRunning = true;
                       _shouldReset = false;
+                      NotificationService().showBasicNotification( // add this
+                        'Countdown Timer',
+                        'Time is up!',
+                      );
                     });
                     debugPrint("Start button clicked!");
+
                   },
                   child: Image(image: AssetImage('assets/Start.png'), width: 52, height: 52),
                 ),
