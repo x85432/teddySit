@@ -199,15 +199,19 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: EdgeInsets.only(top: 28 * scale), 
             child: InkWell(
               onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const BleController()),
+                );
                 Fluttertoast.showToast(
-                msg: "藍芽已開啟！",
-                toastLength: Toast.LENGTH_SHORT, // 或 Toast.LENGTH_LONG
-                gravity: ToastGravity.BOTTOM,    // TOP, CENTER, BOTTOM
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.black54,
-                textColor: Colors.white,
-                fontSize: 16.0,
-              );
+                  msg: "藍芽已開啟！",
+                  toastLength: Toast.LENGTH_SHORT, // 或 Toast.LENGTH_LONG
+                  gravity: ToastGravity.BOTTOM,    // TOP, CENTER, BOTTOM
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black54,
+                  textColor: Colors.white,
+                  fontSize: 16.0,
+                );
                 //Navigator.popUntil(context, ModalRoute.withName('/home'));
                 // Navigate to settings page
                 //getSensorDataByTimeRange(deviceId: "redTest", startTime: "2025-09-20T00:00:00+08:00", endTime: "2025-09-21T00:00:00+08:00", collectionName: "scores");
@@ -215,24 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Image(image: AssetImage('assets/bluetooth.png'), width: 35 * scale, height: 35 * scale),
             ),
           ),
-          SizedBox(width: 18 * scale),
-          Padding(
-            padding: EdgeInsets.only(top: 28 * scale),
-            child: InkWell(
-              onTap: () {
-                // 跳轉到 BleController 頁面
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const BleController()),
-                );
-              },
-              child: Image(
-                image: AssetImage('assets/Home.png'),
-                width: 35 * scale,
-                height: 35 * scale,
-              ),
-            ),
-          ),
+          
                     SizedBox(width: 18 * scale),
           Padding(
             padding: EdgeInsets.only(top: 28 * scale),
