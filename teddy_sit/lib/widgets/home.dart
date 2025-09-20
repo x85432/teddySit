@@ -2,6 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 
+// 時間記錄類別
+class TimeSegment {
+  final DateTime startTime;
+  final DateTime? endTime;
+
+  TimeSegment({required this.startTime, this.endTime});
+
+  Duration get duration {
+    if (endTime != null) {
+      return endTime!.difference(startTime);
+    }
+    return DateTime.now().add(Duration(hours: 8)).difference(startTime);
+  }
+
+  String get formattedStart => '${startTime.year}-${startTime.month.toString().padLeft(2, '0')}-${startTime.day.toString().padLeft(2, '0')} ${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}:${startTime.second.toString().padLeft(2, '0')}';
+  String get formattedEnd => endTime != null ? '${endTime!.year}-${endTime!.month.toString().padLeft(2, '0')}-${endTime!.day.toString().padLeft(2, '0')} ${endTime!.hour.toString().padLeft(2, '0')}:${endTime!.minute.toString().padLeft(2, '0')}:${endTime!.second.toString().padLeft(2, '0')}' : '進行中';
+}
+
+class TimerSession {
+  final List<TimeSegment> segments = [];
+
+  void startSegment() {
+    segments.add(TimeSegment(startTime: DateTime.now().add(Duration(hours: 8))));
+  }
+
+  void endCurrentSegment() {
+    if (segments.isNotEmpty && segments.last.endTime == null) {
+      final lastSegment = segments.removeLast();
+      segments.add(TimeSegment(startTime: lastSegment.startTime, endTime: DateTime.now().add(Duration(hours: 8))));
+    }
+  }
+
+  Duration get totalDuration {
+    return segments.fold(Duration.zero, (total, segment) => total + segment.duration);
+  }
+
+  String getSessionSummary() {
+    String summary = '📊 完整使用記錄：\n總時長: ${_formatDuration(totalDuration)}\n時間段:\n';
+    for (int i = 0; i < segments.length; i++) {
+      final segment = segments[i];
+      summary += '  ${i + 1}. ${segment.formattedStart} - ${segment.formattedEnd} (${_formatDuration(segment.duration)})\n';
+    }
+    return summary;
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String hours = twoDigits(duration.inHours);
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+    return duration.inHours > 0 ? '$hours:$minutes:$seconds' : '$minutes:$seconds';
+  }
+}
+
 double scale = 2340/2440;
 // Logo
 class Teddysit extends StatelessWidget {
@@ -550,6 +604,7 @@ class ElapsedTime extends StatefulWidget {
 class _ElapsedTimeState extends State<ElapsedTime> {
   Timer? _timer;
   int _seconds = 0;
+  TimerSession _session = TimerSession();  // 新增時間記錄
 
   @override
   void initState() {
@@ -572,6 +627,15 @@ class _ElapsedTimeState extends State<ElapsedTime> {
   }
 
   void _startTimer() {
+    // 避免重複啟動
+    if (_timer != null && _timer!.isActive) {
+      return;
+    }
+
+    _session.startSegment();  // 開始新的時間段
+    final now = DateTime.now().add(Duration(hours: 8));
+    debugPrint('⏰ 開始時間: ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}');
+
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _seconds++;
@@ -580,13 +644,26 @@ class _ElapsedTimeState extends State<ElapsedTime> {
   }
 
   void _pauseTimer() {
+    _session.endCurrentSegment();  // 結束當前時間段
+    final now = DateTime.now().add(Duration(hours: 8));
+    debugPrint('⏸️ 暫停時間: ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}');
+    debugPrint(_session.getSessionSummary());  // 顯示目前記錄
+
+
     _timer?.cancel();
   }
 
   void _stopTimer() {
+    _session.endCurrentSegment();  // 結束當前時間段
+    final now = DateTime.now().add(Duration(hours: 8));
+    debugPrint('⏹️ 結束時間: ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}');
+    debugPrint(_session.getSessionSummary());  // 顯示完整記錄
+
+
     _timer?.cancel();
     setState(() {
       _seconds = 0;
+      _session = TimerSession();  // 重置會話
     });
   }
 
@@ -600,6 +677,16 @@ class _ElapsedTimeState extends State<ElapsedTime> {
     } else {
       return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
     }
+  }
+
+  // 取得完整時間記錄的方法
+  TimerSession getCurrentSession() {
+    return _session;
+  }
+
+  // 直接取得時間段列表
+  List<TimeSegment> getSegments() {
+    return _session.segments;
   }
 
   @override
