@@ -53,6 +53,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # notifications
+  flutter_local_notifications: ^17.2.2
+  permission_handler: ^12.0.1
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
