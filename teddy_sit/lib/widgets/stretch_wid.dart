@@ -83,6 +83,32 @@ class _DropdownButtonExampleState extends State<DropdownButtonExample> {
   }
 }
 
+// GIF
+class GifCard extends StatelessWidget {
+  final String gifPath;
+  final double width;
+  final double height;
+
+  const GifCard({
+    super.key,
+    required this.gifPath,
+    this.width = 320,
+    this.height = 320,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child: Container(
+        width: width,
+        height: height,
+        color: Colors.black,
+        child: Image.asset(gifPath, fit: BoxFit.cover),
+      ),
+    );
+  }
+}
 
 
 // Video

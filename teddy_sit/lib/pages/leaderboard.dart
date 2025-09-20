@@ -60,8 +60,8 @@ class LeaderboardPage extends StatelessWidget {
       body: 
         Column(
           children: [
-            SizedBox(height: 30*scale),
-            Padding(padding: EdgeInsets.only(left: 14*scale),
+            SizedBox(height: 10*scale),
+            Padding(padding: EdgeInsets.only(left: 37*scale),
               child:
                 Row(
                   children: [
@@ -80,17 +80,17 @@ class LeaderboardPage extends StatelessWidget {
                 
             ),
             SizedBox(height: 15*scale),
-            Expanded(
-              child: Stack(
+            
+              Stack(
                 children: [
                   Positioned(
-                    left: 20*scale,
+                    left: 13*scale,
                     child: 
                       Opacity(
                         opacity: 0.24,
                         child: Container(
                           width: 370*scale,
-                          height: 445*scale,
+                          height: 420*scale,
                           decoration: ShapeDecoration(
                             gradient: LinearGradient(
                               begin: Alignment(0.0, -1.0),
@@ -105,34 +105,30 @@ class LeaderboardPage extends StatelessWidget {
                       ),
                   ),
                   
-                  SizedBox(
-                    height: 445*scale, 
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: others.map((data) => Column(
-                          children: [
-                            Rank(
-                              rank: data['rank'],
-                              playerName: data['name'],
-                              score: data['score'],
-                              imagePath: data['imagePath'],
-                            ),
-                             if (data['rank'] % 8 != 0) 
-                               Divider(
-                                color: Color.fromARGB(123, 255, 255, 255),
-                                thickness: 2*scale,
-                                height: 1*scale,
-                                indent: 35*scale,
-                                endIndent: 40,
+                  Positioned(
+                    child: SizedBox(
+                      height: 420*scale, 
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: others.map((data) => Column(
+                            children: [
+                              Rank(
+                                rank: data['rank'],
+                                playerName: data['name'],
+                                score: data['score'],
+                                imagePath: data['imagePath'],
                               ),
-                          ],
-                        )).toList(),
+                              
+                            ],
+                          )).toList(),
+                        ),
                       ),
-                    ),
+                    )
                   )
+                  
                 ],
               ),
-            )
+            
           ],
         ),
     );

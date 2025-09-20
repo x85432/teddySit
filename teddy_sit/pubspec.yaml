@@ -124,6 +124,9 @@ flutter:
     - assets/B3_4.png
     - assets/B3_5.png
     - assets/B3_6.png
+    - assets/e1.gif
+    - assets/e2.gif
+    - assets/e3.gif
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
