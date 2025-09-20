@@ -51,14 +51,14 @@ def calculate_cva(landmarks):
         angle_deg = math.degrees(math.acos(cos_theta))
         
         # 根據圖片標準給出等級
-        if angle_deg >= 50:
-            level = 4
-        elif 45 <= angle_deg < 50:
+        if angle_deg >= 60:
             level = 3
-        elif 35 <= angle_deg < 45:
+        elif 50 <= angle_deg < 60:
             level = 2
-        else:
+        elif 40 <= angle_deg < 50:
             level = 1
+        else:
+            level = 0
         return angle_deg, level
         
     except Exception as e:
@@ -126,14 +126,14 @@ def calculate_tia(landmarks):
         angle_deg = math.degrees(angle_rad)
         
         # 根據圖片標準給出等級
-        if angle_deg <= 5:
-            level = 4
-        elif 6 <= angle_deg <= 15:
+        if angle_deg <= 7:
             level = 3
-        elif 16 <= angle_deg <= 30:
+        elif 7 < angle_deg <= 10:
             level = 2
-        else:
+        elif 10 <= angle_deg <= 15:
             level = 1
+        else:
+            level = 0
         return angle_deg, level
         
     except Exception as e:
