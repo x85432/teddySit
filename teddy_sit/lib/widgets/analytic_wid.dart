@@ -127,7 +127,7 @@ class Report extends StatelessWidget {
             ),
             Positioned(
               left: 113,
-              top: 14,
+              top: 6,
               child: Text(
                 textAlign: TextAlign.center,
                 'Your Posture\nHealth Level &\nFinal Grade',

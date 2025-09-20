@@ -49,7 +49,7 @@ class NotificationService {
         channelDescription: 'This notification shows when time stops',
         importance: Importance.high,
         priority: Priority.high,
-        icon: '@mipmap/ic_launcher',
+        icon: 'enterbear',
         largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
         styleInformation: BigTextStyleInformation(''),
         color: Color(0xFF4CAF50),

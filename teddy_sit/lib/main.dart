@@ -338,8 +338,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       _isTimerRunning = true;
                       _shouldReset = false;
                       NotificationService().showBasicNotification( // add this
-                        'Countdown Timer',
-                        'Time is up!',
+                        'Teddy Sit',
+                        '請儘快回到正確坐姿',
                       );
                     });
                     debugPrint("Start button clicked!");

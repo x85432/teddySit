@@ -77,8 +77,8 @@ class Rank3 extends StatelessWidget {
               ],
             ),
             
-            SizedBox(height: rank == 3 ? 20*scale*0.9 : 10*scale*0.9),
-            SizedBox(height: type == 1 ? 15*scale*0.9 : 0),
+            SizedBox(height: rank == 3 ? 20*scale*0.5 : 10*scale*0.5),
+            SizedBox(height: type == 1 ? 15*scale*0.5 : 0),
             Text(
               score.toString(),
               textAlign: TextAlign.center,
@@ -101,7 +101,7 @@ class Rank3 extends StatelessWidget {
               playerName,
               textAlign: TextAlign.center,
               style: GoogleFonts.inknutAntiqua(
-                fontSize: 14*scale,
+                fontSize: 12*scale,
                 color: Color(0xFFCDCCD3),
               ),
             ),
