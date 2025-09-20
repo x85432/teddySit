@@ -72,6 +72,9 @@ class AuthService {
         fontSize: 14.0,
       );
 
+      // 註冊成功後登出用戶，要求重新登入
+      await FirebaseAuth.instance.signOut();
+
       await Future.delayed(const Duration(seconds: 1));
       Navigator.pop(context);
       

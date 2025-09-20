@@ -32,10 +32,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserData() async {
     final userData = await _profileService.getUserProfile();
-    setState(() {
-      _userData = userData;
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _userData = userData;
+        _isLoading = false;
+      });
+    }
   }
 
   @override

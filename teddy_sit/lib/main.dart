@@ -8,6 +8,7 @@ import 'pages/leaderboard.dart';
 import 'pages/stretch.dart';
 import 'pages/analytic.dart';
 import 'pages/sittingpose.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 import 'package:firebase_core/firebase_core.dart'; // 導入 Firebase 核心套件
@@ -44,8 +45,8 @@ void main() async {
     );
   }
 
-  FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-  FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  // 每次啟動都自動登出
+  await FirebaseAuth.instance.signOut();
   runApp(const MyApp());
 }
 
