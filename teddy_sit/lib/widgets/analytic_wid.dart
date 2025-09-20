@@ -77,8 +77,28 @@ class Report extends StatelessWidget {
             Opacity(
               opacity: 0.24,
               child: Container(
-                width: 135*scale,
-                height: 204*0.8*scale,
+                width: 450*0.8*scale,
+                height: 110*0.8*scale,
+                decoration: ShapeDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment(0.00, -1.00),
+                    end: Alignment(0, 1),
+                    colors: [Color(0xFFE8EBFF), Color(0xFF9886FF)]    
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ), 
+              ),
+            ),
+            Positioned(
+              left: 15,
+              top: 14.5,
+              child: Opacity(
+              opacity: 0.24,
+              child: Container(
+                width: 74*0.8*scale,
+                height: 74*0.8*scale,
                 decoration: ShapeDecoration(
                   gradient: const LinearGradient(
                     begin: Alignment(0.00, -1.00),
@@ -91,41 +111,40 @@ class Report extends StatelessWidget {
                 ), 
               ),
             ),
+            ),
             Positioned(
-              left: 40*scale,
-              top: 7*scale,
+              left: 30,
+              top: 16,
               child: Text(
                 'A',
                 style: GoogleFonts.inknutAntiqua(
-                  fontSize: 60*scale,
-                  color: Color(0xFFFFFFFF)
+                  fontSize: 32,
+                  color: Colors.white,
                 ),
+               
               )
             ),
-            Positioned(              
-              top: 90*scale,
-              left: 22*scale,
+            Positioned(
+              left: 113,
+              top: 14,
               child: Text(
-                textAlign: TextAlign.right,
-                'Your\nPosture\nhealth Level',
+                textAlign: TextAlign.center,
+                'Your Posture\nHealth Level &\nFinal Grade',
                 style: GoogleFonts.inknutAntiqua(
-                  fontSize: 13*scale,
-                  color: Color(0xFFCDCCD3),
-                  height: 20/16*scale
+                  fontSize: 14.5,
+                  color: Colors.white,
                 ),
+               
               )
-            )
-            
-          ],
-        ),
-        SizedBox(width: 8*scale),
-        Stack(
-          children: [
-            Opacity(
+            ),
+            Positioned(
+              left: 280,
+              top: 14.5,
+              child: Opacity(
               opacity: 0.24,
               child: Container(
-                width: 227*scale,
-                height: 204*0.8*scale,
+                width: 74*0.8*scale,
+                height: 74*0.8*scale,
                 decoration: ShapeDecoration(
                   gradient: const LinearGradient(
                     begin: Alignment(0.00, -1.00),
@@ -138,31 +157,24 @@ class Report extends StatelessWidget {
                 ), 
               ),
             ),
-            Positioned(              
-              top: 18*scale,
-              left: 32*scale,
-              child: Text(
-                textAlign: TextAlign.center,
-                'Click here to get the\nanalytic report',
-                style: GoogleFonts.inknutAntiqua(
-                  fontSize: 13*scale,
-                  color: Color(0xFFCDCCD3),
-                  height: 20/16*scale
-                ),
-              )
             ),
             Positioned(
-              left: 75*scale,
-              top: 65*scale,
-              child: Image(
-                image: AssetImage('assets/conversation.png'),
-                width: 102 * 0.8*scale,
-                height: 102 * 0.8*scale,)
-              
-            )
+              left: 285,
+              top: 19.6,
+              child: Text(
+                '80',
+                style: GoogleFonts.inknutAntiqua(
+                  fontSize: 30,
+                  color: Colors.white,
+                ),
+               
+              )
+            ),
+            
+            
+            
           ],
         ),
-
       ],
     );
   }
@@ -192,7 +204,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 320*scale, 
+      height: 260*scale, 
       width: 350*scale,
       child: Column(
         children: [
@@ -229,7 +241,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
   Widget buildBarChart() {
     return SizedBox(
       key: const ValueKey('barChart'),
-      height: 280*scale,
+      height: 220*scale,
       width: 350*scale,
       child: BarChart(
         BarChartData(
@@ -251,7 +263,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 40*scale,
-                interval: 20*scale,
+                interval: 20,
                 getTitlesWidget: (value, meta) {
                   return Text(
                     '${value.toInt()}',
@@ -321,7 +333,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
 
     return SizedBox(
       key: const ValueKey('lineChart'),
-      height: 280*scale,
+      height: 220*scale,
       width: 350*scale,
       child: TweenAnimationBuilder<double>(
         tween: Tween<double>(begin: 0, end: 1),
@@ -354,10 +366,10 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
                     interval: 20,
                     getTitlesWidget: (value, meta) {
                       return Text(
-                        '${value.toInt()}pts',
+                        '${value.toInt()}',
                         style: GoogleFonts.inknutAntiqua(
                           color: Colors.white,
-                          fontSize: 9*scale,
+                          fontSize: 12*scale,
                         ),
                       );
                     },

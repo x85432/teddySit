@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../widgets/home.dart';
 import '../services/profile_service.dart';
 
-double scale = 2340/2400;
+double scale = 2290/2400;
 
 class EditProfilePage extends StatefulWidget{
   const EditProfilePage({super.key});
@@ -78,6 +78,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       );
     }
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: 100*scale,

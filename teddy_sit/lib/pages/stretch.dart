@@ -84,7 +84,7 @@ class _StretchPageState extends State<StretchPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(width: 248*scale),
+                SizedBox(width: 200*scale),
                 DropdownButtonExample(
                   options: videoOptions,
                   onChanged: (value) {

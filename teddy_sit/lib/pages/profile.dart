@@ -5,7 +5,7 @@ import '../services/auth_service.dart';
 import '../services/profile_service.dart';
 import 'editprofile.dart';
 
-double scale = 2340/2400;
+double scale = 2290/2400;
 
 class ProfilePage extends StatefulWidget{
   const ProfilePage({super.key});
