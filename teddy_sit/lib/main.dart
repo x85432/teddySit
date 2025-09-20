@@ -52,8 +52,8 @@ void main() async {
   // 每次啟動都自動登出
   await FirebaseAuth.instance.signOut();
 
-  FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-  FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  // FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   runApp(const MyApp());
 }
 
@@ -193,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
                 // Navigate to settings page
-                // getSensorDataByTimeRange(deviceId: "redTest", startTime: "2025-09-20T00:00:00Z", endTime: "2025-09-21T00:00:00Z", collectionName: "scores");
+                getSensorDataByTimeRange(deviceId: "redTest", startTime: "2025-09-20T00:00:00Z", endTime: "2025-09-21T00:00:00Z", collectionName: "scores");
               },
               child: Image(image: AssetImage('assets/Home.png'), width: 35 * scale, height: 35 * scale),
             ),
@@ -316,7 +316,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       _shouldReset = false;
                     });
                     debugPrint('Pause button clicked!');
-                    callDoNotDisturb();
                   },
                   child: Image(image: AssetImage('assets/Pause.png'), width: 52 * scale, height: 52 * scale),
                 ),
