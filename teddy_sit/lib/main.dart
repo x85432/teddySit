@@ -3,7 +3,6 @@ import 'package:teddy_sit/pages/Userprofile.dart';
 import 'widgets/home.dart';
 import 'widgets/auth_wrapper.dart';
 import 'pages/profile.dart';
-import 'pages/Userprofile.dart';
 import 'pages/leaderboard.dart';
 import 'pages/stretch.dart';
 import 'pages/analytic.dart';
@@ -25,9 +24,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 // Notifications
 import 'notifications/permission_handler.dart';
 import 'notifications/service.dart';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -171,7 +167,9 @@ class _MyHomePageState extends State<MyHomePage> {
       final data = result.data;
       if (data["status"] == "success") {
         debugPrint("拿到 ${data['data'].length} 筆資料");
-        debugPrint(data['data']);
+        for (final record in data['data']) {
+          debugPrint(record.toString());
+        }
       } else {
         debugPrint("錯誤: ${data['message']}");
       }
@@ -195,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
                 // Navigate to settings page
-                getSensorDataByTimeRange(deviceId: "redTest", startTime: "2025-9-20", endTime: "", collectionName: "score");
+                // getSensorDataByTimeRange(deviceId: "redTest", startTime: "2025-09-20T00:00:00Z", endTime: "2025-09-21T00:00:00Z", collectionName: "scores");
               },
               child: Image(image: AssetImage('assets/Home.png'), width: 35 * scale, height: 35 * scale),
             ),
