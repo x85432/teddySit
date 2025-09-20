@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:teddy_sit/pages/piechart_test.dart';
 import '../widgets/home.dart';
 import '../widgets/analytic_wid.dart';
+import '../widgets/piechart_wid.dart';
 //import '../widgets/stretch_wid.dart';
 
 double scale = 2340/2400;
@@ -167,74 +169,47 @@ class _AnalyticPageState extends State<AnalyticPage> {
               barValues: barValuesSets[selectedOption]!,
             ),
           ),
-          SizedBox(height: 10*scale),
-          Row(
-            children: [
-              SizedBox(width: 20*scale),
-              Stack(
-                children: [
-                  Positioned(
-                    left: 14*scale,
-                    top: 23*scale,
-                    child: Text(
-                      'Longest Duration\nof Correct and\nIncorrect Posture',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.inknutAntiqua(
-                        fontSize: 16*scale,
-                        color: const Color(0xFFCDCCD3),
-                        height: 20/16*scale
-                      ),
-                    ),
-                  ),
-                  Opacity(
-                    opacity: 0.24,
-                    child: Container(
-                      width: 187*scale,
-                      height: 111*scale,
-                      decoration: ShapeDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Color(0xFFE7EAFF), Color(0xFF314AEF)],
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(width: 19*scale),
-              Column(
-                children:  [
-                  LongestTimeWid(minutes: correct, type: 0), 
-                  SizedBox(height: 19*scale),
-                  LongestTimeWid(minutes: incorrect, type: 1),
-                ],
-              ),
-            ],
-          ),
+          //SizedBox(height: 5*scale),
+          
           Align(
             alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(left: 26*scale, top: 18*scale),
-              child: Text(
-                'Statistic',
-                style: GoogleFonts.inknutAntiqua(
-                  fontSize: 14*scale,
-                  color: const Color(0xFFCDCCD3),
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PieChartPage()));
+              },
+              child:Padding(
+                padding: EdgeInsets.only(left: 38*scale, top: 15*scale),
+                child: Text(
+                  'Status Distribution',
+                  style: GoogleFonts.inknutAntiqua(
+                    fontSize: 14*scale,
+                    color: const Color(0xFFCDCCD3),
+                  ),
                 ),
               ),
-            ),
+            )
           ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(left: 21*scale, top: 8*scale),
-              child: Report(),
-            ),
+          SizedBox(height: 40,),
+          PieChartGrades(
+            grades: {
+              'A+': 10,
+              'A': 5,
+              'B': 3,
+              'C': 2,
+            },
+            scale: 0.72
           ),
+          
+          SizedBox(height: 45,),
+          Padding(
+            padding: EdgeInsets.only(left: 20),
+            child: Report()
+          )
+          
+          
         ],
       ),
     );
