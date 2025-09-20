@@ -9,11 +9,14 @@ import json
 import logging
 import os
 from uuid import uuid4
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
 
 # backend funcitons
 from scoreFunctions import calculate_cva
 from scoreFunctions import calculate_tia
+
+tz_utc8 = timezone(timedelta(hours=8))
 
 # 確保 Firebase Admin SDK 在模組載入時初始化一次
 # 這是確保 App Check 和其他 Firebase 服務在 Cloud Function 環境中正常工作的關鍵。
@@ -118,7 +121,7 @@ def process_sensor_data(request: https_fn.Request):
             
             # 2. 準備要寫入的分數資料
             score_data = {
-                'timestamp': reading_timestamp,
+                "timestamp": datetime.now(tz_utc8),
                 'cva_angle': cva_angle,
                 'cva_level': cva_level,
                 'tia_angle': tia_angle,
@@ -155,7 +158,7 @@ def process_sensor_data(request: https_fn.Request):
 @https_fn.on_call()
 def get_sensor_data_by_time_range(req: https_fn.CallableRequest) -> dict:
     try:
-        data = req.data
+        data = req.data  # Flutter call 傳來的 JSON
         device_id = data.get('device_id')
         collection_name = data.get('collection_name', 'raw_data')
         start_time_str = data.get('start_time')
@@ -165,35 +168,30 @@ def get_sensor_data_by_time_range(req: https_fn.CallableRequest) -> dict:
             raise ValueError("缺少必要參數")
 
         start_time_dt = datetime.fromisoformat(start_time_str.replace('Z', '+00:00'))
-        end_time_dt = datetime.fromisoformat(end_time_str.replace('Z', '+00:00'))
-
-        start_timestamp = firestore.Timestamp.from_datetime(start_time_dt)
-        end_timestamp = firestore.Timestamp.from_datetime(end_time_dt)
+        end_time_dt   = datetime.fromisoformat(end_time_str.replace('Z', '+00:00'))
 
         db = firestore.client()
         query = (
             db.collection('devices')
               .document(device_id)
               .collection(collection_name)
-              .where('timestamp', '>=', start_timestamp)
-              .where('timestamp', '<=', end_timestamp)
+              .where('timestamp', '>=', start_time_dt)
+              .where('timestamp', '<=', end_time_dt)
               .order_by('timestamp', direction=firestore.Query.ASCENDING)
         )
 
         results = []
         for doc in query.stream():
             doc_data = doc.to_dict()
-
-            # ✅ 處理 timestamp 兩種情況
             ts = doc_data.get("timestamp")
-            if isinstance(ts, firestore.Timestamp):
+            if isinstance(ts, datetime):
                 doc_data["timestamp"] = ts.isoformat()
-            elif isinstance(ts, (int, float)):  # 板子傳上來的 UNIX epoch
+            elif isinstance(ts, (int, float)):
                 dt = datetime.fromtimestamp(ts, tz=timezone.utc)
                 doc_data["timestamp"] = dt.isoformat()
-
             results.append(doc_data)
 
+        # ✅ return dict，不要 return Response
         return {"status": "success", "data": results}
 
     except Exception as e:
