@@ -67,6 +67,7 @@ class LongestTimeWid extends StatelessWidget {
 // Report
 class Report extends StatelessWidget {
   const Report({super.key});
+  
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +127,7 @@ class Report extends StatelessWidget {
             ),
             Positioned(
               left: 113,
-              top: 14,
+              top: 6,
               child: Text(
                 textAlign: TextAlign.center,
                 'Your Posture\nHealth Level &\nFinal Grade',

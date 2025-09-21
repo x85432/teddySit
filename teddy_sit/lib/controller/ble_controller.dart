@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// 你的裝置資訊（請換成實際值）
 final String deviceMacAddress = "20:BA:36:5C:DE:28"; // 注意大小寫不敏感 (Android only)
@@ -219,19 +220,36 @@ class _BleControllerState extends State<BleController> {
     super.dispose();
   }
 
+  /// 傳送 "ON"
+  Future<void> sendOnCommand() async {
+    await writeStringAsUtf8("ON");
+    setState(() {
+      _isOn = true;
+    });
+  }
+
+  /// 傳送 "OFF"
+  Future<void> sendOffCommand() async {
+    await writeStringAsUtf8("OFF");
+    setState(() {
+      _isOn = false;
+    });
+  }
+
   Widget _buildControls() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        SizedBox(height: 200,),
         ElevatedButton(
           onPressed: _isScanning ? null : connectByMac,
-          child: Text(_isScanning ? '掃描中...' : '連線到 $deviceMacAddress'),
+          child: Text(_isScanning ? 'Scanning...' : 'Connect to $deviceMacAddress', style: GoogleFonts.inknutAntiqua(fontSize: 15, color: Color(0xFF070C24)), ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 20),
         ElevatedButton(
           onPressed: _connectedDevice == null ? null : disconnect,
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          child: const Text('手動斷線'),
+          style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF7780BA)),
+          child: Text('Disconnect', style: GoogleFonts.inknutAntiqua(fontSize: 15, color: Colors.white70),),
         ),
         const SizedBox(height: 8),
          ElevatedButton(
@@ -253,26 +271,14 @@ class _BleControllerState extends State<BleController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('藍芽裝置 (固定 MAC)')),
+      appBar: AppBar(title: Text('Bluetooth Devices', style: GoogleFonts.inknutAntiqua(fontSize: 20, color: Colors.white70),), ),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
             _buildControls(),
             const SizedBox(height: 16),
-            Expanded(
-              child: ListView(
-                children: [
-                  Text('Adapter state: $_adapterState'),
-                  const SizedBox(height: 8),
-                  Text('Connected device: ${_connectedDevice?.remoteId.toString() ?? "--"}'),
-                  const SizedBox(height: 8),
-                  Text('Target characteristic: ${_targetCharacteristic?.uuid.toString() ?? "--"}'),
-                  const SizedBox(height: 16),
-                  const Text('Debug log 請看 console 輸出'),
-                ],
-              ),
-            ),
+            
           ],
         ),
       ),

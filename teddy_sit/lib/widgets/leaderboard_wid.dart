@@ -27,8 +27,8 @@ class Rank3 extends StatelessWidget {
         Opacity(
           opacity: 0.24,
           child: Container(
-            width: type == 1 ? 124*scale : 123*scale,
-            height: type == 1 ? 272*scale : 213*scale,
+            width: type == 1 ? 124*scale*0.9 : 123*scale*0.9,
+            height: type == 1 ? 272*scale*0.9 : 213*scale*0.9,
             decoration: ShapeDecoration(
               gradient: LinearGradient(
                 begin: Alignment(0.00, -1.00),
@@ -48,7 +48,7 @@ class Rank3 extends StatelessWidget {
           mainAxisSize: MainAxisSize.min, 
           crossAxisAlignment: CrossAxisAlignment.center, 
           children: [
-            SizedBox(height: 20*scale),
+            SizedBox(height: 20*scale*0.9),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -56,7 +56,7 @@ class Rank3 extends StatelessWidget {
                   rank.toString(),
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inika(
-                    fontSize: 64*scale,
+                    fontSize: 64*scale*0.9,
                     color: Colors.white,
                     height: 0.8*scale,
                   ),
@@ -70,25 +70,25 @@ class Rank3 extends StatelessWidget {
                               ? 'rd'
                               : 'th',
                   style: GoogleFonts.inika(
-                    fontSize: 24*scale,
+                    fontSize: 24*scale*0.9,
                     color: Colors.white,
                   ),
                 )
               ],
             ),
             
-            SizedBox(height: rank == 3 ? 20*scale : 10*scale),
-            SizedBox(height: type == 1 ? 15*scale : 0),
+            SizedBox(height: rank == 3 ? 20*scale*0.5 : 10*scale*0.5),
+            SizedBox(height: type == 1 ? 15*scale*0.5 : 0),
             Text(
               score.toString(),
               textAlign: TextAlign.center,
               style: GoogleFonts.inknutAntiqua(
-                fontSize: 14*scale,
+                fontSize: 14*scale*0.9,
                 color: Color(0xFFCDCCD3),
               ),
             ),
-            SizedBox(height: type == 1 ? 25*scale : 8*scale),
-            SizedBox(height: rank == 3 ? 0 : 7*scale),
+            SizedBox(height: type == 1 ? 25*scale*0.9 : 8*scale*0.9),
+            SizedBox(height: rank == 3 ? 0 : 7*scale*0.9),
             Image(
               image: imagePath != null
                   ? AssetImage(imagePath!)
@@ -96,12 +96,12 @@ class Rank3 extends StatelessWidget {
               width: 57*scale,
               height: 57*scale,
             ),
-            SizedBox(height: type == 1 ? 30*scale : 2*scale),
+            SizedBox(height: type == 1 ? 30*scale*0.9 : 2*scale*0.9),
             Text(
               playerName,
               textAlign: TextAlign.center,
               style: GoogleFonts.inknutAntiqua(
-                fontSize: 14*scale,
+                fontSize: 12*scale,
                 color: Color(0xFFCDCCD3),
               ),
             ),
@@ -135,7 +135,7 @@ class Rank extends StatelessWidget {
       height: 75.2*scale, 
       width: 370*scale,
       margin: EdgeInsets.symmetric(vertical: 6*scale, horizontal: 12*scale),
-      padding: EdgeInsets.fromLTRB(12*scale, 0, 25*scale, 0),  
+      padding: EdgeInsets.fromLTRB(6*scale, 0, 25*scale, 0),  
       
 
       decoration: BoxDecoration(
@@ -148,13 +148,18 @@ class Rank extends StatelessWidget {
           Column(
             children:[
               SizedBox(height: 11*scale),
-              Text(
+              SizedBox(
+                height: 50,
+                width: 40,
+                child: Text(
                 '$rank',
                 style: GoogleFonts.inika(
                   color: Colors.white,
-                  fontSize: 36*scale,
+                  fontSize: 36*scale*0.9,
                 ),
-              ),
+                textAlign: TextAlign.center,
+              ),)
+              
             ] 
           ),
           SizedBox(width: 15*scale),
