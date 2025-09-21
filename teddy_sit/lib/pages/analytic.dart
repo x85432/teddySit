@@ -26,7 +26,7 @@ class _AnalyticPageState extends State<AnalyticPage> {
 
   final Map<String, List<List<FlSpot>>> lineDataSets = {
     'Today': [
-      [FlSpot(0, 10), FlSpot(1, 20)],
+      [FlSpot(0, 10), FlSpot(1, 20), FlSpot.nullSpot, FlSpot(3, 5), FlSpot(4, 6)],
       [FlSpot(0, 30), FlSpot(1, 40)],
       [FlSpot(0, 50), FlSpot(1, 60)],
     ],

@@ -264,7 +264,7 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 40*scale,
-                interval: 15*scale,
+                interval: 20,
                 getTitlesWidget: (value, meta) {
                   return Text(
                     '${value.toInt()}',
@@ -367,10 +367,10 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
                     interval: 20,
                     getTitlesWidget: (value, meta) {
                       return Text(
-                        '${value.toInt()}pts',
+                        '${value.toInt()}',
                         style: GoogleFonts.inknutAntiqua(
                           color: Colors.white,
-                          fontSize: 9*scale,
+                          fontSize: 12*scale,
                         ),
                       );
                     },
