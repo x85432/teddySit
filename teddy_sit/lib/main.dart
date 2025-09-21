@@ -15,6 +15,7 @@ import 'firebase_options.dart';
 // import 'services/cloud_function_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'services/sensor_data_manager.dart';
 
 // Firebase App check
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -31,6 +32,9 @@ void main() async {
   await Firebase.initializeApp( // 初始化 Firebase
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // 初始化 SensorDataManager
+  await SensorDataManager.initialize();
 
   // 根據 kDebugMode 判斷是否為開發模式
   if (kDebugMode) {
@@ -148,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _requestPermissionsOnStartup(); // add this
   }
 
-  Future<void> getSensorDataByTimeRange({
+  Future<List<Map<String, dynamic>>?> getSensorDataByTimeRange({
     required String deviceId,
     required String startTime,
     required String endTime,
@@ -165,17 +169,31 @@ class _MyHomePageState extends State<MyHomePage> {
         "end_time": endTime,
       });
 
-      final data = result.data;
+      final data = Map<String, dynamic>.from(result.data);
       if (data["status"] == "success") {
-        debugPrint("拿到 ${data['data'].length} 筆資料");
-        for (final record in data['data']) {
-          debugPrint(record.toString());
-        }
+        final sensorData = (data['data'] as List).map((item) => Map<String, dynamic>.from(item)).toList();
+        debugPrint("拿到 ${sensorData.length} 筆資料");
+
+        // 將抓到的資料存儲到 SensorDataManager
+        await SensorDataManager.initialize();
+        await SensorDataManager.addSensorData(sensorData, startTime, endTime);
+        // await SensorDataManager.loadData();
+        // List<Map<String, dynamic>> datas = SensorDataManager.getAllSensorDataByDate("2025-09-20");
+        // for (final record in sensorData) {
+        //   debugPrint(record.toString());
+        // }
+        // Map<String, double> frameLevelStats = SensorDataManager.getFrameLevelStatsByDate("2025-09-20");
+        // for (final record in sensorData) {
+        //   debugPrint(record.toString());
+        // }
+        return sensorData;
       } else {
         debugPrint("錯誤: ${data['message']}");
+        return null;
       }
     } catch (e) {
       debugPrint("呼叫失敗: $e");
+      return null;
     }
   }
 
@@ -339,13 +357,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
                       if (segments.isNotEmpty) {
                         // 取得開始時間並格式化為台灣時區
-                        final startDateTime = segments.first.startTime;
-                        final startTime = '${startDateTime.year.toString().padLeft(4, '0')}-${startDateTime.month.toString().padLeft(2, '0')}-${startDateTime.day.toString().padLeft(2, '0')}T${startDateTime.hour.toString().padLeft(2, '0')}:${startDateTime.minute.toString().padLeft(2, '0')}:${startDateTime.second.toString().padLeft(2, '0')}+08:00';
+                        final startDateTime = segments.first.startTime!;
+                        final startTime = startDateTime.toIso8601String();
 
                         // 取得結束時間，設為該天的最後一秒作為 upper bound
-                        final lastSegmentEnd = segments.last.endTime ?? DateTime.now().add(Duration(hours: 8));
+                        final lastSegmentEnd = segments.last.endTime ?? DateTime.now();
                         final endDate = DateTime(lastSegmentEnd.year, lastSegmentEnd.month, lastSegmentEnd.day, 23, 59, 59);
-                        final endTime = '${endDate.year.toString().padLeft(4, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}T${endDate.hour.toString().padLeft(2, '0')}:${endDate.minute.toString().padLeft(2, '0')}:${endDate.second.toString().padLeft(2, '0')}+08:00';
+                        final endTime = endDate.toIso8601String();
 
                         debugPrint('  startTime: $startTime');
                         debugPrint('  endTime: $endTime');
@@ -353,13 +371,23 @@ class _MyHomePageState extends State<MyHomePage> {
                         debugPrint('  collectionName: scores');
 
 
-                        // 呼叫 getSensorDataByTimeRange
-                        await getSensorDataByTimeRange(
-                          deviceId: "redTest",
+                        // 呼叫 getSensorDataByTimeRange 並取得資料
+                        final sensorData = await getSensorDataByTimeRange(
+                          deviceId: "daniel",
                           startTime: startTime,
                           endTime: endTime,
+                          // startTime: "2025-09-20T19:50:00+08:00",
+                          // endTime: "2025-09-20T19:54:00+08:00",
                           collectionName: "scores",
                         );
+
+
+                        if (sensorData != null && sensorData.isNotEmpty) {
+                          // 儲存感測器資料
+                          debugPrint('儲存感測器資料中...');
+                          // SensorDataManager.addSensorData(sensorData, startTime, endTime);
+                        }
+                        
                       } else {
                         debugPrint('沒有時間段資料');
                       }
