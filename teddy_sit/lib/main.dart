@@ -370,6 +370,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(width: 39 * scale),
                 InkWell(
                   onTap: () async {
+                    final navigator = Navigator.of(context);
                     setState(() {
                       _isTimerRunning = false;
                       _shouldReset = true;
@@ -433,6 +434,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     });
 
                     await BleService.instance.sendOff();
+
+                    navigator.push(
+                      MaterialPageRoute(builder: (context) => const StretchPage()),
+                    );
+
+
                   },
                   child: Image(image: AssetImage('assets/Stop.png'), width: 52 * scale, height: 52 * scale),
                 ),
