@@ -30,7 +30,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 // bluetooth
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'services/ble_controller.dart';
+import 'controller/ble_controller.dart';
+import 'services/ble_service.dart';
+
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -217,12 +220,13 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: EdgeInsets.only(top: 28 * scale), 
             child: InkWell(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const BleController()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (_) => const BleController()),
+                // );
+                BleService.instance.connectByMac();
                 Fluttertoast.showToast(
-                  msg: "藍芽已開啟！",
+                  msg: "藍芽偵測啟動！",
                   toastLength: Toast.LENGTH_SHORT, // 或 Toast.LENGTH_LONG
                   gravity: ToastGravity.BOTTOM,    // TOP, CENTER, BOTTOM
                   timeInSecForIosWeb: 1,
@@ -333,29 +337,33 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children:[
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     setState(() {
                       _isTimerRunning = true;
                       _shouldReset = false;
                       NotificationService().showBasicNotification( // add this
                         'Teddy Sit',
-                        '請儘快回到正確坐姿',
+                        '計時開始',
                       );
+                      
                     });
                     debugPrint("Start button clicked!");
+
+                    // 傳送 ON
+                    await BleService.instance.sendOn();
 
                   },
                   child: Image(image: AssetImage('assets/Start.png'), width: 52 * scale, height: 52 * scale),
                 ),
                 SizedBox(width: 39 * scale),
                 InkWell(
-                  onTap: ()
-                  {
+                  onTap: () async {
                     setState(() {
                       _isTimerRunning = false;
                       _shouldReset = false;
                     });
                     debugPrint('Pause button clicked!');
+                    await BleService.instance.sendOff();
                   },
                   child: Image(image: AssetImage('assets/Pause.png'), width: 52 * scale, height: 52 * scale),
                 ),
@@ -423,6 +431,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         });
                       }
                     });
+
+                    await BleService.instance.sendOff();
                   },
                   child: Image(image: AssetImage('assets/Stop.png'), width: 52 * scale, height: 52 * scale),
                 ),

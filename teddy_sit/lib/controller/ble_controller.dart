@@ -220,6 +220,22 @@ class _BleControllerState extends State<BleController> {
     super.dispose();
   }
 
+  /// 傳送 "ON"
+  Future<void> sendOnCommand() async {
+    await writeStringAsUtf8("ON");
+    setState(() {
+      _isOn = true;
+    });
+  }
+
+  /// 傳送 "OFF"
+  Future<void> sendOffCommand() async {
+    await writeStringAsUtf8("OFF");
+    setState(() {
+      _isOn = false;
+    });
+  }
+
   Widget _buildControls() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

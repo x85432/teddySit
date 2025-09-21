@@ -98,8 +98,19 @@ def process_sensor_data(request: https_fn.Request):
 
         for msg in messages:
             reading_timestamp = msg.get('timestamp')
-            doc_id = f"{reading_timestamp}_{uuid4().hex}" if reading_timestamp else uuid4().hex
+            doc_id = f"{reading_timestamp}_{uuid4().hex}" if reading_timestamp else uuid4().hex # 使用 UNIX Epoc 時間當作unique檔案名稱
+
+            if reading_timestamp:
+                try:
+                    # 轉成 datetime，並加上 UTC+8 時區
+                    ts = datetime.fromtimestamp(int(reading_timestamp), tz=tz_utc8)
+                except Exception:
+                    ts = datetime.now(tz_utc8)
+            else:
+                ts = datetime.now(tz_utc8)
             
+            
+
             # --- 核心改動區域: 處理並將資料分開寫入 ---
             landmarks = msg.get('landmarks')
             
@@ -115,8 +126,7 @@ def process_sensor_data(request: https_fn.Request):
                 if cva_level is not None and tia_level is not None:
                     frame_score = ((cva_level * 7 + tia_level * 3) / 10)
                     frame_score = (frame_score/3) * 100
-
-            
+    
             if frame_score >= 90:
                 frame_level = "A+"
             elif 90 > frame_score >= 75:
@@ -128,7 +138,7 @@ def process_sensor_data(request: https_fn.Request):
             
             # 2. 準備要寫入的分數資料
             score_data = {
-                "timestamp": datetime.now(tz_utc8),
+                "timestamp": ts,
                 'cva_angle': cva_angle,
                 'cva_level': cva_level,
                 'tia_angle': tia_angle,
@@ -136,6 +146,7 @@ def process_sensor_data(request: https_fn.Request):
                 'frame_score': frame_score,
                 'frame_level': frame_level
             }
+            msg["timestamp"] = ts # raw data也使用同類型的 timestamp 存入 database
             
             # 3. 定義兩個不同的文件參考
             raw_doc_ref   = db.collection('devices').document(device_id).collection('raw_data').document(doc_id)
