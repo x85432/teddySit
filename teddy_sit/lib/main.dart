@@ -118,6 +118,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _shouldReset = false;
   final double scale = 2220/2400;
 
+  var lastUpdate = "";
+
   Future<void> _requestPermissionsOnStartup() async { // add this
     bool permissionsGranted =
         await _permissionHandler.checkNotificationPermissions();
@@ -126,8 +128,6 @@ class _MyHomePageState extends State<MyHomePage> {
       await _permissionHandler.requestNotificationPermissions();
     }
   }
-
- 
 
   Future<void> callDoNotDisturb() async {
     try {
@@ -164,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _requestPermissionsOnStartup(); // add this
   }
 
-  Future<List<Map<String, dynamic>>?> getSensorDataByTimeRange({
+  Future<Map<String, Map<String, dynamic> >?> getSensorDataByTimeRange({
     required String deviceId,
     required DateTime startTimeUtc,
     required DateTime endTimeUtc,
@@ -187,16 +187,12 @@ class _MyHomePageState extends State<MyHomePage> {
             .map((item) => Map<String, dynamic>.from(item))
             .toList();
 
+        // 🔹 轉換成 Map<int, Map<String, dynamic>>
+        final Map<String, Map<String, dynamic>> mappedData = {
+          for (int i = 0; i < sensorData.length; i++) i.toString(): sensorData[i]
+        };
         debugPrint("拿到 ${sensorData.length} 筆資料");
-
-        await SensorDataManager.initialize();
-        await SensorDataManager.addSensorData(
-          sensorData,
-          startTimeUtc.toIso8601String(),
-          endTimeUtc.toIso8601String(),
-        );
-
-        return sensorData;
+        return mappedData;
       } else {
         debugPrint("錯誤: ${data['message']}");
         return null;
@@ -302,7 +298,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onTap: () {
                       Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const AnalyticPage()),
+                          MaterialPageRoute(builder: (context) => const AnalyticPage(lastUpate)),
                       );
                       debugPrint("Analytics card clicked!");
                     },
@@ -386,10 +382,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (elapsedTimeState != null) {
                       final session = (elapsedTimeState as dynamic).getCurrentSession();
                       final segments = session?.segments ?? []; // 這個session的所有segments
-                      for (var segment in segments) {
-                        debugPrint("測試 ${segment.startTime}");
-                        //debugPrint("測試 ${segment.endTime}");
-                      }
+                      
 
                       // debugPrint("測試$segments.toString()");
                       //debugPrint("測試${segments.last.endTime.toString()}");
@@ -397,34 +390,51 @@ class _MyHomePageState extends State<MyHomePage> {
                         final startDateTime = segments.first.startTime;
                         final lastSegmentEnd = segments.last.endTime ?? DateTime.now().toUtc();
                         debugPrint("測試${lastSegmentEnd.toString()}");
+                        lastUpdate = lastSegmentEnd;  // 更新最後一次 Stop 的時間
+
+
                         if (startDateTime == null) {
                           debugPrint("⚠️ Start time 為空，無法查詢");
                           return;
                         }
 
-                        // 撈Session資料
-                        final startUtc = startDateTime.toUtc();
-                        final endUtc = DateTime.utc(
-                          lastSegmentEnd.year,
-                          lastSegmentEnd.month,
-                          lastSegmentEnd.day,
-                          lastSegmentEnd.hour,
-                          lastSegmentEnd.minute,
-                          lastSegmentEnd.second
+                        final newData = [];
+                        for (var aSeg in segments) {
+                          final startUtc = aSeg.startTime;
+                          final endUtc = aSeg.endTime;
+                          final sensorData = await getSensorDataByTimeRange(
+                            deviceId: "daniel",
+                            startTimeUtc: startUtc,
+                            endTimeUtc: endUtc,
+                            collectionName: "scores",
+                          );
+                          sensorData?["startTime"] = {"Time": startUtc.toString()};
+                          sensorData?["endTime"]   = {"Time":   endUtc.toString()};
+                          newData.add(sensorData);
+                        }
+
+                        await SensorDataManager.initialize();
+                        await SensorDataManager.addSensorData(
+                          newData,
+                          startDateTime.toUtc().toIso8601String()
                         );
 
-                        debugPrint('  startTime(UTC): ${startUtc.toIso8601String()}');
-                        debugPrint('  endTime(UTC): ${endUtc.toIso8601String()}');
+                        // // 撈Session資料
+                        // final startUtc = startDateTime.toUtc();
+                        // final endUtc = DateTime.utc(
+                        //   lastSegmentEnd.year,
+                        //   lastSegmentEnd.month,
+                        //   lastSegmentEnd.day,
+                        //   lastSegmentEnd.hour,
+                        //   lastSegmentEnd.minute,
+                        //   lastSegmentEnd.second
+                        // );
 
-                        final sensorData = await getSensorDataByTimeRange(
-                          deviceId: "daniel",
-                          startTimeUtc: startUtc,
-                          endTimeUtc: endUtc,
-                          collectionName: "scores",
-                        );
-
-                        if (sensorData != null && sensorData.isNotEmpty) {
-                          debugPrint('✅ 撈到 ${sensorData.length} 筆感測器資料 (UTC)');
+                        // debugPrint('  startTime(UTC): ${startUtc.toIso8601String()}');
+                        // debugPrint('  endTime(UTC): ${endUtc.toIso8601String()}');
+                                           
+                        if (newData.isNotEmpty) {
+                          debugPrint('✅ 撈到 ${newData.length} 筆感測器資料 (UTC)');
                           await BleService.instance.sendOff();
                           navigator.push(
                             MaterialPageRoute(builder: (context) => const StretchPage()),

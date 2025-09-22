@@ -49,6 +49,7 @@ class SensorDataManager {
 
       final firestore = FirebaseFirestore.instance;
 
+      // print("測試資料: $_dateData");
       await firestore
       .collection("users anaylsis")          // 🔹 第一層: 使用者集合
       .doc(email)              // 🔹 單一使用者文件 (用 email 當 key)
@@ -104,7 +105,7 @@ class SensorDataManager {
   }
 
   // 新增感測器資料（自動存儲到 SharedPreferences）
-  static Future<void> addSensorData(List<Map<String, dynamic>> newData, String startTime, String endTime) async {
+  static Future<void> addSensorData(List newData, String startTime) async {
     final sessionId = DateTime.now().millisecondsSinceEpoch.toString();
     // 從 startTime 提取日期部分
     final date = DateTime.parse(startTime).toString().split(' ')[0];
@@ -115,17 +116,16 @@ class SensorDataManager {
     }
 
     // 創建新的 session 資料（不包含 sessionId，因為 sessionId 是 key）
-    final sessionData = [
-      {
+    final sessionData = {
         'startTime': startTime,
-        'endTime': endTime,
+        // 'endTime': endTime,
         'dataCount': newData.length,
         'sensorData': newData,
-      }
-    ];
-
+      };
+    
     // 以 sessionId 作為 key 存儲到對應日期中
     _dateData[date]![sessionId] = sessionData;
+    print("session data: $sessionData");
 
     // 自動存儲到 SharedPreferences
     await saveData();
@@ -312,12 +312,12 @@ class SensorDataManager {
   }
 
   // 取得從現在開始到30秒前的感測器資料
-  static List<Map<String, dynamic>> getSensorDataLast30Seconds(int num) {
+  static List<Map<String, dynamic>> getSensorDataLast30Seconds(String nowString, int num) {
     // final now = DateTime.parse("2025-09-20 19:54:00+08:00"); // For testing purpose
     
-    final now = DateTime.now().toUtc(); // 台灣時間 UTC+8
-    debugPrint('現在時間 (UTC+8): $now');
-    final thirtySecondsAgo = now.subtract(Duration(seconds: num));
+    final nowDate = DateTime.parse(nowString); 
+    debugPrint('現在時間 (UTC+8): $nowDate');
+    final thirtySecondsAgo = nowDate.subtract(Duration(seconds: num));
     int ten = 10;
     List<Map<String, dynamic>> recentData = [];
 
