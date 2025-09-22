@@ -298,7 +298,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onTap: () {
                       Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const AnalyticPage(lastUpate)),
+                          MaterialPageRoute(builder: (context) => const AnalyticPage()),
                       );
                       debugPrint("Analytics card clicked!");
                     },
