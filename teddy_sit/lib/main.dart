@@ -163,8 +163,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<List<Map<String, dynamic>>?> getSensorDataByTimeRange({
     required String deviceId,
-    required String startTime,
-    required String endTime,
+    required DateTime startTimeUtc,
+    required DateTime endTimeUtc,
     String collectionName = "score",
   }) async {
     try {
@@ -174,27 +174,25 @@ class _MyHomePageState extends State<MyHomePage> {
       final result = await callable.call({
         "device_id": deviceId,
         "collection_name": collectionName,
-        "start_time": startTime,
-        "end_time": endTime,
+        "start_time": startTimeUtc.toUtc().toIso8601String(), // 一律轉成 UTC ISO8601
+        "end_time": endTimeUtc.toUtc().toIso8601String(),
       });
 
       final data = Map<String, dynamic>.from(result.data);
       if (data["status"] == "success") {
-        final sensorData = (data['data'] as List).map((item) => Map<String, dynamic>.from(item)).toList();
+        final sensorData = (data['data'] as List)
+            .map((item) => Map<String, dynamic>.from(item))
+            .toList();
+
         debugPrint("拿到 ${sensorData.length} 筆資料");
 
-        // 將抓到的資料存儲到 SensorDataManager
         await SensorDataManager.initialize();
-        await SensorDataManager.addSensorData(sensorData, startTime, endTime);
-        // await SensorDataManager.loadData();
-        // List<Map<String, dynamic>> datas = SensorDataManager.getAllSensorDataByDate("2025-09-20");
-        // for (final record in sensorData) {
-        //   debugPrint(record.toString());
-        // }
-        // Map<String, double> frameLevelStats = SensorDataManager.getFrameLevelStatsByDate("2025-09-20");
-        // for (final record in sensorData) {
-        //   debugPrint(record.toString());
-        // }
+        await SensorDataManager.addSensorData(
+          sensorData,
+          startTimeUtc.toIso8601String(),
+          endTimeUtc.toIso8601String(),
+        );
+
         return sensorData;
       } else {
         debugPrint("錯誤: ${data['message']}");
@@ -385,41 +383,44 @@ class _MyHomePageState extends State<MyHomePage> {
                       final segments = session?.segments ?? [];
 
                       if (segments.isNotEmpty) {
-                        // 取得開始時間並格式化為台灣時區
-                        final startDateTime = segments.first.startTime!;
-                        final startTime = startDateTime.toIso8601String();
+                        final startDateTime = segments.first.startTime;
+                        final lastSegmentEnd = segments.last.endTime ?? DateTime.now().toUtc();
 
-                        // 取得結束時間，設為該天的最後一秒作為 upper bound
-                        final lastSegmentEnd = segments.last.endTime ?? DateTime.now();
-                        final endDate = DateTime(lastSegmentEnd.year, lastSegmentEnd.month, lastSegmentEnd.day, 23, 59, 59);
-                        final endTime = endDate.toIso8601String();
+                        if (startDateTime == null) {
+                          debugPrint("⚠️ Start time 為空，無法查詢");
+                          return;
+                        }
 
-                        debugPrint('  startTime: $startTime');
-                        debugPrint('  endTime: $endTime');
-                        debugPrint('  deviceId: redTest');
-                        debugPrint('  collectionName: scores');
+                        // 撈當天資料
+                        final startUtc = startDateTime.toUtc();
+                        final endUtc = DateTime.utc(
+                          lastSegmentEnd.year,
+                          lastSegmentEnd.month,
+                          lastSegmentEnd.day,
+                          23, 59, 59,
+                        );
 
+                        debugPrint('  startTime(UTC): ${startUtc.toIso8601String()}');
+                        debugPrint('  endTime(UTC): ${endUtc.toIso8601String()}');
 
-                        // 呼叫 getSensorDataByTimeRange 並取得資料
                         final sensorData = await getSensorDataByTimeRange(
                           deviceId: "daniel",
-                          startTime: startTime,
-                          endTime: endTime,
-                          // startTime: "2025-09-20T19:50:00+08:00",
-                          // endTime: "2025-09-20T19:54:00+08:00",
+                          startTimeUtc: startUtc,
+                          endTimeUtc: endUtc,
                           collectionName: "scores",
                         );
 
-
                         if (sensorData != null && sensorData.isNotEmpty) {
-                          // 儲存感測器資料
-                          debugPrint('儲存感測器資料中...');
-                          // SensorDataManager.addSensorData(sensorData, startTime, endTime);
+                          debugPrint('✅ 撈到 ${sensorData.length} 筆感測器資料 (UTC)');
+                          await BleService.instance.sendOff();
+                          navigator.push(
+                            MaterialPageRoute(builder: (context) => const StretchPage()),
+                          );
+                        } else {
+                          debugPrint('⚠️ 沒有撈到資料 (UTC)');
                         }
-                        
-                      } else {
-                        debugPrint('沒有時間段資料');
                       }
+
                     } else {
                       debugPrint('無法取得 ElapsedTime 狀態');
                     }

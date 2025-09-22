@@ -13,7 +13,7 @@ class TimeSegment {
     if (endTime != null) {
       return endTime!.difference(startTime);
     }
-    return DateTime.now().add(Duration(hours: 8)).difference(startTime);
+    return DateTime.now().toUtc().difference(startTime);
   }
 
   String get formattedStart => '${startTime.year}-${startTime.month.toString().padLeft(2, '0')}-${startTime.day.toString().padLeft(2, '0')} ${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}:${startTime.second.toString().padLeft(2, '0')}';
@@ -24,13 +24,13 @@ class TimerSession {
   final List<TimeSegment> segments = [];
 
   void startSegment() {
-    segments.add(TimeSegment(startTime: DateTime.now().add(Duration(hours: 8))));
+    segments.add(TimeSegment(startTime: DateTime.now().toUtc()));
   }
 
   void endCurrentSegment() {
     if (segments.isNotEmpty && segments.last.endTime == null) {
       final lastSegment = segments.removeLast();
-      segments.add(TimeSegment(startTime: lastSegment.startTime, endTime: DateTime.now().add(Duration(hours: 8))));
+      segments.add(TimeSegment(startTime: lastSegment.startTime, endTime: DateTime.now().toUtc()));
     }
   }
 
@@ -633,7 +633,7 @@ class _ElapsedTimeState extends State<ElapsedTime> {
     }
 
     _session.startSegment();  // 開始新的時間段
-    final now = DateTime.now();
+    final now = DateTime.now().toUtc();
     debugPrint('⏰ 開始時間: ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}');
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -645,7 +645,7 @@ class _ElapsedTimeState extends State<ElapsedTime> {
 
   void _pauseTimer() {
     _session.endCurrentSegment();  // 結束當前時間段
-    final now = DateTime.now();
+    final now = DateTime.now().toUtc();
     debugPrint('⏸️ 暫停時間: ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}');
     debugPrint(_session.getSessionSummary());  // 顯示目前記錄
 
@@ -655,7 +655,7 @@ class _ElapsedTimeState extends State<ElapsedTime> {
 
   void _stopTimer() {
     _session.endCurrentSegment();  // 結束當前時間段
-    final now = DateTime.now();
+    final now = DateTime.now().toUtc();
     debugPrint('⏹️ 結束時間: ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}');
     debugPrint(_session.getSessionSummary());  // 顯示完整記錄
 
