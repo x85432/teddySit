@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // 感測器資料管理類別
 class SensorDataManager {
@@ -41,6 +44,18 @@ class SensorDataManager {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = jsonEncode(_dateData);
       await prefs.setString(_storageKey, jsonString);
+      final user = FirebaseAuth.instance.currentUser;
+      final email = user?.email;
+
+      final firestore = FirebaseFirestore.instance;
+
+      await firestore
+      .collection("users anaylsis")          // 🔹 第一層: 使用者集合
+      .doc(email)              // 🔹 單一使用者文件 (用 email 當 key)
+      .set({
+        "dateData": _dateData,     // 🔹 存你的資料
+        "updatedAt": FieldValue.serverTimestamp()
+      }, SetOptions(merge: true)); // merge 避免覆蓋其他欄位
 
       int totalSessions = 0;
       _dateData.forEach((date, dateInfo) {
@@ -299,7 +314,8 @@ class SensorDataManager {
   // 取得從現在開始到30秒前的感測器資料
   static List<Map<String, dynamic>> getSensorDataLast30Seconds(int num) {
     // final now = DateTime.parse("2025-09-20 19:54:00+08:00"); // For testing purpose
-    final now = DateTime.now().toUtc().add(Duration(hours: 8)); // 台灣時間 UTC+8
+    
+    final now = DateTime.now().toUtc(); // 台灣時間 UTC+8
     debugPrint('現在時間 (UTC+8): $now');
     final thirtySecondsAgo = now.subtract(Duration(seconds: num));
     int ten = 10;

@@ -37,7 +37,7 @@ import 'services/ble_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  
   await Firebase.initializeApp( // 初始化 Firebase
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -52,8 +52,6 @@ void main() async {
       appleProvider: AppleProvider.debug,
     );
 
-    print('App Check initialized in Debug mode. Please check device logs (Logcat/Xcode Console) to confirm which Debug Token is being used.');
-
   } else {
     // 在 Release 模式下使用正式的提供程式
     await FirebaseAppCheck.instance.activate(
@@ -67,6 +65,7 @@ void main() async {
 
   // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
   // FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  
   runApp(const MyApp());
 }
 
@@ -112,6 +111,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final NotificationPermissionHandler _permissionHandler =
       NotificationPermissionHandler(); // add this
   final GlobalKey _elapsedTimeKey = GlobalKey();
+  
+  final userEmail = FirebaseAuth.instance.currentUser?.email;
+  
+  bool _isTimerRunning = false;
+  bool _shouldReset = false;
+  final double scale = 2220/2400;
 
   Future<void> _requestPermissionsOnStartup() async { // add this
     bool permissionsGranted =
@@ -122,11 +127,9 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  bool _isTimerRunning = false;
-  bool _shouldReset = false;
-  final double scale = 2220/2400;
+ 
 
-    Future<void> callDoNotDisturb() async {
+  Future<void> callDoNotDisturb() async {
     try {
       // 獲取 Firebase Functions 實例
       FirebaseFunctions functions = FirebaseFunctions.instance;
@@ -155,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-   @override
+  @override
   initState() { // add this
     super.initState();
     _requestPermissionsOnStartup(); // add this
@@ -368,6 +371,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(width: 39 * scale),
                 InkWell(
                   onTap: () async {
+                    final userEmail = FirebaseAuth.instance.currentUser?.email;
+                    debugPrint("目前使用的信箱: $userEmail");
                     final navigator = Navigator.of(context);
                     setState(() {
                       _isTimerRunning = false;
@@ -380,24 +385,32 @@ class _MyHomePageState extends State<MyHomePage> {
 
                     if (elapsedTimeState != null) {
                       final session = (elapsedTimeState as dynamic).getCurrentSession();
-                      final segments = session?.segments ?? [];
+                      final segments = session?.segments ?? []; // 這個session的所有segments
+                      for (var segment in segments) {
+                        debugPrint("測試 ${segment.startTime}");
+                        //debugPrint("測試 ${segment.endTime}");
+                      }
 
+                      // debugPrint("測試$segments.toString()");
+                      //debugPrint("測試${segments.last.endTime.toString()}");
                       if (segments.isNotEmpty) {
                         final startDateTime = segments.first.startTime;
                         final lastSegmentEnd = segments.last.endTime ?? DateTime.now().toUtc();
-
+                        debugPrint("測試${lastSegmentEnd.toString()}");
                         if (startDateTime == null) {
                           debugPrint("⚠️ Start time 為空，無法查詢");
                           return;
                         }
 
-                        // 撈當天資料
+                        // 撈Session資料
                         final startUtc = startDateTime.toUtc();
                         final endUtc = DateTime.utc(
                           lastSegmentEnd.year,
                           lastSegmentEnd.month,
                           lastSegmentEnd.day,
-                          23, 59, 59,
+                          lastSegmentEnd.hour,
+                          lastSegmentEnd.minute,
+                          lastSegmentEnd.second
                         );
 
                         debugPrint('  startTime(UTC): ${startUtc.toIso8601String()}');

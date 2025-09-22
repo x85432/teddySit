@@ -14,7 +14,8 @@ double scale = 2340/2400;
 const List<String> dropdownOptions = ['Today', 'Past 3 Days', 'Past 5 Days'];
 
 class AnalyticPage extends StatefulWidget {
-  const AnalyticPage({super.key});
+  
+  const AnalyticPage({super.key,});
   
 
   @override

@@ -22,7 +22,7 @@ class TimeSegment {
 
 class TimerSession {
   final List<TimeSegment> segments = [];
-
+  
   void startSegment() {
     segments.add(TimeSegment(startTime: DateTime.now().toUtc()));
   }
