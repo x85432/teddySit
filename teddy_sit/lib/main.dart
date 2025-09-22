@@ -91,7 +91,7 @@ class MyApp extends StatelessWidget {
         '/userProfile': (context) => const UserProfilePage(),
         '/leaderboard': (context) => const LeaderboardPage(),
         '/stretch': (context) => const StretchPage(),
-        '/analytic': (context) => const AnalyticPage(),
+        // '/analytic': (context) => AnalyticPage(lastUpdate),
         '/sittingPose': (context) => const SittingPosePage(),
       },
     );
@@ -118,7 +118,41 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _shouldReset = false;
   final double scale = 2220/2400;
 
-  var lastUpdate = "";
+  String lastUpdate = "";
+
+  Future<void> fetchLatestUpdate() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection("devices")
+          .doc("daniel")
+          .collection("scores")
+          .orderBy("timestamp", descending: true) // 🔹 按時間排序
+          .limit(1)                              // 🔹 只要最新一筆
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final latest = snapshot.docs.first.data();
+        final ts = latest["timestamp"];
+
+        if (ts != null) {
+          setState(() {
+            if (ts is Timestamp) {
+              // ✅ Firestore Timestamp → DateTime → ISO8601
+              lastUpdate = ts.toDate().toUtc().toIso8601String();
+            } else if (ts is String) {
+              // ✅ 如果你存的是字串
+              lastUpdate = DateTime.parse(ts).toUtc().toIso8601String();
+            }
+          });
+          debugPrint("✅ 從 Firebase 拿到最新 update: $lastUpdate");
+        }
+      } else {
+        debugPrint("⚠️ 沒有資料可用");
+      }
+    } catch (e) {
+      debugPrint("❌ 抓取最新 update 失敗: $e");
+    }
+  }
 
   Future<void> _requestPermissionsOnStartup() async { // add this
     bool permissionsGranted =
@@ -159,9 +193,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  initState() { // add this
+  initState() { 
     super.initState();
-    _requestPermissionsOnStartup(); // add this
+    _requestPermissionsOnStartup(); 
+    fetchLatestUpdate(); // fetch last update time
   }
 
   Future<Map<String, Map<String, dynamic> >?> getSensorDataByTimeRange({
@@ -298,7 +333,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onTap: () {
                       Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const AnalyticPage()),
+                          MaterialPageRoute(builder: (context) => AnalyticPage(lastUpdate: lastUpdate)),
                       );
                       debugPrint("Analytics card clicked!");
                     },
@@ -390,7 +425,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         final startDateTime = segments.first.startTime;
                         final lastSegmentEnd = segments.last.endTime ?? DateTime.now().toUtc();
                         debugPrint("測試${lastSegmentEnd.toString()}");
-                        lastUpdate = lastSegmentEnd;  // 更新最後一次 Stop 的時間
+                        lastUpdate = lastSegmentEnd.toIso8601String();  // 更新最後一次 Stop
 
 
                         if (startDateTime == null) {
