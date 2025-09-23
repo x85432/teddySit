@@ -37,9 +37,13 @@ class _AnalyticPageState extends State<AnalyticPage> {
     lastUpdateString = widget.lastUpdate; // 取 yyyy-MM-dd
 
     // 測試 segment 服務
-    _testSegmentService();
+    // _testSegmentService();
 
-    _loadData(); // 撈資料
+    // 撈柱狀圖資料
+    _loadData(); 
+
+    // 撈折線圖資料
+    _loadTodaySegments();
   }
 
   Future<void> _testSegmentService() async {
@@ -112,6 +116,40 @@ class _AnalyticPageState extends State<AnalyticPage> {
       chunks = tmp;
     });
   }
+  Future<void> _loadTodaySegments() async {
+    try {
+      final allSegments = await SegmentDataService.getSegmentsByDate(lastUpdateString);
+
+      // 每個 segment 會是一條折線
+      List<List<FlSpot>> allSegmentsSpots = [];
+
+      for (var segment in allSegments) {
+        final frames = segment['frames'] as List;
+        List<FlSpot> spots = [];
+
+        for (var i = 0; i < frames.length; i++) {
+          final frame = frames[i];
+          final score = (frame['frame_score'] as num?)?.toDouble() ?? 0.0;
+
+          // 用 index 當 x 軸（簡單做法）
+          spots.add(FlSpot(i.toDouble(), score));
+        }
+
+        if (spots.isNotEmpty) {
+          allSegmentsSpots.add(spots);
+        }
+      }
+
+      setState(() {
+        lineDataSets['Today'] = allSegmentsSpots;
+      });
+
+      debugPrint("✅ 更新 Today 折線圖，共 ${allSegmentsSpots.length} 條線");
+
+    } catch (e) {
+      debugPrint("❌ _loadTodaySegments 失敗: $e");
+    }
+  }
 
   final Map<String, List<List<FlSpot>>> lineDataSets = {
     'Today': [
@@ -172,8 +210,6 @@ class _AnalyticPageState extends State<AnalyticPage> {
 
   int correct = 40;
   int incorrect = 50;
-
-  
 
   @override
   Widget build(BuildContext context) {

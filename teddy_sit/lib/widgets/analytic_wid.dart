@@ -327,26 +327,46 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
 
   /// LineChart
   Widget buildAnimatedLineChart() {
-    final targetSpots = (selectedBarIndex >= 0 &&
-            selectedBarIndex < widget.lineDataPerBar.length)
-        ? widget.lineDataPerBar[selectedBarIndex]
-        : <FlSpot>[];
+    final allSpotsList = widget.lineDataPerBar;
 
     return SizedBox(
       key: const ValueKey('lineChart'),
-      height: 220*scale,
-      width: 350*scale,
+      height: 220 * scale,
+      width: 350 * scale,
       child: TweenAnimationBuilder<double>(
         tween: Tween<double>(begin: 0, end: 1),
         duration: const Duration(milliseconds: 700),
         builder: (context, value, child) {
-          final animatedSpots =
-              targetSpots.map((e) => FlSpot(e.x, e.y * value)).toList();
+          const double segmentGap = 5.0; // 每個 segment 的間距 (x 軸上分隔開的距離)
+
+          final animatedLines = allSpotsList.asMap().entries.map((entry) {
+            final idx = entry.key;
+            final spots = entry.value;
+
+            // 幫每個 segment 的 x 軸加偏移
+            final animatedSpots = spots
+                .map((e) => FlSpot(e.x + idx * segmentGap, e.y * value))
+                .toList();
+
+            return LineChartBarData(
+              spots: animatedSpots,
+              isCurved: true,
+              color: Colors.primaries[idx % Colors.primaries.length], // 不同顏色
+              barWidth: 3 * scale,
+              dotData: FlDotData(show: true),
+            );
+          }).toList();
 
           return LineChart(
             LineChartData(
               minX: 0,
-              maxX: 30, // 0 ~ 180 秒
+              maxX: allSpotsList.expand((e) => e).isEmpty
+                  ? 30
+                  : allSpotsList.asMap().entries.expand((entry) {
+                      final idx = entry.key;
+                      final spots = entry.value;
+                      return spots.map((s) => s.x + idx * segmentGap);
+                    }).reduce((a, b) => a > b ? a : b),
               minY: 0,
               maxY: 100,
               gridData: FlGridData(show: false),
@@ -354,59 +374,50 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
                 show: true,
                 border: Border.all(
                   color: const Color.fromARGB(40, 255, 255, 255),
-                  width: 2*scale,
+                  width: 2 * scale,
                 ),
               ),
               titlesData: FlTitlesData(
-                leftTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 rightTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 40*scale,
+                    reservedSize: 40 * scale,
                     interval: 20,
                     getTitlesWidget: (value, meta) {
                       return Text(
                         '${value.toInt()}',
                         style: GoogleFonts.inknutAntiqua(
                           color: Colors.white,
-                          fontSize: 12*scale,
+                          fontSize: 12 * scale,
                         ),
                       );
                     },
                   ),
                 ),
-                topTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    interval: 5, // 每 30 秒一個刻度
+                    interval: 20, // 可依 segmentGap 調整
                     getTitlesWidget: (value, meta) {
                       return Text(
                         '${value.toInt()}s',
                         style: GoogleFonts.inknutAntiqua(
                           color: Colors.white,
-                          fontSize: 12*scale,
+                          fontSize: 12 * scale,
                         ),
                       );
                     },
                   ),
                 ),
               ),
-              lineBarsData: [
-                LineChartBarData(
-                  spots: animatedSpots,
-                  isCurved: true,
-                  color: const Color(0xFF7780BA),
-                  barWidth: 3*scale,
-                  dotData: FlDotData(show: true),
-                ),
-              ],
+              lineBarsData: animatedLines,
             ),
           );
         },
       ),
     );
   }
+
 }
