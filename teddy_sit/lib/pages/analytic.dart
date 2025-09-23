@@ -43,7 +43,36 @@ class _AnalyticPageState extends State<AnalyticPage> {
     _loadData(); 
 
     // 撈折線圖資料
-    _loadTodaySegments();
+    _loadSegments();
+  }
+
+  Map<String, List<List<FlSpot>>> lineDataSets = {
+    'Today': [],
+    'Past 3 Days': [],
+    'Past 5 Days': [],
+  };
+  // 柱狀圖x軸顯示的字
+  final Map<String, List<String>> labelsSets = {
+    'Today': ['9/21'],
+    'Past 3 Days': ['9/21', '9/20', '9/19'],
+    'Past 5 Days': ['9/21', '9/20', '9/19', '9/18', '9/17'],
+  };
+  final timeSpan = 5;
+  final Duration daySpan = const Duration(seconds: 5);
+
+  Duration _mul(Duration base, int k) =>
+      Duration(microseconds: base.inMicroseconds * k); // 回傳 base * k 的時間長度
+
+  DateTime? _toDateTime(dynamic v) { // 把所有 time 相關的東西變成 DateTime 型態
+    if (v is DateTime) return v;
+    if (v is Timestamp) return v.toDate();
+    if (v is String) return DateTime.tryParse(v);
+    return null;
+  }
+
+  bool _inWindow(DateTime ts, DateTime now, Duration window) { // ts 是否落在 (now-window) ~ now
+    final lower = now.subtract(window);
+    return !ts.isBefore(lower) && !ts.isAfter(now);
   }
 
   Future<void> _testSegmentService() async {
@@ -92,6 +121,51 @@ class _AnalyticPageState extends State<AnalyticPage> {
     debugPrint('🧪 === 測試結束 ===');
   }
 
+  Future<void> _loadSegments() async {
+    try {
+      final allSegments =
+          await SegmentDataService.getSegmentsByDate(lastUpdateString);
+
+      final now = DateTime.parse(lastUpdateString); // 把最後更新的時間定義成 now
+      final Map<String, List<List<FlSpot>>> temp = {
+        'Today': [],
+        'Past 3 Days': [],
+        'Past 5 Days': [],
+      };
+
+      for (final segment in allSegments) { // 如果 seg 的 startTime 不在這個時間段裡面，就丟掉整個 seg
+        DateTime? startTime = _toDateTime(segment['startTime']);
+        final frames = (segment['frames'] as List?) ?? [];
+        if (startTime == null && frames.isNotEmpty) {
+          startTime = _toDateTime(frames.first['timestamp']);
+        }
+        if (startTime == null) continue;
+
+        final List<FlSpot> spots = [];
+        for (int i = 0; i < frames.length; i++) {
+          final f = frames[i];
+          final score = (f['frame_score'] as num?)?.toDouble() ?? 0.0;
+          spots.add(FlSpot(i.toDouble(), score));
+        }
+        if (spots.isEmpty) continue;
+
+        if (_inWindow(startTime, now, daySpan)) {
+          temp['Today']!.add(spots);
+        }
+        if (_inWindow(startTime, now, _mul(daySpan, 3))) {
+          temp['Past 3 Days']!.add(spots);
+        }
+        if (_inWindow(startTime, now, _mul(daySpan, 5))) {
+          temp['Past 5 Days']!.add(spots);
+        }
+      }
+
+      setState(() => lineDataSets = temp); // 把 3 種區間的資料丟進去
+    } catch (e) {
+      debugPrint("❌ _loadSegments 失敗: $e");
+    }
+  }
+
   Future<void> _loadData() async {
     // 一次撈 150 秒
     final allData = await SensorDataManager.getSensorDataBySecond(lastUpdateString, 150);
@@ -100,8 +174,8 @@ class _AnalyticPageState extends State<AnalyticPage> {
     // 切成 5 段，每段 30 秒
     List<List<Map<String, dynamic>>> tmp = [];
     for (int i = 0; i < 5; i++) {
-      final start = i * 30;
-      final end = (i + 1) * 30;
+      final start = i * timeSpan;
+      final end = (i + 1) * timeSpan;
 
       final chunk = allData.where((d) {
         final time = DateTime.parse(d['timestamp']);
@@ -116,65 +190,7 @@ class _AnalyticPageState extends State<AnalyticPage> {
       chunks = tmp;
     });
   }
-  Future<void> _loadTodaySegments() async {
-    try {
-      final allSegments = await SegmentDataService.getSegmentsByDate(lastUpdateString);
 
-      // 每個 segment 會是一條折線
-      List<List<FlSpot>> allSegmentsSpots = [];
-
-      for (var segment in allSegments) {
-        final frames = segment['frames'] as List;
-        List<FlSpot> spots = [];
-
-        for (var i = 0; i < frames.length; i++) {
-          final frame = frames[i];
-          final score = (frame['frame_score'] as num?)?.toDouble() ?? 0.0;
-
-          // 用 index 當 x 軸（簡單做法）
-          spots.add(FlSpot(i.toDouble(), score));
-        }
-
-        if (spots.isNotEmpty) {
-          allSegmentsSpots.add(spots);
-        }
-      }
-
-      setState(() {
-        lineDataSets['Today'] = allSegmentsSpots;
-      });
-
-      debugPrint("✅ 更新 Today 折線圖，共 ${allSegmentsSpots.length} 條線");
-
-    } catch (e) {
-      debugPrint("❌ _loadTodaySegments 失敗: $e");
-    }
-  }
-
-  final Map<String, List<List<FlSpot>>> lineDataSets = {
-    'Today': [
-      [FlSpot(0, 10), FlSpot(1, 20), FlSpot.nullSpot, FlSpot(3, 5), FlSpot(4, 6)],
-      [FlSpot(0, 30), FlSpot(1, 40)],
-      [FlSpot(0, 50), FlSpot(1, 60)],
-    ],
-    'Past 3 Days': [
-      [FlSpot(0, 15), FlSpot(1, 25)],
-      [FlSpot(0, 35), FlSpot(1, 45)],
-      [FlSpot(0, 55), FlSpot(1, 65)],
-    ],
-    'Past 5 Days': [
-      [FlSpot(0, 20), FlSpot(1, 30)],
-      [FlSpot(0, 40), FlSpot(1, 50)],
-      [FlSpot(0, 60), FlSpot(1, 70)],
-    ],
-  };
-
-  // 柱狀圖x軸顯示的字
-  final Map<String, List<String>> labelsSets = {
-    'Today': ['9/21'],
-    'Past 3 Days': ['9/21', '9/20', '9/19'],
-    'Past 5 Days': ['9/21', '9/20', '9/19', '9/18', '9/17'],
-  };
 
   Map<String, List<double>> get barValuesSets {
     return {
