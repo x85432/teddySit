@@ -6,6 +6,7 @@ import '../widgets/home.dart';
 import '../widgets/analytic_wid.dart';
 import '../widgets/piechart_wid.dart';
 import '../services/sensor_data_manager.dart';
+import '../services/get_segment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import '../widgets/stretch_wid.dart';
 
@@ -35,7 +36,56 @@ class _AnalyticPageState extends State<AnalyticPage> {
     super.initState();
     lastUpdateString = widget.lastUpdate; // 取 yyyy-MM-dd
 
+    // 測試 segment 服務
+    _testSegmentService();
+
     _loadData(); // 撈資料
+  }
+
+  Future<void> _testSegmentService() async {
+    debugPrint('🧪 === 開始測試 SegmentDataService ===');
+    debugPrint('🧪 測試日期: $lastUpdateString');
+
+    try {
+      final segments = await SegmentDataService.getSegmentsByDate(lastUpdateString);
+      debugPrint('🧪 總共找到 ${segments.length} 個 segments');
+
+      if (segments.isEmpty) {
+        debugPrint('🧪 ❌ 沒有找到任何 segments，請檢查：');
+        debugPrint('🧪    1. 用戶是否已登錄');
+        debugPrint('🧪    2. Firebase 中是否有該日期的數據');
+        debugPrint('🧪    3. 數據結構是否正確');
+        return;
+      }
+
+      // 顯示前3個 segment 的詳細信息
+      for (int i = 0; i < segments.length && i < 3; i++) {
+        final segment = segments[i];
+        debugPrint('🧪 Segment $i:');
+        debugPrint('   - SessionId: ${segment['sessionId']}');
+        debugPrint('   - StartTime: ${segment['startTime']}');
+        debugPrint('   - EndTime: ${segment['endTime']}');
+        debugPrint('   - Frames: ${(segment['frames'] as List).length}');
+        
+        for (var frame in segment['frames']) {
+          debugPrint('     - Frame Timestamp: ${frame['timestamp']}, Score: ${frame['frame_score']}');
+        }
+
+        // 測試取得分數
+        final scores = SegmentDataService.getSegmentStartEndScores(segment);
+        debugPrint('   - Start Score: ${scores['startScore']}');
+        debugPrint('   - End Score: ${scores['endScore']}');
+
+        // 測試時長
+        final duration = SegmentDataService.getSegmentDuration(segment);
+        debugPrint('   - Duration: ${duration}秒');
+      }
+
+    } catch (e) {
+      debugPrint('🧪 ❌ 測試失敗: $e');
+    }
+
+    debugPrint('🧪 === 測試結束 ===');
   }
 
   Future<void> _loadData() async {
