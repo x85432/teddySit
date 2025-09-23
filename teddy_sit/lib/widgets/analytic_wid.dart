@@ -350,8 +350,8 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
 
             return LineChartBarData(
               spots: animatedSpots,
-              isCurved: true,
-              color: Colors.primaries[idx % Colors.primaries.length], // 不同顏色
+              isCurved: false,
+              color: const Color(0xFF7780BA), // 固定顏色
               barWidth: 3 * scale,
               dotData: FlDotData(show: true),
             );
