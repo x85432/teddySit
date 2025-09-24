@@ -536,6 +536,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         if (dataCount == 0) {selectedOption = "3";}
                         else if (tiaLevel >= 0.5 * dataCount) {selectedOption = "2";}
                         else if (cvaLevel >= 0.5 * dataCount) {selectedOption = "1";}
+                        else {selectedOption = "3";}
                         
                         debugPrint('dataCount: {$dataCount}');
                         debugPrint('tiaLevel: {$tiaLevel}');

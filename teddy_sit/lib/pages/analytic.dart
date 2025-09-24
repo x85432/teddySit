@@ -57,8 +57,8 @@ class _AnalyticPageState extends State<AnalyticPage> {
     'Past 3 Days': ['9/22', '9/23', '9/24'],
     'Past 5 Days': ['9/20', '9/21', '9/22', '9/23', '9/24'],
   };
-  final timeSpan = 10;
-  final Duration daySpan = const Duration(seconds: 10);
+  final timeSpan = 15;
+  final Duration daySpan = const Duration(seconds: 15);
 
   Duration _mul(Duration base, int k) =>
       Duration(microseconds: base.inMicroseconds * k); // 回傳 base * k 的時間長度
@@ -134,14 +134,14 @@ class _AnalyticPageState extends State<AnalyticPage> {
       };
 
       for (final segment in allSegments) { // 如果 seg 的 startTime 不在這個時間段裡面，就丟掉整個 seg
-        DateTime? startTime = _toDateTime(segment['startTime']);
+        DateTime? endTime = _toDateTime(segment['endTime']);
         final frames = (segment['frames'] as List?) ?? [];
-        if (startTime == null && frames.isNotEmpty) {
-          startTime = _toDateTime(frames.first['timestamp']);
+        if (endTime == null && frames.isNotEmpty) {
+          endTime = _toDateTime(frames.first['timestamp']);
         }
-        if (startTime == null) continue;
+        if (endTime == null) continue;
 
-        final List<FlSpot> spots = [];
+        final List<FlSpot> spots = []; // 一堆 frames
         for (int i = 0; i < frames.length; i++) {
           final f = frames[i];
           final score = (f['frame_score'] as num?)?.toDouble() ?? 0.0;
@@ -149,13 +149,13 @@ class _AnalyticPageState extends State<AnalyticPage> {
         }
         if (spots.isEmpty) continue;
 
-        if (_inWindow(startTime, now, daySpan)) {
-          temp['Today']!.add(spots);
+        if (_inWindow(endTime, now, daySpan)) {
+          temp['Today']!.add(spots); // temp['Today'] 很多個 segements
         }
-        if (_inWindow(startTime, now, _mul(daySpan, 3))) {
+        if (_inWindow(endTime, now, _mul(daySpan, 3))) {
           temp['Past 3 Days']!.add(spots);
         }
-        if (_inWindow(startTime, now, _mul(daySpan, 5))) {
+        if (_inWindow(endTime, now, _mul(daySpan, 5))) {
           temp['Past 5 Days']!.add(spots);
         }
       }

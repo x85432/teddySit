@@ -113,7 +113,7 @@ class _StretchPageState extends State<StretchPage> {
                       Icon(Icons.accessibility_new, color: const Color.fromARGB(255, 142, 128, 192),size: 32,),
                       Text(
                     videoTitles[selectedSet] ?? '',
-                    style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 20*scale),
+                    style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 17*scale),
                     ),
                     ],
                   ),
