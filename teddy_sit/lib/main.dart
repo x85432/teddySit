@@ -33,6 +33,9 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'controller/ble_controller.dart';
 import 'services/ble_service.dart';
 
+// 計時用
+import 'dart:async';
+
 
 
 void main() async {
@@ -90,7 +93,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfilePage(),
         '/userProfile': (context) => const UserProfilePage(),
         '/leaderboard': (context) => const LeaderboardPage(),
-        '/stretch': (context) => const StretchPage(),
+        ///stretch': (context) => const StretchPage(),
         // '/analytic': (context) => AnalyticPage(lastUpdate),
         '/sittingPose': (context) => const SittingPosePage(),
       },
@@ -113,11 +116,46 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey _elapsedTimeKey = GlobalKey();
   
   final userEmail = FirebaseAuth.instance.currentUser?.email;
-  
+
+  // 伸展動作選項
+  String selectedOption = "3";
+
   bool _isTimerRunning = false;
   bool _shouldReset = false;
   final double scale = 2220/2400;
   bool trans = false;
+
+  // 每10秒計時器
+  Timer? _timer;
+  bool _is10TimerRunning = false;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void startTimer() {
+    if (_is10TimerRunning) return; 
+    _is10TimerRunning = true;
+
+    // 每10秒執行一次
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      //debugPrint('Hello world, timer tick: ${timer.tick}');
+      NotificationService().showBasicNotification( // add this
+      'Teddy Sit',
+      '10秒囉',
+    );
+    });
+
+    
+  }
+
+  void stopTimer() {
+    _timer?.cancel();
+    _timer = null;
+    _is10TimerRunning = false;
+  }
 
   String lastUpdate = "";
 
@@ -324,7 +362,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const StretchPage()),
+                        MaterialPageRoute(builder: (context) => StretchPage(selectedSet: selectedOption,)),
                       );
                       debugPrint("Stretch Recommendations card clicked!");
                     },
@@ -407,6 +445,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     // 傳送 ON
                     await BleService.instance.sendOn();
 
+                    // 每10秒檢測一次坐姿
+                    startTimer();
+
                   },
                   child: Image(image: AssetImage('assets/Start.png'), width: 52 * scale, height: 52 * scale),
                 ),
@@ -418,7 +459,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       _shouldReset = false;
                     });
                     debugPrint('Pause button clicked!');
+                    stopTimer();
                     await BleService.instance.sendOff();
+
                   },
                   child: Image(image: AssetImage('assets/Pause.png'), width: 52 * scale, height: 52 * scale),
                 ),
@@ -433,6 +476,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       _shouldReset = true;
                     });
                     debugPrint('Stop button clicked!');
+
+                    // 停止每10秒計時器
+                    stopTimer();
 
                     // 取得時間段資料
                     final elapsedTimeState = _elapsedTimeKey.currentState;
@@ -456,6 +502,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           return;
                         }
 
+                        // 存低於2的cva_level & tia_level個數
+                        int dataCount = 0;
+                        int cvaLevel = 0;
+                        int tiaLevel = 0;
+
                         final newData = [];
                         for (var aSeg in segments) {
                           final startUtc = aSeg.startTime;
@@ -466,36 +517,41 @@ class _MyHomePageState extends State<MyHomePage> {
                             endTimeUtc: endUtc,
                             collectionName: "scores",
                           );
+
+                          // 拿到cva_level & tia_level
+                          if (sensorData != null) {
+                            for (var record in sensorData.values) {
+                              dataCount++;
+                              if (record["cva_level"] <= 1) {cvaLevel++;}
+                              if (record["tia_level"] <= 1) {tiaLevel++;}
+                            }
+                          }
+
                           sensorData?["startTime"] = {"Time": startUtc.toString()};
-                          sensorData?["endTime"]   = {"Time":   endUtc.toString()};
+                          sensorData?["endTime"]   = {"Time": endUtc.toString()};
                           newData.add(sensorData);
                         }
+
+                        // 計算cva_level & tia_level是否有超過50%
+                        if (dataCount == 0) {selectedOption = "3";}
+                        else if (tiaLevel >= 0.5 * dataCount) {selectedOption = "2";}
+                        else if (cvaLevel >= 0.5 * dataCount) {selectedOption = "1";}
+                        
+                        debugPrint('dataCount: {$dataCount}');
+                        debugPrint('tiaLevel: {$tiaLevel}');
+                        debugPrint('cvaLevel: {$cvaLevel}');
 
                         await SensorDataManager.initialize();
                         await SensorDataManager.addSensorData(
                           newData,
                           startDateTime.toUtc().toIso8601String()
                         );
-
-                        // // 撈Session資料
-                        // final startUtc = startDateTime.toUtc();
-                        // final endUtc = DateTime.utc(
-                        //   lastSegmentEnd.year,
-                        //   lastSegmentEnd.month,
-                        //   lastSegmentEnd.day,
-                        //   lastSegmentEnd.hour,
-                        //   lastSegmentEnd.minute,
-                        //   lastSegmentEnd.second
-                        // );
-
-                        // debugPrint('  startTime(UTC): ${startUtc.toIso8601String()}');
-                        // debugPrint('  endTime(UTC): ${endUtc.toIso8601String()}');
-                                           
+            
                         if (newData.isNotEmpty) {
                           debugPrint('✅ 撈到 ${newData.length} 筆感測器資料 (UTC)');
                           await BleService.instance.sendOff();
                           navigator.push(
-                            MaterialPageRoute(builder: (context) => const StretchPage()),
+                            MaterialPageRoute(builder: (context) => StretchPage(selectedSet: selectedOption)),
                           );
                         } else {
                           debugPrint('⚠️ 沒有撈到資料 (UTC)');
@@ -518,7 +574,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     await BleService.instance.sendOff();
 
                     navigator.push(
-                      MaterialPageRoute(builder: (context) => const StretchPage()),
+                      MaterialPageRoute(builder: (context) => StretchPage(selectedSet: selectedOption,)),
                     );
 
 

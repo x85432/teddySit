@@ -394,7 +394,7 @@ class _AnalyticPageState extends State<AnalyticPage> {
           SizedBox(height: 45,),
           Padding(
             padding: EdgeInsets.only(left: 20),
-            child: Report()
+            child: Report(score: averageScores[selectedOption] ?? 0.0)
           )
           
           

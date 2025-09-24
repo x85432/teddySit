@@ -66,8 +66,17 @@ class LongestTimeWid extends StatelessWidget {
 
 // Report
 class Report extends StatelessWidget {
-  const Report({super.key});
   
+  final double score;
+  const Report({super.key, this.score = 0});
+  
+  String level(double num)
+  {
+    if (score >= 90) {return 'A+';}
+    else if (score >= 75) {return 'A';}
+    else if (score >= 60) {return 'B';}
+    return 'C';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +126,7 @@ class Report extends StatelessWidget {
               left: 30,
               top: 16,
               child: Text(
-                'A',
+                level(score),
                 style: GoogleFonts.inknutAntiqua(
                   fontSize: 32,
                   color: Colors.white,
@@ -163,7 +172,7 @@ class Report extends StatelessWidget {
               left: 285,
               top: 19.6,
               child: Text(
-                '80',
+                '${score.toInt()}',
                 style: GoogleFonts.inknutAntiqua(
                   fontSize: 30,
                   color: Colors.white,
