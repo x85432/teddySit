@@ -113,7 +113,7 @@ class _StretchPageState extends State<StretchPage> {
                       Icon(Icons.accessibility_new, color: const Color.fromARGB(255, 142, 128, 192),size: 32,),
                       Text(
                     videoTitles[selectedSet] ?? '',
-                    style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 17*scale),
+                    style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 14*scale),
                     ),
                     ],
                   ),
@@ -127,14 +127,14 @@ class _StretchPageState extends State<StretchPage> {
                           width: 320,
                           child: Text(
                           videoTips[selectedSet] ?? '',
-                          style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 14*scale, height: 27/14),
+                          style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 12.5*scale, height: 27/14),
                         )),
                         SizedBox(height: 10,),
                        SizedBox(
                           width: 320,
                           child: Text(
                           videoNotes[selectedSet] ?? '',
-                          style: GoogleFonts.inknutAntiqua(color: Color(0xFFE8DEF8), fontSize: 12*scale, height: 23/14),
+                          style: GoogleFonts.inknutAntiqua(color: Color(0xFFE8DEF8), fontSize: 11.5*scale, height: 23/14),
                         )),
 
                       

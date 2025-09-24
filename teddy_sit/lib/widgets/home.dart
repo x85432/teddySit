@@ -302,7 +302,7 @@ class CorrectSittingCard extends StatelessWidget {
                     height: 1.2*scale,
                   ) : GoogleFonts.notoSerifTc(
                     color: Color(0xFFE8E5ED),
-                    fontSize: 14*scale,
+                    fontSize: 13*scale,
                     height: 1.2*scale)
                 ),
               ),
