@@ -117,6 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isTimerRunning = false;
   bool _shouldReset = false;
   final double scale = 2220/2400;
+  bool trans = false;
 
   String lastUpdate = "";
 
@@ -274,7 +275,25 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           
-                    SizedBox(width: 18 * scale),
+          SizedBox(width: 18 * scale),
+          Padding(
+            padding: EdgeInsets.only(top: 28 * scale),
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  if(trans == false){
+                    trans = true;
+                  }
+                  else{
+                    trans = false;
+                  }
+                });
+                debugPrint("Translate button clicked!");
+              },
+              child: Image(image: AssetImage('assets/translate.png'), width: 45 * scale, height: 45 * scale),
+            )
+          ),
+          SizedBox(width: 18 * scale),
           Padding(
             padding: EdgeInsets.only(top: 28 * scale),
             child: InkWell(
@@ -301,6 +320,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 SizedBox(
                   child: StretchCard(
+                    trans: trans,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -313,6 +333,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(width: 10 * scale),
                 SizedBox(
                   child: CorrectSittingCard(
+                    trans: trans,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -330,6 +351,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 SizedBox(
                   child: AnalyticsCard(
+                    trans: trans,
                     onTap: () {
                       Navigator.push(
                           context,
@@ -347,6 +369,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 SizedBox(
                   child: LeaderboardCard(
+                    trans: trans,
                     onTap: () {
                       debugPrint("Leaderboard card clicked!");
                       Navigator.push(
@@ -358,12 +381,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 SizedBox(width: 10 * scale),
                 SizedBox(
-                  child: Donotdisturb(),
+                  child: Donotdisturb(trans: trans),
                 ),
               ],
             ),
             //SizedBox(height: 10 * scale),
-            ElapsedTime(key: _elapsedTimeKey, isRunning: _isTimerRunning, shouldReset: _shouldReset),
+            ElapsedTime(key: _elapsedTimeKey, isRunning: _isTimerRunning, shouldReset: _shouldReset, trans: trans),
             //SizedBox(height: 5 * scale),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -53,12 +53,12 @@ class _AnalyticPageState extends State<AnalyticPage> {
   };
   // 柱狀圖x軸顯示的字
   final Map<String, List<String>> labelsSets = {
-    'Today': ['9/21'],
-    'Past 3 Days': ['9/21', '9/20', '9/19'],
-    'Past 5 Days': ['9/21', '9/20', '9/19', '9/18', '9/17'],
+    'Today': ['9/24'],
+    'Past 3 Days': ['9/22', '9/23', '9/24'],
+    'Past 5 Days': ['9/20', '9/21', '9/22', '9/23', '9/24'],
   };
-  final timeSpan = 5;
-  final Duration daySpan = const Duration(seconds: 5);
+  final timeSpan = 10;
+  final Duration daySpan = const Duration(seconds: 10);
 
   Duration _mul(Duration base, int k) =>
       Duration(microseconds: base.inMicroseconds * k); // 回傳 base * k 的時間長度

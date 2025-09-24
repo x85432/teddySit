@@ -112,8 +112,9 @@ class Teddysit extends StatelessWidget {
 // Stretch Recommendations
 class StretchCard extends StatelessWidget {
   final VoidCallback? onTap;
+  final bool trans;
 
-  const StretchCard({super.key, this.onTap});
+  const StretchCard({super.key, this.onTap, required this.trans});
 
   @override
   Widget build(BuildContext context) {
@@ -165,16 +166,20 @@ class StretchCard extends StatelessWidget {
             ),
             Positioned(
               left: 6*scale,
-              top: 135*scale,
+              top: (trans == false) ? 135*scale : 145*scale,
               child: SizedBox(
                 width: 173*scale,
                 height: 75*scale,
                 child: Text(
-                  'Stretch Recommendations',
+                  (trans == false) ? 'Stretch Recommendations' : '伸展建議',
                   textAlign: TextAlign.left,
-                  style: GoogleFonts.inknutAntiqua(
+                  style: (trans == false) ? GoogleFonts.inknutAntiqua(
                     color: Colors.white,
                     fontSize: 16*scale,
+                    height: 1.2*scale,
+                  ) : GoogleFonts.notoSerifTc(
+                    color: Colors.white,
+                    fontSize: 20*scale,
                     height: 1.2*scale,
                   ),
                 ),
@@ -182,16 +187,20 @@ class StretchCard extends StatelessWidget {
             ),
             Positioned(
               left: 6*scale,
-              top: 180*scale,
+              top: (trans == false) ? 180*scale : 175*scale,
               child: SizedBox(
                 width: 165*scale,
                 height: 75*scale,
                 child: Text(
-                  'Your personalized recommendations sports',
+                  (trans == false) ? 'Your personalized recommendations sports' : '您的個性化運動建議',
                   textAlign: TextAlign.left,
-                  style: GoogleFonts.inknutAntiqua(
+                  style: (trans == false) ? GoogleFonts.inknutAntiqua(
                     color: Color(0xFFE8E5ED),
                     fontSize: 11*scale,
+                    height: 1.2*scale,
+                  ) : GoogleFonts.notoSerifTc(
+                    color: Color(0xFFE8E5ED),
+                    fontSize: 15*scale,
                     height: 1.2*scale,
                   ),
                 ),
@@ -207,8 +216,9 @@ class StretchCard extends StatelessWidget {
 // Correct Sitting Poses
 class CorrectSittingCard extends StatelessWidget {
   final VoidCallback? onTap;
+  final bool trans;
 
-  const CorrectSittingCard({super.key, this.onTap});
+  const CorrectSittingCard({super.key, this.onTap, required this.trans});
 
   @override
   Widget build(BuildContext context) {
@@ -259,35 +269,41 @@ class CorrectSittingCard extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 135*scale,
+              top: (trans == false) ? 135*scale : 145*scale,
               child: SizedBox(
                 width: 169*scale,
                 height: 75*scale,
                 child: Text(
-                  'Correct\nSitting Poses',
+                  (trans == false) ? 'Correct\nSitting Poses' : '正確的坐姿',
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.inknutAntiqua(
+                  style: (trans == false) ? GoogleFonts.inknutAntiqua(
                     color: Colors.white,
                     fontSize: 16*scale,
                     height: 1.2*scale,
-                  ),
+                  ) : GoogleFonts.notoSerifTc(
+                    color: Colors.white,
+                    fontSize: 20*scale,
+                    height: 1.2*scale)
                 ),
               ),
             ),
             Positioned(
               left: 6*scale,
-              top: 180*scale,
+              top: (trans == false) ? 180*scale : 175*scale,
               child: SizedBox(
                 width: 165*scale,
                 height: 75*scale,
                 child: Text(
-                  'Learn the correct sitting poses by videos',
+                  (trans == false) ? 'Learn the correct sitting poses by videos' : '通過影片學習正確的坐姿',
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.inknutAntiqua(
+                  style: (trans == false) ? GoogleFonts.inknutAntiqua(
                     color: Color(0xFFE8E5ED),
                     fontSize: 11*scale,
                     height: 1.2*scale,
-                  ),
+                  ) : GoogleFonts.notoSerifTc(
+                    color: Color(0xFFE8E5ED),
+                    fontSize: 14*scale,
+                    height: 1.2*scale)
                 ),
               ),
             ),
@@ -301,8 +317,9 @@ class CorrectSittingCard extends StatelessWidget {
 // Analytics
 class AnalyticsCard extends StatelessWidget {
   final VoidCallback? onTap;
+  final bool trans;
 
-  const AnalyticsCard({super.key, this.onTap});
+  const AnalyticsCard({super.key, this.onTap, required this.trans});
 
   @override
   Widget build(BuildContext context) {
@@ -354,35 +371,41 @@ class AnalyticsCard extends StatelessWidget {
             ),
             Positioned(
               left: 109*scale,
-              top: 24*scale,
+              top: (trans == false) ? 24*scale : 28*scale,
               child: SizedBox(
                 width: 272*scale,
                 height: 75*scale,
                 child: Text(
-                  'Analytics',
+                  (trans == false) ? 'Analytics' : '分析',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inknutAntiqua(
+                  style: (trans == false) ? GoogleFonts.inknutAntiqua(
                     color: Colors.white,
                     fontSize: 24*scale,
                     height: 1.2*scale,
-                  ),
+                  ) : GoogleFonts.notoSerifTc(
+                    color: Colors.white,
+                    fontSize: 30*scale,
+                    height: 1.2*scale)
                 ),
               ),
             ),
             Positioned(
-              left: 128*scale,
-              top: 59*scale,
+              left: (trans == false) ? 128*scale : 140*scale,
+              top: (trans == false) ? 59*scale : 70*scale,
               child: SizedBox(
                 width: 240*scale,
                 height: 75*scale,
                 child: Text(
-                  'Analyze your sitting posture to detect imbalances, slouching, \nor other issues',
+                  (trans == false) ? 'Analyze your sitting posture to detect imbalances, slouching, \nor other issues' : '分析你的坐姿以檢測不平衡、\n駝背或其他問題',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inknutAntiqua(
+                  style: (trans == false) ? GoogleFonts.inknutAntiqua(
                     color: const Color(0xFFD9D8DD),
                     fontSize: 12*scale,
                     height: 1.3*scale,
-                  ),
+                  ) : GoogleFonts.notoSerifTc(
+                    color: const Color(0xFFD9D8DD),
+                    fontSize: 15*scale,
+                    height: 1.3*scale)
                 ),
               ),
             ),
@@ -396,8 +419,9 @@ class AnalyticsCard extends StatelessWidget {
 // Leaderboard
 class LeaderboardCard extends StatelessWidget {
   final VoidCallback? onTap;
+  final bool trans;
 
-  const LeaderboardCard({super.key, this.onTap});
+  const LeaderboardCard({super.key, this.onTap, required this.trans});
 
   @override
   Widget build(BuildContext context) {
@@ -429,12 +453,14 @@ class LeaderboardCard extends StatelessWidget {
                 width: 151*scale,
                 height: 45*scale,
                 child: Text(
-                  'Leaderboard',
+                  (trans == false) ? 'Leaderboard' : '排行榜',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inknutAntiqua(
+                  style: (trans == false) ?GoogleFonts.inknutAntiqua(
                     color: Colors.white,
                     fontSize: 18*scale,
-                  ),
+                  ) : GoogleFonts.notoSerifTc(
+                    color: Colors.white,
+                    fontSize: 23*scale)
                 ),
               ),
             ),
@@ -482,7 +508,9 @@ class LeaderboardCard extends StatelessWidget {
 }
 
 class Donotdisturb extends StatefulWidget {
-  const Donotdisturb({super.key});
+  final bool trans;
+
+  const Donotdisturb({super.key, required this.trans});
 
   @override
   State<Donotdisturb> createState() => _DonotdisturbState();
@@ -532,19 +560,25 @@ class _DonotdisturbState extends State<Donotdisturb> {
             ),
             Positioned(
               left: 0,
-              top: 48*scale,
+              top: (widget.trans == false) ? 48*scale : 53*scale,
               child: SizedBox(
                 width: 188*scale,
                 height: 77*scale,
                 child: AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 300),
-                  style: GoogleFonts.inknutAntiqua(
+                  style: (widget.trans == false) ? GoogleFonts.inknutAntiqua(
                     color: _isPressed ? Colors.black : Colors.white,
                     fontSize: 13*scale,
                     height: 1.0*scale,
+                  ) : GoogleFonts.notoSerifTc(
+                    color: _isPressed ? Colors.black : Colors.white,
+                    fontSize: 20*scale,
+                    height: 1.0*scale,
                   ),
                   child: Text(
-                    _isPressed ? 'Do Not Disturb ON' : 'Do Not Disturb OFF',
+                    _isPressed
+                      ? (widget.trans ? '勿擾模式 開啟' : 'Do Not Disturb ON')
+                      : (widget.trans ? '勿擾模式 關閉' : 'Do Not Disturb OFF'),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -552,21 +586,25 @@ class _DonotdisturbState extends State<Donotdisturb> {
             ),
             Positioned(
               left: 0,
-              top: 70*scale,
+              top: (widget.trans == false) ? 70*scale : 77*scale,
               child: SizedBox(
                 width: 188*scale,
                 height: 75*scale,
                 child: AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 300),
-                  style: GoogleFonts.inknutAntiqua(
+                  style: (widget.trans == false) ?GoogleFonts.inknutAntiqua(
                     color: _isPressed ? Colors.black54 : const Color(0xFFCCCBD2),
                     fontSize: 11*scale,
                     height: 20/11*scale,
+                  ) : GoogleFonts.notoSerifTc(
+                    color: _isPressed ? Colors.black54 : const Color(0xFFCCCBD2),
+                    fontSize: 15*scale,
+                    height: 20/15*scale,
                   ),
                   child: Text(
                     _isPressed
-                        ? 'Only records sitting posture, without reminders'
-                        : 'Now it records and reminds your posture',
+                        ? (widget.trans ? '僅記錄坐姿，不提醒' : 'Only records sitting posture, without reminders')
+                        : (widget.trans ? '現在記錄並提醒您的坐姿' : 'Now it records and reminds your posture'),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -584,6 +622,7 @@ class _DonotdisturbState extends State<Donotdisturb> {
 class ElapsedTime extends StatefulWidget {
   final bool isRunning;
   final bool shouldReset;
+  final bool trans;
   final VoidCallback? onStart;
   final VoidCallback? onPause;
   final VoidCallback? onStop;
@@ -592,6 +631,7 @@ class ElapsedTime extends StatefulWidget {
     super.key,
     this.isRunning = false,
     this.shouldReset = false,
+    required this.trans,
     this.onStart,
     this.onPause,
     this.onStop,
@@ -742,20 +782,25 @@ class _ElapsedTimeState extends State<ElapsedTime> {
               ),
               Positioned(
                 left: 26*scale,
-                top: 31*scale,
+                top: (widget.trans == false) ? 31*scale : 28*scale,
                 child: SizedBox(
                   width: 212*scale,
                   height: 21*scale,
                   child: Text(
-                    'Elapsed Time',
+                    widget.trans ? '已用時間' : 'Elapsed Time',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inknutAntiqua(
+                    style: (widget.trans == false) ? GoogleFonts.inknutAntiqua(
                       textStyle: const TextStyle(
                         color: Color(0xFFCCCBD2),
                         fontSize: 11*2340/2400,
                       ),
                       height: 1.2*2340/2400,
-                    ),
+                    ) : GoogleFonts.notoSerifTc(
+                      textStyle: const TextStyle(
+                        color: Color(0xFFCCCBD2),
+                        fontSize: 15*2340/2400,
+                      ),
+                      height: 1.2*2340/2400)
                   ),
                 ),
               ),
