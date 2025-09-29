@@ -66,8 +66,17 @@ class LongestTimeWid extends StatelessWidget {
 
 // Report
 class Report extends StatelessWidget {
-  const Report({super.key});
   
+  final double score;
+  const Report({super.key, this.score = 0});
+  
+  String level(double num)
+  {
+    if (score >= 90) {return 'A+';}
+    else if (score >= 75) {return 'A';}
+    else if (score >= 60) {return 'B';}
+    return 'C';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +126,7 @@ class Report extends StatelessWidget {
               left: 30,
               top: 16,
               child: Text(
-                'A',
+                level(score),
                 style: GoogleFonts.inknutAntiqua(
                   fontSize: 32,
                   color: Colors.white,
@@ -163,7 +172,7 @@ class Report extends StatelessWidget {
               left: 285,
               top: 19.6,
               child: Text(
-                '80',
+                '${score.toInt()}',
                 style: GoogleFonts.inknutAntiqua(
                   fontSize: 30,
                   color: Colors.white,
@@ -327,86 +336,121 @@ class _BarToLineChartExampleState extends State<BarToLineChartExample> {
 
   /// LineChart
   Widget buildAnimatedLineChart() {
-    final targetSpots = (selectedBarIndex >= 0 &&
-            selectedBarIndex < widget.lineDataPerBar.length)
-        ? widget.lineDataPerBar[selectedBarIndex]
-        : <FlSpot>[];
+    final allSpotsList = widget.lineDataPerBar;
+
+    // 計算每個 segment 的偏移量
+    final offsets = <double>[];
+    double currentOffset = 0.0;
+    const double segmentGap = 1; // 你想要的間距
+
+    for (var spots in allSpotsList) {
+      offsets.add(currentOffset);
+      if (spots.isNotEmpty) {
+        currentOffset += spots.last.x; // 取最後一點的 x
+      }
+      currentOffset += segmentGap; // 加上間隔
+    }
 
     return SizedBox(
       key: const ValueKey('lineChart'),
-      height: 220*scale,
-      width: 350*scale,
-      child: TweenAnimationBuilder<double>(
-        tween: Tween<double>(begin: 0, end: 1),
-        duration: const Duration(milliseconds: 700),
-        builder: (context, value, child) {
-          final animatedSpots =
-              targetSpots.map((e) => FlSpot(e.x, e.y * value)).toList();
+      height: 220 * scale,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: SizedBox(
+          width: (allSpotsList.length * 300).toDouble(),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 700),
+            builder: (context, value, child) {
+              const double segmentGap = 5.0; // 每個 segment 的間距 (x 軸上分隔開的距離)
 
-          return LineChart(
-            LineChartData(
-              minX: 0,
-              maxX: 30, // 0 ~ 180 秒
-              minY: 0,
-              maxY: 100,
-              gridData: FlGridData(show: false),
-              borderData: FlBorderData(
-                show: true,
-                border: Border.all(
-                  color: const Color.fromARGB(40, 255, 255, 255),
-                  width: 2*scale,
-                ),
-              ),
-              titlesData: FlTitlesData(
-                leftTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40*scale,
-                    interval: 20,
-                    getTitlesWidget: (value, meta) {
-                      return Text(
-                        '${value.toInt()}',
-                        style: GoogleFonts.inknutAntiqua(
-                          color: Colors.white,
-                          fontSize: 12*scale,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                topTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    interval: 5, // 每 30 秒一個刻度
-                    getTitlesWidget: (value, meta) {
-                      return Text(
-                        '${value.toInt()}s',
-                        style: GoogleFonts.inknutAntiqua(
-                          color: Colors.white,
-                          fontSize: 12*scale,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              lineBarsData: [
-                LineChartBarData(
+              final animatedLines = allSpotsList.asMap().entries.map((entry) {
+                final idx = entry.key;
+                final spots = entry.value;
+
+                final animatedSpots = spots
+                    .map((e) => FlSpot(e.x + offsets[idx], e.y * value))
+                    .toList();
+
+                return LineChartBarData(
                   spots: animatedSpots,
-                  isCurved: true,
+                  isCurved: false,
                   color: const Color(0xFF7780BA),
-                  barWidth: 3*scale,
+                  barWidth: 3 * scale,
                   dotData: FlDotData(show: true),
+                );
+              }).toList();
+
+              double chartMaxX = 30; // 預設 30
+              if (allSpotsList.isNotEmpty) {
+                  final maxXFromData = allSpotsList.asMap().entries.map((entry) {
+                  final idx = entry.key;
+                  final spots = entry.value;
+                  if (spots.isEmpty) return 0.0;
+                  // 每個 segment 的最後一個點的 X + offset
+                      return spots.last.x + offsets[idx];
+                  }).reduce((a, b) => a > b ? a : b);
+
+                  chartMaxX = maxXFromData;
+              }
+
+              return LineChart(
+                LineChartData(
+                  minX: 0,
+                  maxX: chartMaxX,
+                  minY: 0,
+                  maxY: 100,
+                  gridData: FlGridData(show: false),
+                  borderData: FlBorderData(
+                    show: true,
+                    border: Border.all(
+                      color: const Color.fromARGB(40, 255, 255, 255),
+                      width: 2 * scale,
+                    ),
+                  ),
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40 * scale,
+                        interval: 20,
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            '${value.toInt()}',
+                            style: GoogleFonts.inknutAntiqua(
+                              color: Colors.white,
+                              fontSize: 12 * scale,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: 5, // 可依 segmentGap 調整
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            '${value.toInt()}s',
+                            style: GoogleFonts.inknutAntiqua(
+                              color: Colors.white,
+                              fontSize: 12 * scale,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  lineBarsData: animatedLines,
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
+        )
+      )
     );
   }
+
 }

@@ -33,11 +33,14 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'controller/ble_controller.dart';
 import 'services/ble_service.dart';
 
+// 計時用
+import 'dart:async';
+
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  
   await Firebase.initializeApp( // 初始化 Firebase
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -52,8 +55,6 @@ void main() async {
       appleProvider: AppleProvider.debug,
     );
 
-    print('App Check initialized in Debug mode. Please check device logs (Logcat/Xcode Console) to confirm which Debug Token is being used.');
-
   } else {
     // 在 Release 模式下使用正式的提供程式
     await FirebaseAppCheck.instance.activate(
@@ -67,6 +68,7 @@ void main() async {
 
   // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
   // FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  
   runApp(const MyApp());
 }
 
@@ -91,8 +93,8 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfilePage(),
         '/userProfile': (context) => const UserProfilePage(),
         '/leaderboard': (context) => const LeaderboardPage(),
-        '/stretch': (context) => const StretchPage(),
-        '/analytic': (context) => const AnalyticPage(),
+        ///stretch': (context) => const StretchPage(),
+        // '/analytic': (context) => AnalyticPage(lastUpdate),
         '/sittingPose': (context) => const SittingPosePage(),
       },
     );
@@ -112,6 +114,84 @@ class _MyHomePageState extends State<MyHomePage> {
   final NotificationPermissionHandler _permissionHandler =
       NotificationPermissionHandler(); // add this
   final GlobalKey _elapsedTimeKey = GlobalKey();
+  
+  final userEmail = FirebaseAuth.instance.currentUser?.email;
+
+  // 伸展動作選項
+  String selectedOption = "3";
+
+  bool _isTimerRunning = false;
+  bool _shouldReset = false;
+  final double scale = 2220/2400;
+  bool trans = false;
+
+  // 每10秒計時器
+  Timer? _timer;
+  bool _is10TimerRunning = false;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void startTimer() {
+    if (_is10TimerRunning) return; 
+    _is10TimerRunning = true;
+
+    // 每10秒執行一次
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      //debugPrint('Hello world, timer tick: ${timer.tick}');
+      NotificationService().showBasicNotification( // add this
+      'Teddy Sit',
+      '10秒囉',
+    );
+    });
+
+    
+  }
+
+  void stopTimer() {
+    _timer?.cancel();
+    _timer = null;
+    _is10TimerRunning = false;
+  }
+
+  String lastUpdate = "";
+
+  Future<void> fetchLatestUpdate() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection("devices")
+          .doc("daniel")
+          .collection("scores")
+          .orderBy("timestamp", descending: true) // 🔹 按時間排序
+          .limit(1)                              // 🔹 只要最新一筆
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final latest = snapshot.docs.first.data();
+        final ts = latest["timestamp"];
+
+        if (ts != null) {
+          setState(() {
+            if (ts is Timestamp) {
+              // ✅ Firestore Timestamp → DateTime → ISO8601
+              lastUpdate = ts.toDate().toUtc().toIso8601String();
+            } else if (ts is String) {
+              // ✅ 如果你存的是字串
+              lastUpdate = DateTime.parse(ts).toUtc().toIso8601String();
+            }
+          });
+          debugPrint("✅ 從 Firebase 拿到最新 update: $lastUpdate");
+        }
+      } else {
+        debugPrint("⚠️ 沒有資料可用");
+      }
+    } catch (e) {
+      debugPrint("❌ 抓取最新 update 失敗: $e");
+    }
+  }
 
   Future<void> _requestPermissionsOnStartup() async { // add this
     bool permissionsGranted =
@@ -122,11 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  bool _isTimerRunning = false;
-  bool _shouldReset = false;
-  final double scale = 2220/2400;
-
-    Future<void> callDoNotDisturb() async {
+  Future<void> callDoNotDisturb() async {
     try {
       // 獲取 Firebase Functions 實例
       FirebaseFunctions functions = FirebaseFunctions.instance;
@@ -155,16 +231,17 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-   @override
-  initState() { // add this
+  @override
+  initState() { 
     super.initState();
-    _requestPermissionsOnStartup(); // add this
+    _requestPermissionsOnStartup(); 
+    fetchLatestUpdate(); // fetch last update time
   }
 
-  Future<List<Map<String, dynamic>>?> getSensorDataByTimeRange({
+  Future<Map<String, Map<String, dynamic> >?> getSensorDataByTimeRange({
     required String deviceId,
-    required String startTime,
-    required String endTime,
+    required DateTime startTimeUtc,
+    required DateTime endTimeUtc,
     String collectionName = "score",
   }) async {
     try {
@@ -174,28 +251,22 @@ class _MyHomePageState extends State<MyHomePage> {
       final result = await callable.call({
         "device_id": deviceId,
         "collection_name": collectionName,
-        "start_time": startTime,
-        "end_time": endTime,
+        "start_time": startTimeUtc.toUtc().toIso8601String(), // 一律轉成 UTC ISO8601
+        "end_time": endTimeUtc.toUtc().toIso8601String(),
       });
 
       final data = Map<String, dynamic>.from(result.data);
       if (data["status"] == "success") {
-        final sensorData = (data['data'] as List).map((item) => Map<String, dynamic>.from(item)).toList();
-        debugPrint("拿到 ${sensorData.length} 筆資料");
+        final sensorData = (data['data'] as List)
+            .map((item) => Map<String, dynamic>.from(item))
+            .toList();
 
-        // 將抓到的資料存儲到 SensorDataManager
-        await SensorDataManager.initialize();
-        await SensorDataManager.addSensorData(sensorData, startTime, endTime);
-        // await SensorDataManager.loadData();
-        // List<Map<String, dynamic>> datas = SensorDataManager.getAllSensorDataByDate("2025-09-20");
-        // for (final record in sensorData) {
-        //   debugPrint(record.toString());
-        // }
-        // Map<String, double> frameLevelStats = SensorDataManager.getFrameLevelStatsByDate("2025-09-20");
-        // for (final record in sensorData) {
-        //   debugPrint(record.toString());
-        // }
-        return sensorData;
+        // 🔹 轉換成 Map<int, Map<String, dynamic>>
+        final Map<String, Map<String, dynamic>> mappedData = {
+          for (int i = 0; i < sensorData.length; i++) i.toString(): sensorData[i]
+        };
+        debugPrint("拿到 ${sensorData.length} 筆資料");
+        return mappedData;
       } else {
         debugPrint("錯誤: ${data['message']}");
         return null;
@@ -242,7 +313,25 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           
-                    SizedBox(width: 18 * scale),
+          SizedBox(width: 18 * scale),
+          Padding(
+            padding: EdgeInsets.only(top: 28 * scale),
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  if(trans == false){
+                    trans = true;
+                  }
+                  else{
+                    trans = false;
+                  }
+                });
+                debugPrint("Translate button clicked!");
+              },
+              child: Image(image: AssetImage('assets/translate.png'), width: 45 * scale, height: 45 * scale),
+            )
+          ),
+          SizedBox(width: 18 * scale),
           Padding(
             padding: EdgeInsets.only(top: 28 * scale),
             child: InkWell(
@@ -269,10 +358,11 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 SizedBox(
                   child: StretchCard(
+                    trans: trans,
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const StretchPage()),
+                        MaterialPageRoute(builder: (context) => StretchPage(selectedSet: selectedOption,)),
                       );
                       debugPrint("Stretch Recommendations card clicked!");
                     },
@@ -281,6 +371,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(width: 10 * scale),
                 SizedBox(
                   child: CorrectSittingCard(
+                    trans: trans,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -298,10 +389,11 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 SizedBox(
                   child: AnalyticsCard(
+                    trans: trans,
                     onTap: () {
                       Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const AnalyticPage()),
+                          MaterialPageRoute(builder: (context) => AnalyticPage(lastUpdate: lastUpdate)),
                       );
                       debugPrint("Analytics card clicked!");
                     },
@@ -315,6 +407,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 SizedBox(
                   child: LeaderboardCard(
+                    trans: trans,
                     onTap: () {
                       debugPrint("Leaderboard card clicked!");
                       Navigator.push(
@@ -326,12 +419,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 SizedBox(width: 10 * scale),
                 SizedBox(
-                  child: Donotdisturb(),
+                  child: Donotdisturb(trans: trans),
                 ),
               ],
             ),
             //SizedBox(height: 10 * scale),
-            ElapsedTime(key: _elapsedTimeKey, isRunning: _isTimerRunning, shouldReset: _shouldReset),
+            ElapsedTime(key: _elapsedTimeKey, isRunning: _isTimerRunning, shouldReset: _shouldReset, trans: trans),
             //SizedBox(height: 5 * scale),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -352,6 +445,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     // 傳送 ON
                     await BleService.instance.sendOn();
 
+                    // 每10秒檢測一次坐姿
+                    startTimer();
+
                   },
                   child: Image(image: AssetImage('assets/Start.png'), width: 52 * scale, height: 52 * scale),
                 ),
@@ -363,13 +459,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       _shouldReset = false;
                     });
                     debugPrint('Pause button clicked!');
+                    stopTimer();
                     await BleService.instance.sendOff();
+
                   },
                   child: Image(image: AssetImage('assets/Pause.png'), width: 52 * scale, height: 52 * scale),
                 ),
                 SizedBox(width: 39 * scale),
                 InkWell(
                   onTap: () async {
+                    final userEmail = FirebaseAuth.instance.currentUser?.email;
+                    debugPrint("目前使用的信箱: $userEmail");
                     final navigator = Navigator.of(context);
                     setState(() {
                       _isTimerRunning = false;
@@ -377,49 +477,88 @@ class _MyHomePageState extends State<MyHomePage> {
                     });
                     debugPrint('Stop button clicked!');
 
+                    // 停止每10秒計時器
+                    stopTimer();
+
                     // 取得時間段資料
                     final elapsedTimeState = _elapsedTimeKey.currentState;
 
                     if (elapsedTimeState != null) {
                       final session = (elapsedTimeState as dynamic).getCurrentSession();
-                      final segments = session?.segments ?? [];
+                      final segments = session?.segments ?? []; // 這個session的所有segments
+                      
 
+                      // debugPrint("測試$segments.toString()");
+                      //debugPrint("測試${segments.last.endTime.toString()}");
                       if (segments.isNotEmpty) {
-                        // 取得開始時間並格式化為台灣時區
-                        final startDateTime = segments.first.startTime!;
-                        final startTime = startDateTime.toIso8601String();
-
-                        // 取得結束時間，設為該天的最後一秒作為 upper bound
-                        final lastSegmentEnd = segments.last.endTime ?? DateTime.now();
-                        final endDate = DateTime(lastSegmentEnd.year, lastSegmentEnd.month, lastSegmentEnd.day, 23, 59, 59);
-                        final endTime = endDate.toIso8601String();
-
-                        debugPrint('  startTime: $startTime');
-                        debugPrint('  endTime: $endTime');
-                        debugPrint('  deviceId: redTest');
-                        debugPrint('  collectionName: scores');
+                        final startDateTime = segments.first.startTime;
+                        final lastSegmentEnd = segments.last.endTime ?? DateTime.now().toUtc();
+                        debugPrint("測試${lastSegmentEnd.toString()}");
+                        lastUpdate = lastSegmentEnd.toIso8601String();  // 更新最後一次 Stop
 
 
-                        // 呼叫 getSensorDataByTimeRange 並取得資料
-                        final sensorData = await getSensorDataByTimeRange(
-                          deviceId: "daniel",
-                          startTime: startTime,
-                          endTime: endTime,
-                          // startTime: "2025-09-20T19:50:00+08:00",
-                          // endTime: "2025-09-20T19:54:00+08:00",
-                          collectionName: "scores",
-                        );
-
-
-                        if (sensorData != null && sensorData.isNotEmpty) {
-                          // 儲存感測器資料
-                          debugPrint('儲存感測器資料中...');
-                          // SensorDataManager.addSensorData(sensorData, startTime, endTime);
+                        if (startDateTime == null) {
+                          debugPrint("⚠️ Start time 為空，無法查詢");
+                          return;
                         }
+
+                        // 存低於2的cva_level & tia_level個數
+                        int dataCount = 0;
+                        int cvaLevel = 0;
+                        int tiaLevel = 0;
+
+                        final newData = [];
+                        for (var aSeg in segments) {
+                          final startUtc = aSeg.startTime;
+                          final endUtc = aSeg.endTime;
+                          final sensorData = await getSensorDataByTimeRange(
+                            deviceId: "daniel",
+                            startTimeUtc: startUtc,
+                            endTimeUtc: endUtc,
+                            collectionName: "scores",
+                          );
+
+                          // 拿到cva_level & tia_level
+                          if (sensorData != null) {
+                            for (var record in sensorData.values) {
+                              dataCount++;
+                              if (record["cva_level"] <= 1) {cvaLevel++;}
+                              if (record["tia_level"] <= 1) {tiaLevel++;}
+                            }
+                          }
+
+                          sensorData?["startTime"] = {"Time": startUtc.toString()};
+                          sensorData?["endTime"]   = {"Time": endUtc.toString()};
+                          newData.add(sensorData);
+                        }
+
+                        // 計算cva_level & tia_level是否有超過50%
+                        if (dataCount == 0) {selectedOption = "3";}
+                        else if (tiaLevel >= 0.5 * dataCount) {selectedOption = "2";}
+                        else if (cvaLevel >= 0.5 * dataCount) {selectedOption = "1";}
+                        else {selectedOption = "3";}
                         
-                      } else {
-                        debugPrint('沒有時間段資料');
+                        debugPrint('dataCount: {$dataCount}');
+                        debugPrint('tiaLevel: {$tiaLevel}');
+                        debugPrint('cvaLevel: {$cvaLevel}');
+
+                        await SensorDataManager.initialize();
+                        await SensorDataManager.addSensorData(
+                          newData,
+                          startDateTime.toUtc().toIso8601String()
+                        );
+            
+                        if (newData.isNotEmpty) {
+                          debugPrint('✅ 撈到 ${newData.length} 筆感測器資料 (UTC)');
+                          await BleService.instance.sendOff();
+                          navigator.push(
+                            MaterialPageRoute(builder: (context) => StretchPage(selectedSet: selectedOption)),
+                          );
+                        } else {
+                          debugPrint('⚠️ 沒有撈到資料 (UTC)');
+                        }
                       }
+
                     } else {
                       debugPrint('無法取得 ElapsedTime 狀態');
                     }
@@ -436,7 +575,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     await BleService.instance.sendOff();
 
                     navigator.push(
-                      MaterialPageRoute(builder: (context) => const StretchPage()),
+                      MaterialPageRoute(builder: (context) => StretchPage(selectedSet: selectedOption,)),
                     );
 
 

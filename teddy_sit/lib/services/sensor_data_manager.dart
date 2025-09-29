@@ -1,6 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 // 感測器資料管理類別
 class SensorDataManager {
@@ -41,6 +45,19 @@ class SensorDataManager {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = jsonEncode(_dateData);
       await prefs.setString(_storageKey, jsonString);
+      final user = FirebaseAuth.instance.currentUser;
+      final email = user?.email;
+
+      final firestore = FirebaseFirestore.instance;
+
+      // print("測試資料: $_dateData");
+      await firestore
+      .collection("users anaylsis")          // 🔹 第一層: 使用者集合
+      .doc(email)              // 🔹 單一使用者文件 (用 email 當 key)
+      .set({
+        "dateData": _dateData,     // 🔹 存你的資料
+        "updatedAt": FieldValue.serverTimestamp()
+      }, SetOptions(merge: true)); // merge 避免覆蓋其他欄位
 
       int totalSessions = 0;
       _dateData.forEach((date, dateInfo) {
@@ -89,7 +106,7 @@ class SensorDataManager {
   }
 
   // 新增感測器資料（自動存儲到 SharedPreferences）
-  static Future<void> addSensorData(List<Map<String, dynamic>> newData, String startTime, String endTime) async {
+  static Future<void> addSensorData(List newData, String startTime) async {
     final sessionId = DateTime.now().millisecondsSinceEpoch.toString();
     // 從 startTime 提取日期部分
     final date = DateTime.parse(startTime).toString().split(' ')[0];
@@ -100,17 +117,16 @@ class SensorDataManager {
     }
 
     // 創建新的 session 資料（不包含 sessionId，因為 sessionId 是 key）
-    final sessionData = [
-      {
+    final sessionData = {
         'startTime': startTime,
-        'endTime': endTime,
+        // 'endTime': endTime,
         'dataCount': newData.length,
         'sensorData': newData,
-      }
-    ];
-
+      };
+    
     // 以 sessionId 作為 key 存儲到對應日期中
     _dateData[date]![sessionId] = sessionData;
+    print("session data: $sessionData");
 
     // 自動存儲到 SharedPreferences
     await saveData();
@@ -297,50 +313,51 @@ class SensorDataManager {
   }
 
   // 取得從現在開始到30秒前的感測器資料
-  static List<Map<String, dynamic>> getSensorDataLast30Seconds(int num) {
-    // final now = DateTime.parse("2025-09-20 19:54:00+08:00"); // For testing purpose
-    final now = DateTime.now().toUtc().add(Duration(hours: 8)); // 台灣時間 UTC+8
-    debugPrint('現在時間 (UTC+8): $now');
-    final thirtySecondsAgo = now.subtract(Duration(seconds: num));
-    int ten = 10;
-    List<Map<String, dynamic>> recentData = [];
+  static Future<List<Map<String, dynamic>>> getSensorDataBySecond(
+    String lastUpdateString,
+    int seconds,
+  ) async {
+    try {
+      // 解析 lastUpdate 字串成 DateTime
+      final lastUpdate = DateTime.parse(lastUpdateString);
 
-    // 遍歷所有日期的所有sessions
-    _dateData.forEach((date, dateInfo) {
-      dateInfo.forEach((sessionId, sessionDataList) {
-        final sessionData = (sessionDataList as List).first;
-        final sensorData = sessionData['sensorData'] as List? ?? [];
+      // 轉換成區間
+      final startTime = lastUpdate.subtract(Duration(seconds: seconds));
+      final endTime = lastUpdate;
 
-        // 檢查每筆sensor data的時間戳
-        for (var data in sensorData) {
-          if (data['timestamp'] != null) {
-            try {
-              final dataTime = DateTime.parse(data['timestamp']);
-              // 如果資料時間在30秒內，加入結果
-              if (dataTime.isAfter(thirtySecondsAgo) && dataTime.isBefore(thirtySecondsAgo.add(Duration(seconds: ten)))) {
-                recentData.add(Map<String, dynamic>.from(data));
-              }
-            } catch (e) {
-              debugPrint('解析時間戳失敗: ${data['timestamp']}, 錯誤: $e');
-            }
-          }
-        }
-      });
-    });
+      debugPrint("查詢區間: $startTime ~ $endTime");
 
-    // 按時間排序（最新的在前面）
-    recentData.sort((a, b) {
-      try {
-        final timeA = DateTime.parse(a['timestamp']);
-        final timeB = DateTime.parse(b['timestamp']);
-        return timeB.compareTo(timeA);
-      } catch (e) {
-        return 0;
+      // 查 Firestore
+      final snapshot = await FirebaseFirestore.instance
+        .collection("devices")   // 第一層
+        .doc("daniel")           // 第二層 doc
+        .collection("scores")    // 第三層 collection
+        .where("timestamp", isGreaterThanOrEqualTo: startTime) // 時間篩選
+        .where("timestamp", isLessThanOrEqualTo: endTime)
+        .get();
+
+      List<Map<String, dynamic>> allData = [];
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+
+        // 直接存進來即可
+        allData.add({
+          "cva_angle": data["cva_angle"],
+          "cva_level": data["cva_level"],
+          "frame_level": data["frame_level"],
+          "frame_score": data["frame_score"],
+          "tia_angle": data["tia_angle"],
+          "tia_level": data["tia_level"],
+          "timestamp": (data["timestamp"] as Timestamp).toDate().toIso8601String(),
+        });
       }
-    });
 
-    debugPrint('取得最近10秒的感測器資料: ${recentData.length} 筆');
-    return recentData;
+      debugPrint("✅ Firebase 撈到 ${allData.length} 筆資料");
+      return allData;
+    } catch (e) {
+      debugPrint("❌ Firebase 撈資料失敗: $e");
+      return [];
+    }
   }
 
 }

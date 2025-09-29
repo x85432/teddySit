@@ -8,12 +8,13 @@ import logging
 import os
 from uuid import uuid4
 from datetime import datetime, timezone, timedelta
+from google.cloud import firestore as gcf
 
 # backend funcitons
 from scoreFunctions import calculate_cva
 from scoreFunctions import calculate_tia
 
-tz_utc8 = timezone(timedelta(hours=8))
+tz_utc = timezone.utc
 
 # 確保 Firebase Admin SDK 在模組載入時初始化一次
 # 這是確保 App Check 和其他 Firebase 服務在 Cloud Function 環境中正常工作的關鍵。
@@ -102,12 +103,12 @@ def process_sensor_data(request: https_fn.Request):
 
             if reading_timestamp:
                 try:
-                    # 轉成 datetime，並加上 UTC+8 時區
-                    ts = datetime.fromtimestamp(int(reading_timestamp), tz=tz_utc8)
+                    # 轉成 datetime (秒數) → UTC
+                    ts = datetime.fromtimestamp(int(reading_timestamp), tz=timezone.utc)
                 except Exception:
-                    ts = datetime.now(tz_utc8)
+                    ts = datetime.now(timezone.utc)
             else:
-                ts = datetime.now(tz_utc8)
+                ts = datetime.now(timezone.utc)
             
             
 
@@ -138,7 +139,7 @@ def process_sensor_data(request: https_fn.Request):
             
             # 2. 準備要寫入的分數資料
             score_data = {
-                "timestamp": ts,
+                "timestamp": gcf.SERVER_TIMESTAMP,
                 'cva_angle': cva_angle,
                 'cva_level': cva_level,
                 'tia_angle': tia_angle,
@@ -147,6 +148,7 @@ def process_sensor_data(request: https_fn.Request):
                 'frame_level': frame_level
             }
             msg["timestamp"] = ts # raw data也使用同類型的 timestamp 存入 database
+            print("----------------ts", ts)
             
             # 3. 定義兩個不同的文件參考
             raw_doc_ref   = db.collection('devices').document(device_id).collection('raw_data').document(doc_id)

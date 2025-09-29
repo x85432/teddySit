@@ -6,16 +6,16 @@ import '../widgets/stretch_wid.dart';
 double scale = 2340/2400;
 
 class StretchPage extends StatefulWidget {
-  const StretchPage({super.key});
+  final String selectedSet;
+  const StretchPage({super.key, required this.selectedSet});
 
   @override
   State<StretchPage> createState() => _StretchPageState();
 }
 
 class _StretchPageState extends State<StretchPage> {
-  String selectedSet = '1';
-  String videoUrl = 'assets/e1.gif';
-
+  late String selectedSet = widget.selectedSet;
+  
   List<String> videoOptions = ['1', '2', '3'];
 
   final Map<String, String> videoUrls = {
@@ -41,6 +41,12 @@ class _StretchPageState extends State<StretchPage> {
     '2': 'Note: Your body leans forward more than it should during sitting. This chest-opening stretch relaxes tight shoulder and chest muscles, helping you sit taller, breathe easier, and stay more comfortable.',
     '3': 'Note: Great job keeping a healthy posture! To keep your muscles loose, we suggest a quick arm stretch overhead. It refreshes your body, improves circulation, and prevents stiffness from sitting long.'
   };
+
+  @override
+  void initState() {
+    super.initState();
+    selectedSet = widget.selectedSet;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +100,7 @@ class _StretchPageState extends State<StretchPage> {
                 // 影片播放器
                 Padding(
                   padding: EdgeInsets.only(top: 45*scale*0.9, left: 18*scale*0.9),
-                  child: GifCard(gifPath: videoUrl),
+                  child: GifCard(gifPath: videoUrls[selectedSet]??'2'),
                 ),
         
                 // 影片標題
@@ -107,7 +113,7 @@ class _StretchPageState extends State<StretchPage> {
                       Icon(Icons.accessibility_new, color: const Color.fromARGB(255, 142, 128, 192),size: 32,),
                       Text(
                     videoTitles[selectedSet] ?? '',
-                    style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 20*scale),
+                    style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 14*scale),
                     ),
                     ],
                   ),
@@ -121,14 +127,14 @@ class _StretchPageState extends State<StretchPage> {
                           width: 320,
                           child: Text(
                           videoTips[selectedSet] ?? '',
-                          style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 14*scale, height: 27/14),
+                          style: GoogleFonts.inknutAntiqua(color: Color(0xFFCDCCD3), fontSize: 12.5*scale, height: 27/14),
                         )),
                         SizedBox(height: 10,),
                        SizedBox(
                           width: 320,
                           child: Text(
                           videoNotes[selectedSet] ?? '',
-                          style: GoogleFonts.inknutAntiqua(color: Color(0xFFE8DEF8), fontSize: 12*scale, height: 23/14),
+                          style: GoogleFonts.inknutAntiqua(color: Color(0xFFE8DEF8), fontSize: 11.5*scale, height: 23/14),
                         )),
 
                       

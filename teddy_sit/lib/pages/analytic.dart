@@ -6,6 +6,8 @@ import '../widgets/home.dart';
 import '../widgets/analytic_wid.dart';
 import '../widgets/piechart_wid.dart';
 import '../services/sensor_data_manager.dart';
+import '../services/get_segment.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 //import '../widgets/stretch_wid.dart';
 
 double scale = 2340/2400;
@@ -14,120 +16,244 @@ double scale = 2340/2400;
 const List<String> dropdownOptions = ['Today', 'Past 3 Days', 'Past 5 Days'];
 
 class AnalyticPage extends StatefulWidget {
-  const AnalyticPage({super.key});
+  final String lastUpdate;
+  const AnalyticPage({super.key, required this.lastUpdate});
   
-
+  
   @override
   State<AnalyticPage> createState() => _AnalyticPageState();
 }
 
 class _AnalyticPageState extends State<AnalyticPage> {
   String selectedOption = dropdownOptions.first;
+  late String lastUpdateString;
 
-  final Map<String, List<List<FlSpot>>> lineDataSets = {
-    'Today': [
-      [FlSpot(0, 10), FlSpot(1, 20), FlSpot.nullSpot, FlSpot(3, 5), FlSpot(4, 6)],
-      [FlSpot(0, 30), FlSpot(1, 40)],
-      [FlSpot(0, 50), FlSpot(1, 60)],
-    ],
-    'Past 3 Days': [
-      [FlSpot(0, 15), FlSpot(1, 25)],
-      [FlSpot(0, 35), FlSpot(1, 45)],
-      [FlSpot(0, 55), FlSpot(1, 65)],
-    ],
-    'Past 5 Days': [
-      [FlSpot(0, 20), FlSpot(1, 30)],
-      [FlSpot(0, 40), FlSpot(1, 50)],
-      [FlSpot(0, 60), FlSpot(1, 70)],
-    ],
+  // 用來存 Firestore 撈回來的 5 段資料
+  List<List<Map<String, dynamic>>> chunks = [[], [], [], [], []];
+  @override
+
+  void initState() {
+    super.initState();
+    lastUpdateString = widget.lastUpdate; // 取 yyyy-MM-dd
+
+    // 測試 segment 服務
+    // _testSegmentService();
+
+    // 撈柱狀圖資料
+    _loadData(); 
+
+    // 撈折線圖資料
+    _loadSegments();
+  }
+
+  Map<String, List<List<FlSpot>>> lineDataSets = {
+    'Today': [],
+    'Past 3 Days': [],
+    'Past 5 Days': [],
   };
-
+  // 柱狀圖x軸顯示的字
   final Map<String, List<String>> labelsSets = {
-    'Today': ['9/21'],
-    'Past 3 Days': ['9/21', '9/20', '9/19'],
-    'Past 5 Days': ['9/21', '9/20', '9/19', '9/18', '9/17'],
+    'Today': ['9/24'],
+    'Past 3 Days': ['9/22', '9/23', '9/24'],
+    'Past 5 Days': ['9/20', '9/21', '9/22', '9/23', '9/24'],
   };
+  final timeSpan = 15;
+  final Duration daySpan = const Duration(seconds: 15);
+
+  Duration _mul(Duration base, int k) =>
+      Duration(microseconds: base.inMicroseconds * k); // 回傳 base * k 的時間長度
+
+  DateTime? _toDateTime(dynamic v) { // 把所有 time 相關的東西變成 DateTime 型態
+    if (v is DateTime) return v;
+    if (v is Timestamp) return v.toDate();
+    if (v is String) return DateTime.tryParse(v);
+    return null;
+  }
+
+  bool _inWindow(DateTime ts, DateTime now, Duration window) { // ts 是否落在 (now-window) ~ now
+    final lower = now.subtract(window);
+    return !ts.isBefore(lower) && !ts.isAfter(now);
+  }
+
+  Future<void> _testSegmentService() async {
+    debugPrint('🧪 === 開始測試 SegmentDataService ===');
+    debugPrint('🧪 測試日期: $lastUpdateString');
+
+    try {
+      final segments = await SegmentDataService.getSegmentsByDate(lastUpdateString);
+      debugPrint('🧪 總共找到 ${segments.length} 個 segments');
+
+      if (segments.isEmpty) {
+        debugPrint('🧪 ❌ 沒有找到任何 segments，請檢查：');
+        debugPrint('🧪    1. 用戶是否已登錄');
+        debugPrint('🧪    2. Firebase 中是否有該日期的數據');
+        debugPrint('🧪    3. 數據結構是否正確');
+        return;
+      }
+
+      // 顯示前3個 segment 的詳細信息
+      for (int i = 0; i < segments.length && i < 3; i++) {
+        final segment = segments[i];
+        debugPrint('🧪 Segment $i:');
+        debugPrint('   - SessionId: ${segment['sessionId']}');
+        debugPrint('   - StartTime: ${segment['startTime']}');
+        debugPrint('   - EndTime: ${segment['endTime']}');
+        debugPrint('   - Frames: ${(segment['frames'] as List).length}');
+        
+        for (var frame in segment['frames']) {
+          debugPrint('     - Frame Timestamp: ${frame['timestamp']}, Score: ${frame['frame_score']}');
+        }
+
+        // 測試取得分數
+        final scores = SegmentDataService.getSegmentStartEndScores(segment);
+        debugPrint('   - Start Score: ${scores['startScore']}');
+        debugPrint('   - End Score: ${scores['endScore']}');
+
+        // 測試時長
+        final duration = SegmentDataService.getSegmentDuration(segment);
+        debugPrint('   - Duration: ${duration}秒');
+      }
+
+    } catch (e) {
+      debugPrint('🧪 ❌ 測試失敗: $e');
+    }
+
+    debugPrint('🧪 === 測試結束 ===');
+  }
+
+  Future<void> _loadSegments() async {
+    try {
+      final allSegments =
+          await SegmentDataService.getSegmentsByDate(lastUpdateString);
+
+      final now = DateTime.parse(lastUpdateString); // 把最後更新的時間定義成 now
+      final Map<String, List<List<FlSpot>>> temp = {
+        'Today': [],
+        'Past 3 Days': [],
+        'Past 5 Days': [],
+      };
+
+      for (final segment in allSegments) { // 如果 seg 的 startTime 不在這個時間段裡面，就丟掉整個 seg
+        DateTime? endTime = _toDateTime(segment['endTime']);
+        final frames = (segment['frames'] as List?) ?? [];
+        if (endTime == null && frames.isNotEmpty) {
+          endTime = _toDateTime(frames.first['timestamp']);
+        }
+        if (endTime == null) continue;
+
+        final List<FlSpot> spots = []; // 一堆 frames
+        for (int i = 0; i < frames.length; i++) {
+          final f = frames[i];
+          final score = (f['frame_score'] as num?)?.toDouble() ?? 0.0;
+          spots.add(FlSpot(i.toDouble(), score));
+        }
+        if (spots.isEmpty) continue;
+
+        if (_inWindow(endTime, now, daySpan)) {
+          temp['Today']!.add(spots); // temp['Today'] 很多個 segements
+        }
+        if (_inWindow(endTime, now, _mul(daySpan, 3))) {
+          temp['Past 3 Days']!.add(spots);
+        }
+        if (_inWindow(endTime, now, _mul(daySpan, 5))) {
+          temp['Past 5 Days']!.add(spots);
+        }
+      }
+
+      setState(() => lineDataSets = temp); // 把 3 種區間的資料丟進去
+    } catch (e) {
+      debugPrint("❌ _loadSegments 失敗: $e");
+    }
+  }
+
+  Future<void> _loadData() async {
+    // 一次撈 150 秒
+    final allData = await SensorDataManager.getSensorDataBySecond(lastUpdateString, 150);
+    final lastUpdateTime = DateTime.parse(lastUpdateString);
+
+    // 切成 5 段，每段 30 秒
+    List<List<Map<String, dynamic>>> tmp = [];
+    for (int i = 0; i < 5; i++) {
+      final start = i * timeSpan;
+      final end = (i + 1) * timeSpan;
+
+      final chunk = allData.where((d) {
+        final time = DateTime.parse(d['timestamp']);
+        final diff = lastUpdateTime.difference(time).inSeconds;
+        return diff >= start && diff < end;
+      }).toList();
+
+      tmp.add(chunk);
+    }
+
+    setState(() {
+      chunks = tmp;
+    });
+  }
+
 
   Map<String, List<double>> get barValuesSets {
-    final today = DateTime.now().toString().split(' ')[0];
-    final yesterday = DateTime.now().subtract(Duration(days: 1)).toString().split(' ')[0];
-    final dayBeforeYesterday = DateTime.now().subtract(Duration(days: 2)).toString().split(' ')[0];
-    final day3 = DateTime.now().subtract(Duration(days: 3)).toString().split(' ')[0];
-    final day4 = DateTime.now().subtract(Duration(days: 4)).toString().split(' ')[0];
-    debugPrint('Today: $today, Yesterday: $yesterday, Day Before Yesterday: $dayBeforeYesterday');
-    List<Map<String, dynamic>> datas1 = SensorDataManager.getSensorDataLast30Seconds(10);
-    List<Map<String, dynamic>> datas2 = SensorDataManager.getSensorDataLast30Seconds(20);
-    List<Map<String, dynamic>> datas3 = SensorDataManager.getSensorDataLast30Seconds(30);
-    List<Map<String, dynamic>> datas4 = SensorDataManager.getSensorDataLast30Seconds(40);
-    List<Map<String, dynamic>> datas5 = SensorDataManager.getSensorDataLast30Seconds(50);
     return {
-      'Today': [SensorDataManager.getAverageFrameScoreByDateDirect(datas1)],
+      'Today': [
+        SensorDataManager.getAverageFrameScoreByDateDirect(chunks[0]),
+      ],
       'Past 3 Days': [
-        SensorDataManager.getAverageFrameScoreByDateDirect(datas1),
-        SensorDataManager.getAverageFrameScoreByDateDirect(datas2),
-        SensorDataManager.getAverageFrameScoreByDateDirect(datas3),
+        for (int i = 0; i < 3; i++)
+          SensorDataManager.getAverageFrameScoreByDateDirect(chunks[i]),
       ],
       'Past 5 Days': [
-        SensorDataManager.getAverageFrameScoreByDateDirect(datas1),
-        SensorDataManager.getAverageFrameScoreByDateDirect(datas2),
-        SensorDataManager.getAverageFrameScoreByDateDirect(datas3),
-        SensorDataManager.getAverageFrameScoreByDateDirect(datas4),
-        SensorDataManager.getAverageFrameScoreByDateDirect(datas5),
-      ], // 暫時保持靜態資料，因為需要更複雜的月份計算
+        for (int i = 0; i < 5; i++)
+          SensorDataManager.getAverageFrameScoreByDateDirect(chunks[i]),
+      ],
     };
   }
 
-  final Map<String, double> averageScores = {
-    'Today': SensorDataManager.getAverageFrameScoreByDateDirect(SensorDataManager.getSensorDataLast30Seconds(10)),
-    'Past 3 Days': SensorDataManager.getAverageFrameScoreByDateDirect(SensorDataManager.getSensorDataLast30Seconds(10) + SensorDataManager.getSensorDataLast30Seconds(20) + SensorDataManager.getSensorDataLast30Seconds(30)),
-    'Past 5 Days': SensorDataManager.getAverageFrameScoreByDateDirect(SensorDataManager.getSensorDataLast30Seconds(10) + SensorDataManager.getSensorDataLast30Seconds(20) + SensorDataManager.getSensorDataLast30Seconds(30) + SensorDataManager.getSensorDataLast30Seconds(40) + SensorDataManager.getSensorDataLast30Seconds(50)),
-  };
+  Map<String, double> get averageScores {
+    return {
+      'Today': chunks[0].isEmpty
+          ? 0
+          : SensorDataManager.getAverageFrameScoreByDateDirect(chunks[0]),
+      'Past 3 Days': chunks.take(3).expand((e) => e).isEmpty
+          ? 0
+          : SensorDataManager.getAverageFrameScoreByDateDirect(
+              chunks.take(3).expand((e) => e).toList()),
+      'Past 5 Days': chunks.expand((e) => e).isEmpty
+          ? 0
+          : SensorDataManager.getAverageFrameScoreByDateDirect(
+              chunks.expand((e) => e).toList()),
+    };
+  }
 
   int correct = 40;
   int incorrect = 50;
 
-  
-
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> datas1 = SensorDataManager.getSensorDataLast30Seconds(10);
-    List<Map<String, dynamic>> datas2 = SensorDataManager.getSensorDataLast30Seconds(20);
-    List<Map<String, dynamic>> datas3 = SensorDataManager.getSensorDataLast30Seconds(30);
-    List<Map<String, dynamic>> datas4 = SensorDataManager.getSensorDataLast30Seconds(40);
-    List<Map<String, dynamic>> datas5 = SensorDataManager.getSensorDataLast30Seconds(50);
-    Map<String, double> frameLevelStats;
-    if(selectedOption == 'Today'){
-      frameLevelStats = SensorDataManager.getFrameLevelStatsByDate(datas1);
-    }
-    else if(selectedOption == 'Past 3 Days'){
-      List<Map<String, dynamic>> combinedDatas = [];
-      combinedDatas.addAll(datas1);
-      combinedDatas.addAll(datas2);
-      combinedDatas.addAll(datas3);
-      frameLevelStats = SensorDataManager.getFrameLevelStatsByDate(combinedDatas);
-    }
-    else{
-      List<Map<String, dynamic>> combinedDatas = [];
-      combinedDatas.addAll(datas1);
-      combinedDatas.addAll(datas2);
-      combinedDatas.addAll(datas3);
-      combinedDatas.addAll(datas4);
-      combinedDatas.addAll(datas5);
-      frameLevelStats = SensorDataManager.getFrameLevelStatsByDate(combinedDatas);
+    // 如果資料還沒載入，顯示 loading
+    if (chunks.every((c) => c.isEmpty)) {
+      return const Center(child: CircularProgressIndicator());
     }
 
-    if (frameLevelStats['A+'] == null) {
-      frameLevelStats['A+'] = 0;
-    } 
-    if (frameLevelStats['A'] == null){
-      frameLevelStats['A'] = 0;
+    Map<String, double> frameLevelStats;
+    if(selectedOption == 'Today'){
+      frameLevelStats = SensorDataManager.getFrameLevelStatsByDate(chunks[0]);
     }
-    if (frameLevelStats['B'] == null){
-      frameLevelStats['B'] = 0;
+    else if(selectedOption == 'Past 3 Days'){
+      frameLevelStats = SensorDataManager.getFrameLevelStatsByDate(
+        chunks.take(3).expand((e) => e).toList(),
+      );
     }
-    if (frameLevelStats['C'] == null){
-      frameLevelStats['C'] = 0;
+    else{
+      frameLevelStats = SensorDataManager.getFrameLevelStatsByDate(
+        chunks.expand((e) => e).toList(),
+      );
     }
+
+    // 確保 key 存在
+    for (var grade in ['A+', 'A', 'B', 'C']) {
+      frameLevelStats.putIfAbsent(grade, () => 0);
+    }
+    
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -268,7 +394,7 @@ class _AnalyticPageState extends State<AnalyticPage> {
           SizedBox(height: 45,),
           Padding(
             padding: EdgeInsets.only(left: 20),
-            child: Report()
+            child: Report(score: averageScores[selectedOption] ?? 0.0)
           )
           
           
