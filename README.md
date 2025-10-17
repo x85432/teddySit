@@ -46,6 +46,8 @@
 1. Fail to connect the device
 \> Go to `Android Studio` > Virtual Device Manager > `Delete` your original device > `Create` another device > Connet it again in `VScode`
 
+# Demo video link
+[![Demo Video](https://img.youtube.com/vi/YxQu-dgL4Kg/0.jpg)](https://youtu.be/YxQu-dgL4Kg)
 
 
 
